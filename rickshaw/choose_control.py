@@ -14,15 +14,12 @@ dt time step (in seconds)
 
 """
 
-import json
-
 from random_from_range import random_from_range
 
 
 
 def choose_control():  
     
-    control_parameter = open("control_parameter.json", "w")
     
     duration = random_from_range(12, 600, 6)
     start_month = random_from_range(1, 12)
@@ -38,11 +35,7 @@ def choose_control():
                 
                 }
                 
-    to_json = json.dumps(control)
-    control_parameter.write("control: ")
-    control_parameter.write(to_json)
-    control_parameter.close()
-    
+    return control
     
     
     
