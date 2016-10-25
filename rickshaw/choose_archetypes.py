@@ -1,38 +1,44 @@
 # -*- coding: utf-8 -*-
 """Modudle to help generate an archtypes list."""
 import random
+global niches
+
+from list_niches import random_niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
 
 NICHE_ARCHETYPES = {
-    "mine": {},
-    #"conversion" : {},
-    "enrichment": {":agents:Enrichment"},
-    "fuelfab:uo2_fabrication": {":agents:FuelFab"},
-    "triso_fabrication": {":agents:FuelFab"},
-    "reactor": {":agents:Reactor"},
-    "reactor:fr": {":agents:Reactor"},
-    "reactor:lwr": {":agents:Reactor"},
-    "hwr": {":agents:Reactor"},
-    "htgr": {":agents:Reactor"},
-    "rbmk": {":agents:Reactor"},
-    "pb": {":agents:Reactor"},
-    "storage": {},
-    "dry_reprocessing": {":agents:Separation"},
-    "purex": {":agents:Separation"},
-    "mox_fabrication": {":agents:FuelFab"},
-    "deep_geological_repository": {":agents:Sink"},
-    "near_surface_repository": {":agents:Sink"},
+    "mine": set(),
+    #"conversion" : set(),
+    "enrichment": {":cycamore:Enrichment"},
+    "fuel_fab:uo2": {":cycamore:FuelFab"},
+    "fuel_fab:triso": {":cycamore:FuelFab"},
+    "reactor": {":cycamore:Reactor"},
+    "reactor:fr": {":cycamore:Reactor"},
+    "reactor:lwr": {":cycamore:Reactor"},
+    "reactor:hwr": {":cycamore:Reactor"},
+    "reactor:htgr": {":cycamore:Reactor"},
+    "reactor:rbmk": {":cycamore:Reactor"},
+    "reactor:pb": {":cycamore:Reactor"},
+    "storage": set(),
+    "separations": {":cycamore:Separation"},
+    "fuel_fab:mox": {":cycamore:FuelFab"},
+    "repository": {":cycamore:Sink"},
     }
 
 
 def choose_archetypes(niches):
-    arches = [random.choose(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES)]
+    print(niches)
+    arches = [random.sample(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
     for niche in niches[1:-1]:
-        a = random.choose(NICHE_ARCHETYPES[niche])
+        a = random.sample(NICHE_ARCHETYPES[niche], 1)
         arches.append(a)
     if len(niches) > 1:
-        a = random.choose(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINK)
+        a = random.sample(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINKS, 1)
         arches.append(a)
     return arches
+    
+def compile_archetypes(max_niches):
+    niches = random_niches(max_niches)
+    return choose_archetypes(niches)
