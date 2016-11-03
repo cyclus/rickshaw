@@ -30,15 +30,20 @@ NICHE_ARCHETYPES = {
 
 def choose_archetypes(niches):
     print(niches)
-    arches = [random.sample(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
+    arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
     for niche in niches[1:-1]:
-        a = random.sample(NICHE_ARCHETYPES[niche], 1)
+        a = random.choice(tuple(NICHE_ARCHETYPES[niche]))
         arches.append(a)
     if len(niches) > 1:
-        a = random.sample(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINKS, 1)
+        a = random.choice(tuple(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINKS))
         arches.append(a)
     return arches
     
-def compile_archetypes(max_niches):
-    niches = random_niches(max_niches)
-    return choose_archetypes(niches)
+def archetype_block(arches):
+    unique_arches = sorted(set(arches))
+    block = {"spec" : []}
+    spec_keys = ["path", "lib", "name"]
+    for a in unique_arches:
+        spec = dict(zip(spec_keys, a.split(":")))
+        block["spec"].append(spec)
+    return block
