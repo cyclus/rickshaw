@@ -24,7 +24,7 @@ NICHE_ARCHETYPES = {
     "storage": set(),
     "separations": {":cycamore:Separation"},
     "fuel_fab:mox": {":cycamore:FuelFab"},
-    "repository": {":cycamore:Sink"},
+    "repository": set(),
     }
 
 
