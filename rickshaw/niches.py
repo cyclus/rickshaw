@@ -6,14 +6,15 @@ Created on Tue Oct 25 08:36:04 2016
 """
 
 import random
+global niches
 
 #hierarchical dictionary flow
 T = {
     "mine" : {"enrichment", "reactor:hwr"},
     "enrichment" : {"fuel_fab:uo2", "fuel_fab:triso", "reactor:hwr"},
     "fuel_fab:uo2" : {"reactor:lwr", "reactor:htgr", "reactor:rbmk"},
-    "fuel_fab_triso" : {"reactor:pb"},
-    "reactor" : {"storage", "separations", "repository"},
+    "fuel_fab:triso" : {"reactor:pb"},
+    "fuel_fab:mox" : {"reactor:fr", "reactor:lwr", "reactor:htgr", "reactor:rbmk"},"reactor" : {"storage", "separations", "repository"},
     "reactor:fr" : {"storage", "separations", "repository"},
     "reactor:lwr" : {"storage", "separations", "repository"},
     "reactor:hwr" : {"storage",  "repository"},
@@ -21,8 +22,7 @@ T = {
     "reactor:rbmk" : {"storage", "separations", "repository"},         
     "reactor:pb" : {"storage", "repository"},         
     "storage" : {"separations", "repository"},         
-    "separations" : {"conversion","enrichment", "hwr", "mox_fabrication"},
-    "fuel_fab:mox" : {"reactor:fr", "reactor:lwr", "reactor:htgr", "reactor:rbmk"},
+    "separations" : {"enrichment", "reactor:hwr", "fuel_fab:mox"},
     "repository" : {None},          
     }
 
