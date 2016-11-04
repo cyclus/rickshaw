@@ -3,7 +3,7 @@
 import random
 global niches
 
-from list_niches import random_niches
+from niches import random_niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}

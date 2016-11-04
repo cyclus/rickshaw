@@ -26,5 +26,7 @@ def generate(max_num_niches=10):
     # choose niches and archtypes
     niches = rickshaw.niches.random_niches(max_niches=max_num_niches)
     arches = rickshaw.choose_archtypes.choose_archetypes(niches)
+    sim["archetypes"] = choose_archetypes.archetypes_block(arches)
+    
     return inp
 
