@@ -3,7 +3,7 @@
 import random
 global niches
 
-from niches import random_niches
+#from niches import random_niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
@@ -12,8 +12,10 @@ NICHE_ARCHETYPES = {
     "mine": set(),
     #"conversion" : set(),
     "enrichment": {":cycamore:Enrichment"},
+    "fuel_fab" : {":cycamore:FuelFab"},
     "fuel_fab:uo2": {":cycamore:FuelFab"},
     "fuel_fab:triso": {":cycamore:FuelFab"},
+    "fuel_fab:mox": {":cycamore:FuelFab"},
     "reactor": {":cycamore:Reactor"},
     "reactor:fr": {":cycamore:Reactor"},
     "reactor:lwr": {":cycamore:Reactor"},
@@ -22,8 +24,10 @@ NICHE_ARCHETYPES = {
     "reactor:rbmk": {":cycamore:Reactor"},
     "reactor:pb": {":cycamore:Reactor"},
     "storage": set(),
+    "storage:wet": set(),
+    "storage:dry": set(),
+    "storage:interim": set(),
     "separations": {":cycamore:Separation"},
-    "fuel_fab:mox": {":cycamore:FuelFab"},
     "repository": set(),
     }
 
