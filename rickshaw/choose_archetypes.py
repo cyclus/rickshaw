@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Modudle to help generate an archtypes list."""
 import random
-global niches
+import subprocess
+import json
 
-#from niches import random_niches
+
+#from niches import niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
@@ -13,7 +15,7 @@ NICHE_ARCHETYPES = {
     #"conversion" : set(),
     "enrichment": {":cycamore:Enrichment"},
     "fuel_fab" : {":cycamore:FuelFab"},
-    "fuel_fab:uo2": {":cycamore:FuelFab"},
+    "fuel_fab:uo2": set(), #not the correct archetype currently possibly 
     "fuel_fab:triso": {":cycamore:FuelFab"},
     "fuel_fab:mox": {":cycamore:FuelFab"},
     "reactor": {":cycamore:Reactor"},
@@ -51,3 +53,17 @@ def archetype_block(arches):
         spec = dict(zip(spec_keys, a.split(":")))
         block["spec"].append(spec)
     return block
+    
+def generate_archetype(arche, name):
+    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])
+    annotations = json.loads(annotations)
+    vals = {}
+    for name, var in annotations.items():
+        if var["uitype"] == "range":
+            val = random.uniform(*var["range"])
+            vals[name] = val
+    alias = arche.rpartition(":")[-1]
+    config = {"name": name, "config": {alias: vals}}
+    return config
+        
+

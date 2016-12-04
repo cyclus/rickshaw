@@ -27,6 +27,9 @@ def generate(max_num_niches=10):
     niches = rickshaw.niches.random_niches(max_niches=max_num_niches)
     arches = rickshaw.choose_archtypes.choose_archetypes(niches)
     sim["archetypes"] = choose_archetypes.archetypes_block(arches)
-    
+    protos = {}
+    for arche in arches:
+        protos[arche] = choose_archetypes.generate_archetype(arche, name)
+    sim["facility"] = list(protos.values())
     return inp
 
