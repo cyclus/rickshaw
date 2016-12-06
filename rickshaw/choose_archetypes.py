@@ -59,7 +59,10 @@ def generate_archetype(arche, name):
     annotations = json.loads(annotations)
     vals = {}
     for name, var in annotations.items():
-        if var["uitype"] == "range":
+        uitype = var.get("uitype", None)
+        if uitype is None:
+            continue
+        if uitype == "range":
             if "nichedomain" in var:
                 rng = var["nichedomain"].get(niche, var["range"])
             else:
