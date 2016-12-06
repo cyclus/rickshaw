@@ -15,7 +15,7 @@ NICHE_ARCHETYPES = {
     #"conversion" : set(),
     "enrichment": {":cycamore:Enrichment"},
     "fuel_fab" : {":cycamore:FuelFab"},
-    "fuel_fab:uo2": set(), #not the correct archetype currently possibly 
+    "fuel_fab:uo2": set(), #not the correct archetype currently possibly
     "fuel_fab:triso": {":cycamore:FuelFab"},
     "fuel_fab:mox": {":cycamore:FuelFab"},
     "reactor": {":cycamore:Reactor"},
@@ -44,7 +44,7 @@ def choose_archetypes(niches):
         a = random.choice(tuple(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINKS))
         arches.append(a)
     return arches
-    
+
 def archetype_block(arches):
     unique_arches = sorted(set(arches))
     block = {"spec" : []}
@@ -53,17 +53,21 @@ def archetype_block(arches):
         spec = dict(zip(spec_keys, a.split(":")))
         block["spec"].append(spec)
     return block
-    
+
 def generate_archetype(arche, name):
     annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])
     annotations = json.loads(annotations)
     vals = {}
     for name, var in annotations.items():
         if var["uitype"] == "range":
-            val = random.uniform(*var["range"])
+            if "nichedomain" in var:
+                rng = var["nichedomain"].get(niche, var["range"])
+            else:
+                rng = var["range"]
+            val = random.uniform(*rng)
             vals[name] = val
     alias = arche.rpartition(":")[-1]
     config = {"name": name, "config": {alias: vals}}
     return config
-        
+
 
