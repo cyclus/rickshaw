@@ -9,6 +9,7 @@ import os
 sub_env = os.environ.copy()
 #this is bad
 sub_env['LD_LIBRARY_PATH'] = '/home/ryan/miniconda3/lib'
+sub_env['LD_LIBRARY_PATH'] += ':/home/ryan/miniconda3/pkgs/cycamore-1.5.0-0/lib/cyclus'
 
 #from niches import niches
 
