@@ -3,7 +3,12 @@
 import random
 import subprocess
 import json
+import shutil
+import os
 
+sub_env = os.environ.copy()
+#this is bad
+sub_env['LD_LIBRARY_PATH'] = '/home/ryan/miniconda3/lib'
 
 #from niches import niches
 
@@ -11,11 +16,11 @@ DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
 
 NICHE_ARCHETYPES = {
-    "mine": set(),
-    #"conversion" : set(),
+    "mine": {":cycamore:Source"}, #
+    "conversion" : {":cycamore:Storage"}, #
     "enrichment": {":cycamore:Enrichment"},
     "fuel_fab" : {":cycamore:FuelFab"},
-    "fuel_fab:uo2": set(), #not the correct archetype currently possibly
+    "fuel_fab:uo2": {":cycamore:FuelFab"}, #not the correct archetype currently possibly
     "fuel_fab:triso": {":cycamore:FuelFab"},
     "fuel_fab:mox": {":cycamore:FuelFab"},
     "reactor": {":cycamore:Reactor"},
@@ -25,23 +30,24 @@ NICHE_ARCHETYPES = {
     "reactor:htgr": {":cycamore:Reactor"},
     "reactor:rbmk": {":cycamore:Reactor"},
     "reactor:pb": {":cycamore:Reactor"},
-    "storage": set(),
-    "storage:wet": set(),
-    "storage:dry": set(),
-    "storage:interim": set(),
+    "storage": {":cycamore:Sink"}, #
+    "storage:wet": {":cycamore:Sink"}, #
+    "storage:dry": {":cycamore:Sink"}, #
+    "storage:interim": {"cycamore:Sink"}, #
     "separations": {":cycamore:Separation"},
-    "repository": set(),
+    "repository": {":cycamore:Sink"} #
     }
 
 
 def choose_archetypes(niches):
-    print(niches)
+    #print(niches)
     arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
     for niche in niches[1:-1]:
         a = random.choice(tuple(NICHE_ARCHETYPES[niche]))
         arches.append(a)
     if len(niches) > 1:
-        a = random.choice(tuple(NICHE_ARCHETYPES[niches][-1] | DEFAULT_SINKS))
+        #used to be NICHE_ARCHETYPES[niches][-1]
+        a = random.choice(tuple(NICHE_ARCHETYPES[niches[-1]] | DEFAULT_SINKS))
         arches.append(a)
     return arches
 
@@ -54,8 +60,9 @@ def archetype_block(arches):
         block["spec"].append(spec)
     return block
 
-def generate_archetype(arche, name, in_commod, out_commod):
-    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])
+def generate_archetype(arche, in_commod, out_commod):
+    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche], env=sub_env)
+    print(annotations)
     annotations = json.loads(annotations)
     vals = {}
     for name, var in annotations.items():
@@ -77,5 +84,5 @@ def generate_archetype(arche, name, in_commod, out_commod):
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
     alias = arche.rpartition(":")[-1]
-    config = {"name": name, "config": {alias: vals}}
+    config = {"name": alias, "config": {alias: vals}}
     return config

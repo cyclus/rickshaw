@@ -13,18 +13,15 @@ start year (starting at 2000)
 dt time step (in seconds)
 
 """
-
-import random
-
-
+from random import randrange
 
 def choose_control():  
     
     
-    duration = random.random_from_range(12, 600, 6)
-    start_month = random.random_from_range(1, 12)
-    start_year = random.random_from_range(2000, 2050)
-    dt = random.random_from_range(2,629,846, 31,558,152, 2,629,846)
+    duration = randrange(12, 600, 6)
+    start_month = randrange(1, 12)
+    start_year = randrange(2000, 2050)
+    dt = randrange(2629846, 31558152, 2629846)
     
     control = {
     
