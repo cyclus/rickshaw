@@ -6,23 +6,23 @@ Created on Wed Dec 28 13:19:28 2016
 import random
 
 COMMODITIES = {
-    ("mine", "enrichment"): "natural uranium",
-    ("enrichment", "fuel_fab"): "low enriched uranium",
-    ("enrichment", "repository"): "enrichment waste stream",
-    ("fuel_fab", "reactor"): "fresh fuel",
-    ("fuel_fab:uo2", "reactor:lwr"): "fresh uox",
-    ("fuel_fab:triso", "reactor:pb"): "fresh triso",
-    ("reactor", "storage"): "used fuel",
-    ("reactor", "repository"): "used fuel",
-    ("reactor:lwr", "storage"): "used uox",
-    ("reactor:pb", "storage"): "used triso",
-    ("reactor", "separations"): "used fuel",
-    ("reactor:lwr", "separations"): "used uox",
-    ("storage", "separations"): "stored used fuel",
-    ("storage", "repository"): "stored used fuel",
-    ("separations", "fuel_fab"): "separated product",
-    ("separations", "storage"): "separated waste",
-    ("separations", "repository"): "separated waste"
+    ("mine", "enrichment"): "natural_uranium",
+    ("enrichment", "fuel_fab"): "low_enriched_uranium",
+    ("enrichment", "repository"): "enrichment_waste_stream",
+    ("fuel_fab", "reactor"): "fresh_fuel",
+    ("fuel_fab:uo2", "reactor:lwr"): "fresh_uox",
+    ("fuel_fab:triso", "reactor:pb"): "fresh_triso",
+    ("reactor", "storage"): "used_fuel",
+    ("reactor", "repository"): "used_fuel",
+    ("reactor:lwr", "storage"): "used_uox",
+    ("reactor:pb", "storage"): "used_triso",
+    ("reactor", "separations"): "used_fuel",
+    ("reactor:lwr", "separations"): "used_uox",
+    ("storage", "separations"): "stored_used_fuel",
+    ("storage", "repository"): "stored_used_fuel",
+    ("separations", "fuel_fab"): "separated_product",
+    ("separations", "storage"): "separated_waste",
+    ("separations", "repository"): "separated_waste"
 }
 
 def up_hierarchy(key):
