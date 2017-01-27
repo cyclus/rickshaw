@@ -45,14 +45,6 @@ def choose_archetypes(niches):
         arches.append(a)
     return arches
 
-def choose_commodities(niches):
-    commods = []
-    unique_commods = set()
-    for keyfrom, keyto in zip(niches[:-1], niches[1:]):
-        commod = choose_commidity(keyfrom, keyto, unique_commods)
-        commods.append(commod)
-    return commods
-
 def archetype_block(arches):
     unique_arches = sorted(set(arches))
     block = {"spec" : []}

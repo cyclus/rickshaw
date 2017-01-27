@@ -46,12 +46,21 @@ def up_hierarchy(key):
         return commod
     commod = up_hierarchy(COMMODITIES, (keyfrom, keyto))
     return commod
-
+    
 def choose_commodity(keyfrom, keyto, unique_commods):
     commod = orig_commod = up_hierarchy((keyfrom, keyto))
     n = 1
     while commod in unique_commods:
         commod = orig_commod + str(n)
         n = n + 1
-    unique_commod.add(commod)
+    unique_commods.add(commod)
     return commod
+
+def choose_commodities(niches):
+    commods = []
+    unique_commods = set()
+    for keyfrom, keyto in zip(niches[:-1], niches[1:]):
+        commod = choose_commidity(keyfrom, keyto, unique_commods)
+        commods.append(commod)
+    return commods    
+    

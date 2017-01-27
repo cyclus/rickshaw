@@ -24,9 +24,9 @@ def generate(max_num_niches=10):
     sim = inp["simulation"]
     sim["control"] = rickshaw.choose_control.choose_control()
     # choose niches and archtypes
-    niches = rickshaw.niches.random_niches(max_niches=max_num_niches)
-    arches = rickshaw.choose_archetypes.choose_archetypes(niches)
-    commods = rickshaw.choose_archetypes.choose_commodities(niches)
+    niches = niches.random_niches(max_niches=max_num_niches)
+    arches = choose_archetypes.choose_archetypes(niches)
+    commods = choose_commodities.choose_commodities(niches)
     sim["archetypes"] = choose_archetypes.archetypes_block(arches)
     protos = {}
     protos[arche] = choose_archetypes.generate_archetype(arches[0], name, None, commods[0])
