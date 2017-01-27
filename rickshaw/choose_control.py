@@ -14,17 +14,17 @@ dt time step (in seconds)
 
 """
 
-from random_from_range import random_from_range
+import random
 
 
 
 def choose_control():  
     
     
-    duration = random_from_range(12, 600, 6)
-    start_month = random_from_range(1, 12)
-    start_year = random_from_range(2000, 2050)
-    dt = random_from_range(2,629,846, 31,558,152, 2,629,846)
+    duration = random.random_from_range(12, 600, 6)
+    start_month = random.random_from_range(1, 12)
+    start_year = random.random_from_range(2000, 2050)
+    dt = random.random_from_range(2,629,846, 31,558,152, 2,629,846)
     
     control = {
     

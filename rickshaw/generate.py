@@ -1,8 +1,8 @@
 """Generates a random Cyclus input file."""
 
-import rickshaw.niches
-import rickshaw.choose_control
-import rickshaw.choose_archetypes
+import niches
+import choose_control
+import choose_archetypes
 
 
 def generate(max_num_niches=10):
