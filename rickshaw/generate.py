@@ -29,7 +29,11 @@ def generate(max_num_niches=10):
     commods = choose_commodities.choose_commodities(niches)
     commod_names = [x[1] for x in commods]
     recipes = choose_recipes.choose_recipes(commods)
+    if len(recipes) == 1:
+        recipes = recipes[0]
     sim["archetypes"] = choose_archetypes.archetypes_block(arches)
+    #put the other things in here
+    sim["recipe"] = recipes
     protos = {}
     protos[arche] = choose_archetypes.generate_archetype(arches[0], name, None, 
                                                          commod_names[0])
