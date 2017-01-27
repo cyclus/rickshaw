@@ -48,6 +48,24 @@ def up_hierarchy(key):
     return commod
     
 def choose_commodity(keyfrom, keyto, unique_commods):
+    """Determine commodity based on a from/to pairs.
+    
+    Parameters
+    ----------
+        keyfrom : str
+            Origin archetype name.
+        keyto : str
+            Following achetype name.
+        unique_commods : set
+            Current names used by chosen commodities.
+    
+    Returns
+    -------
+        commod : str
+            The commodity, with no unique identifier concatenated.
+        commod_name : str
+            A unique commodity name.
+    """
     commod = orig_commod = up_hierarchy((keyfrom, keyto))
     n = 1
     commod_name = commod
