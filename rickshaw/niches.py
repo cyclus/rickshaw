@@ -35,6 +35,12 @@ T = {
 #to change start point add new string in argument
 
 def random_niches(max_niches, choice="mine", niches=None):
+    """Generates a randomized list of niches of the nuclear fuel cycle.
+    
+    Parameters
+    ----------
+    
+    """
     if niches is None:
         niches = []
     niches.append(choice)
