@@ -1,2 +1,3 @@
-# rickshaw
+rickshaw
+========
 Automated driver for Cyclus

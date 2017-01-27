@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Dec 28 13:19:28 2016
 
@@ -56,7 +55,4 @@ def choose_commodity(keyfrom, keyto, unique_commods):
         n = n + 1
     unique_commod.add(commod)
     return commod
-    
-            
-            
-        
+

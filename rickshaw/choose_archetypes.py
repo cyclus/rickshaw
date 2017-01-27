@@ -77,14 +77,12 @@ def generate_archetype(arche, name, in_commod, out_commod):
                 rng = var["range"]
             val = random.uniform(*rng)
             vals[name] = val
-        elif uitype = "incommodity":
+        elif uitype == "incommodity":
             vals[name] = in_commod
-        elif uitype = "outcommodity":
+        elif uitype == "outcommodity":
             vals[name] = out_commod
-        elif uitype = "commodity":
+        elif uitype == "commodity":
             raise KeyError("Can't generate to commodity please use incommodity or outcommodity")
     alias = arche.rpartition(":")[-1]
     config = {"name": name, "config": {alias: vals}}
     return config
-
-
