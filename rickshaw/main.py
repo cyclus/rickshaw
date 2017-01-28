@@ -1,10 +1,9 @@
-import sys
-import json
 import generate
+import pprint
 
 def main():
     input_file = generate.generate()
-    print(input_file)
+    pprint.pprint(input_file)
 
 if __name__ == '__main__':
     main()

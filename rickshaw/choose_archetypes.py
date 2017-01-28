@@ -6,10 +6,9 @@ import json
 import shutil
 import os
 
-sub_env = os.environ.copy()
-#this is bad
-sub_env['LD_LIBRARY_PATH'] = '/home/ryan/miniconda3/lib'
-sub_env['LD_LIBRARY_PATH'] += ':/home/ryan/miniconda3/pkgs/cycamore-1.5.0-0/lib/cyclus'
+#sub_env = os.environ.copy()
+##this is bad
+#sub_env['LD_LIBRARY_PATH'] = '/home/ryan/miniconda3/lib'
 
 #from niches import niches
 
@@ -35,7 +34,7 @@ NICHE_ARCHETYPES = {
     "storage:wet": {":cycamore:Sink"}, #
     "storage:dry": {":cycamore:Sink"}, #
     "storage:interim": {"cycamore:Sink"}, #
-    "separations": {":cycamore:Separation"},
+    "separations": {":cycamore:Separations"},
     "repository": {":cycamore:Sink"} #
     }
 
@@ -62,12 +61,20 @@ def archetype_block(arches):
     return block
 
 def generate_archetype(arche, in_commod, out_commod):
-    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche], env=sub_env)
-    print(annotations)
-    annotations = json.loads(annotations)
+    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])
+    #print(annotations.decode('utf-8'))
+    try:
+        annotations = json.loads(annotations.decode('utf-8'))
+    except Exception:
+        print(arche)
+        exit()
+    #print(arche, annotations)
     vals = {}
     for name, var in annotations.items():
-        uitype = var.get("uitype", None)
+        try:
+            uitype = var.get("uitype", None)
+        except AttributeError:
+            uitype = None
         if uitype is None:
             continue
         elif uitype == "range":
