@@ -5,10 +5,7 @@ import subprocess
 import json
 import shutil
 import os
-
-#sub_env = os.environ.copy()
-#this is bad
-#sub_env['LD_LIBRARY_PATH'] = '/home/ryan/miniconda3/lib'
+import pprint
 
 #from niches import niches
 
@@ -61,11 +58,14 @@ def archetype_block(arches):
     return block
 
 def generate_archetype(arche, in_commod, out_commod):
+    print(arche)
     annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])#, env=sub_env)
     print(annotations)
-    annotations = json.loads(annotations)
+    annotations = json.loads(annotations.decode())
+    pprint.pprint(annotations)
     vals = {}
-    for name, var in annotations.items():
+    for name, var in annotations["vars"].items():
+        print(var)
         uitype = var.get("uitype", None)
         if uitype is None:
             continue
