@@ -31,7 +31,7 @@ NICHE_ARCHETYPES = {
     "storage:wet": {":cycamore:Sink"}, #
     "storage:dry": {":cycamore:Sink"}, #
     "storage:interim": {"cycamore:Sink"}, #
-    "separations": {":cycamore:Separation"},
+    "separations": {":cycamore:Separations"},
     "repository": {":cycamore:Sink"} #
     }
 
@@ -67,6 +67,7 @@ def generate_archetype(arche, in_commod, out_commod):
     for name, var in annotations["vars"].items():
         print(var)
         uitype = var.get("uitype", None)
+
         if uitype is None:
             continue
         elif uitype == "range":
