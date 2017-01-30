@@ -1,2 +1,2 @@
-import main
+from rickshaw.main import main
 main()
