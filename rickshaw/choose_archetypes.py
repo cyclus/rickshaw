@@ -63,7 +63,7 @@ def archetype_block(arches):
 def generate_archetype(arche, in_commod, out_commod):
     if arche not in ANNOTATIONS:
         anno = subprocess.check_output(["cyclus", "--agent-annotations", arche])
-        anno = json.loads(anno)
+        anno = json.loads(anno.decode())
         ANNOTATIONS[arche] = anno
     annotations = ANNOTATIONS[arche]
     pprint.pprint(annotations)
