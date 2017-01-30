@@ -36,6 +36,9 @@ NICHE_ARCHETYPES = {
     }
 
 
+ANNOTATIONS = {}
+
+
 def choose_archetypes(niches):
     #print(niches)
     arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
@@ -58,10 +61,11 @@ def archetype_block(arches):
     return block
 
 def generate_archetype(arche, in_commod, out_commod):
-    print(arche)
-    annotations = subprocess.check_output(["cyclus", "--agent-annotations", arche])#, env=sub_env)
-    print(annotations)
-    annotations = json.loads(annotations.decode())
+    if arche not in ANNOTATIONS:
+        anno = subprocess.check_output(["cyclus", "--agent-annotations", arche])
+        anno = json.loads(anno)
+        ANNOTATIONS[arche] = anno
+    annotations = ANNOTATIONS[arche]
     pprint.pprint(annotations)
     vals = {}
     for name, var in annotations["vars"].items():
