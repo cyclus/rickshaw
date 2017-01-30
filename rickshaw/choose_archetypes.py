@@ -7,6 +7,8 @@ import shutil
 import os
 import pprint
 
+from rickshaw.lazyasd import lazyobject
+
 #from niches import niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
@@ -39,6 +41,40 @@ NICHE_ARCHETYPES = {
 ANNOTATIONS = {}
 
 
+@lazyobject
+def CYCLUS_EXECUTABLE():
+    return shutil.which('cyclus')
+
+
+@lazyobject
+def H5LS_EXECUTABLE():
+    return shutil.which('h5ls')
+
+
+@lazyobject
+def H5_LIBPATH():
+    prefix = os.path.dirname(os.path.dirname(H5LS_EXECUTABLE[:]))
+    lib = os.path.join(prefix, 'lib')
+    return lib
+
+
+@lazyobject
+def CYCLUS_LD_LIB_PATH():
+    prefix = os.path.dirname(os.path.dirname(CYCLUS_EXECUTABLE[:]))
+    lib = os.path.join(prefix, 'lib')
+    lib += ':' + H5_LIBPATH[:]
+    ld_lib_path = lib + ':' + os.environ.get('LD_LIBRARY_PATH', '')
+    return ld_lib_path
+
+
+@lazyobject
+def CYCLUS_ENV():
+    env = dict(os.environ)
+    env['LD_LIBRARY_PATH'] = CYCLUS_LD_LIB_PATH[:]
+    return env
+
+
+
 def choose_archetypes(niches):
     #print(niches)
     arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
@@ -62,11 +98,11 @@ def archetype_block(arches):
 
 def generate_archetype(arche, in_commod, out_commod):
     if arche not in ANNOTATIONS:
-        anno = subprocess.check_output(["cyclus", "--agent-annotations", arche])
+        anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
+                                       env=CYCLUS_ENV)
         anno = json.loads(anno.decode())
         ANNOTATIONS[arche] = anno
     annotations = ANNOTATIONS[arche]
-    pprint.pprint(annotations)
     vals = {}
     for name, var in annotations["vars"].items():
         print(var)
