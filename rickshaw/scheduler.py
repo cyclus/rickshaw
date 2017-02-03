@@ -13,11 +13,6 @@ class Scheduler(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def shutdown_cyclus_server(self):
-        """Starts up a cyclus server at a remote location."""
-        ...
-
-    @abstractmethod
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled
         and status of each job.

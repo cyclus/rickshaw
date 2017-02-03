@@ -1,23 +1,26 @@
 """The asynchronous rickshaw server that communicates with scheduling queues and
 provides randomly generated input files.
 """
+import json
 import asyncio
-import concurrent_futures
+import socket
+import concurrent.futures
 from argparse import ArgumentParser
 
 import docker
 import websockets
 
-
 from rickshaw import choose_archetypes
+from rickshaw.docker_scheduler import DockerScheduler
+from rickshaw.generate import generate
 
 
+SCHEDULER = None
 SEND_QUEUE = asyncio.Queue()
 
-
 def all_archetypes():
-    arches = choose_archetypes.DEFAULT_SOURCES | choose_archtypes.DEFAULT_SINKS
-    for v in choose_archetypes.values():
+    arches = choose_archetypes.DEFAULT_SOURCES | choose_archetypes.DEFAULT_SINKS
+    for v in choose_archetypes.NICHE_ARCHETYPES.values():
         arches |= v
     return v
 
@@ -60,6 +63,7 @@ async def queue_message_action(message):
 
 async def websocket_handler(websocket, path):
     """Sends and recieves data via a websocket."""
+    SCHEDULER.start_cyclus_server()
     while True:
         recv_task = asyncio.ensure_future(websocket.recv())
         send_task = asyncio.ensure_future(get_send_data())
@@ -120,11 +124,13 @@ def make_parser():
 
 
 def main(args=None):
+    global SCHEDULER
     p = make_parser()
     ns = p.parse_args(args=args)
     # start up tasks
-    executor = concurrent_futures.ThreadPoolExecutor(max_workers=ns.nthreads)
-    loop = state.loop = asyncio.get_event_loop()
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
+    loop = asyncio.get_event_loop()
+    SCHEDULER = scheduler = DockerScheduler()
     if ns.debug:
         _start_debug(loop)
     open_port = _find_open_port(ns.host, ns.port)
