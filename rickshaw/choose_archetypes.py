@@ -5,11 +5,9 @@ import subprocess
 import json
 import shutil
 import os
-import pprint
 
 from rickshaw.lazyasd import lazyobject
 
-#from niches import niches
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
@@ -76,7 +74,6 @@ def CYCLUS_ENV():
 
 
 def choose_archetypes(niches):
-    #print(niches)
     arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
     for niche in niches[1:-1]:
         a = random.choice(tuple(NICHE_ARCHETYPES[niche]))
@@ -105,7 +102,6 @@ def generate_archetype(arche, in_commod, out_commod):
     annotations = ANNOTATIONS[arche]
     vals = {}
     for name, var in annotations["vars"].items():
-        print(var)
         uitype = var.get("uitype", None)
 
         if uitype is None:

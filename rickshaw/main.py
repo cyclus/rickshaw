@@ -1,11 +1,16 @@
-import pprint
+"""Main entry point for rickshaw"""
+try:
+    from pprintpp import pprint
+except ImportError:
+    from pprint import pprint
+
 
 from rickshaw import generate
 
 
 def main():
     input_file = generate.generate()
-    pprint.pprint(input_file)
+    pprint(input_file)
 
 
 if __name__ == '__main__':
