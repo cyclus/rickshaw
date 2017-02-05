@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 13 22:17:14 2016
 
-@author: adam
+"""This program will choose the control scheme at random for a cyclus 
+input file in json
 
-This program will choose the control scheme at random for a cyclus input file in json
 Parameters to choose at random:
 
 duration (in months)
@@ -16,7 +13,15 @@ dt time step (in seconds)
 from random import randrange
 
 def choose_control():  
+    """This program will choose the control scheme at random for a cyclus 
+    input file in JSON
     
+    Returns
+    -------
+        control : dict
+            Dictionary generated to be the control scheme in the JSON cyclus
+            input file
+    """    
     
     duration = randrange(12, 600, 6)
     start_month = randrange(1, 12)
