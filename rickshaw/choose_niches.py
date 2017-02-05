@@ -39,7 +39,21 @@ def random_niches(max_niches, choice="mine", niches=None):
     
     Parameters
     ----------
-    
+        max_niches : int
+            The maximum number of niches desired by the user, the total number
+            of generated niches does not have to reach this number.
+        choice : str
+            If desired the starting point of the list of niches can be set. 
+            Preset to the natural starting point of "mine"
+        niches : None
+            This will be set to be a list at the beginning of the function and
+            will contain the chosen niches.
+            
+    Returns
+    -------
+        niches : list
+            List of connected niches that model the steps of the full nuclear
+            fuel cycle.
     """
     if niches is None:
         niches = []

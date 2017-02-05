@@ -18,6 +18,20 @@ NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.007},
 NUCLIDES['stored_used_fuel'] = NUCLIDES['used_uox'] = NUCLIDES['used_fuel'] 
 
 def choose_recipes(commods):
+    """Chooses the specific recipe for each commodity in the commods list
+    
+    Parameters
+    ----------
+        commods : list
+            List of in and out commodities to be added to the archetypes in the
+            input file.
+    
+    Returns
+    -------
+        recipes : list
+            List of the assigned recipes to be added to the recipe section of 
+            the generated input file
+    """
     recipes = []
     for commod in commods:    
         recipe_dict = {}
