@@ -84,6 +84,19 @@ def choose_commodity(keyfrom, keyto, unique_commods):
     return commod, commod_name
 
 def choose_commodities(niches):
+    """Creates list of commodities individually chosen by the choose_commodity function
+    
+    Parameters
+    ----------
+        niches : list
+            List of sequential niches returned from choose_niches.py
+    
+    Returns
+    -------
+        commods : list
+            List of in and out commodities to be added to the archetypes in the
+            input file.
+    """
     commods = []
     unique_commods = set()
     for keyfrom, keyto in zip(niches[:-1], niches[1:]):
