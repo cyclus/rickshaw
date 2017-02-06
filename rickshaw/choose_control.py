@@ -1,15 +1,3 @@
-
-"""This program will choose the control scheme at random for a cyclus 
-input file in json
-
-Parameters to choose at random:
-
-duration (in months)
-start month (jan = 1, dec = 12)
-start year (starting at 2000)
-dt time step (in seconds)
-
-"""
 from random import randrange
 
 def choose_control():  
