@@ -63,7 +63,9 @@ async def queue_message_action(message):
 
 async def websocket_handler(websocket, path):
     """Sends and recieves data via a websocket."""
+    print("x")
     SCHEDULER.start_cyclus_server()
+    print("y")
     while True:
         recv_task = asyncio.ensure_future(websocket.recv())
         send_task = asyncio.ensure_future(get_send_data())
@@ -139,7 +141,7 @@ def main(args=None):
         print(msg.format(ns.port, open_port), file=sys.stderr)
         ns.port = open_port
     server = websockets.serve(websocket_handler, ns.host, ns.port)
-    print("serving cyclus at http://{}:{}".format(ns.host, ns.port))
+    print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
     # run the loop!
     try:
         loop.run_until_complete(asyncio.gather(

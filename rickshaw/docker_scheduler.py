@@ -12,7 +12,9 @@ class DockerScheduler(Scheduler):
 
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
-        self.client.containers.run("ubuntu", "echo hello world")
+        print("starting cyclus server")
+        self.client.containers.run("ergs/ergs-cyclusdev", "python -m cyclus.server")
+        print("cyclus server started")
 
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled
