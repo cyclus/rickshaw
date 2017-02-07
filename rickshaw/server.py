@@ -33,13 +33,12 @@ async def gather_annotations(frequency=0.001):
     staged_tasks = []
     while curr_arches < all_arches:
         if SEND_QUEUE.qsize() > 0:
-            await asyncio.sleep(frequency)
+            await asyncio.sleep(min(frequency*1e3, 1.0))
             curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
             continue
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
             msg = json.dumps(msg)
-            print(msg)
             action_task = asyncio.ensure_future(SEND_QUEUE.put(msg))
             staged_tasks.append(action_task)
         if len(staged_tasks) > 0:
@@ -61,9 +60,10 @@ async def queue_message_action(message):
     kind = event["event"]
     if kind == 'agent_annotations':
         spec = params['spec']
+        print('received agent annotations for ' + spec, file=sys.stderr)
         choose_archetypes.ANNOTATIONS[spec] = event['data']
     else:
-        print("ignoring recived " + kind + " event")
+        print("ignoring received " + kind + " event", file=sys.stderr)
 
 
 async def websocket_handler(websocket, path):
@@ -76,7 +76,6 @@ async def websocket_handler(websocket, path):
         # handle incoming
         if recv_task in done:
             message = recv_task.result()
-            print("got message", message)
             await queue_message_action(message)
         else:
             recv_task.cancel()
