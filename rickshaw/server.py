@@ -23,7 +23,7 @@ def all_archetypes():
     arches = choose_archetypes.DEFAULT_SOURCES | choose_archetypes.DEFAULT_SINKS
     for v in choose_archetypes.NICHE_ARCHETYPES.values():
         arches |= v
-    return v
+    return arches
 
 
 async def gather_annotations(frequency=0.001):
@@ -39,6 +39,7 @@ async def gather_annotations(frequency=0.001):
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
             msg = json.dumps(msg)
+            print(msg)
             action_task = asyncio.ensure_future(SEND_QUEUE.put(msg))
             staged_tasks.append(action_task)
         if len(staged_tasks) > 0:

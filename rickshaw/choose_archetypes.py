@@ -30,7 +30,7 @@ NICHE_ARCHETYPES = {
     "storage": {":cycamore:Sink"}, #
     "storage:wet": {":cycamore:Sink"}, #
     "storage:dry": {":cycamore:Sink"}, #
-    "storage:interim": {"cycamore:Sink"}, #
+    "storage:interim": {":cycamore:Sink"}, #
     "separations": {":cycamore:Separations"},
     "repository": {":cycamore:Sink"} #
     }
@@ -75,15 +75,15 @@ def CYCLUS_ENV():
 
 def choose_archetypes(niches):
     """Determines the correct archetype from cyclus or cycamore based on the niche
-    
+
     Parameters
     ----------
         niches : list
             List of sequential niches returned from choose_niches.py
-    
+
     Returns
     -------
-    
+
         arches : list
             List of assigned archetypes. Same list length as niches.
     """
@@ -108,18 +108,18 @@ def archetype_block(arches):
 
 def generate_archetype(arche, in_commod, out_commod):
     """Pulls in the metadata for each archetype
-    
+
         Parameters
         ----------
             arche : str
                 The name of the archetype that is being generated.
             in_commod : str
-                The incommodity received by the specific archetype as 
+                The incommodity received by the specific archetype as
                 determined by choose_commodities.py
             out_commod : str
                 The outcommodity produced by the specific archetype as
                 determined by choose_commodities.py
-                
+
         Returns
         -------
             config : dict
