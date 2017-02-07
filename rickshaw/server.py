@@ -16,7 +16,6 @@ from rickshaw.docker_scheduler import DockerScheduler
 from rickshaw.generate import generate
 
 
-SCHEDULER = None
 SEND_QUEUE = asyncio.Queue()
 
 def all_archetypes():
@@ -26,7 +25,7 @@ def all_archetypes():
     return arches
 
 
-async def gather_annotations(frequency=0.001):
+async def gather_annotations(scheduler, frequency=0.001):
     """The basic consumer of actions."""
     all_arches = all_archetypes()
     curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
@@ -46,6 +45,8 @@ async def gather_annotations(frequency=0.001):
             staged_tasks.clear()
         await asyncio.sleep(frequency)
         curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+    await SEND_QUEUE.put('{"event": "shutdown", "params": {"when": "now"}}')
+    scheduler.gathered_annotations = True
 
 
 async def get_send_data():
@@ -66,9 +67,9 @@ async def queue_message_action(message):
         print("ignoring received " + kind + " event", file=sys.stderr)
 
 
-async def websocket_handler(websocket, path):
+async def websocket_handler(websocket, scheduler):
     """Sends and recieves data via a websocket."""
-    while True:
+    while not scheduler.gathered_annotations:
         recv_task = asyncio.ensure_future(websocket.recv())
         send_task = asyncio.ensure_future(get_send_data())
         done, pending = await asyncio.wait([recv_task, send_task],
@@ -89,27 +90,17 @@ async def websocket_handler(websocket, path):
 
 async def websocket_client(host, port, scheduler, frequency=0.001):
     """Runs a websocket client on a host/port."""
-    #while not scheduler.cyclus_server_ready:
-    #    await asyncio.sleep(frequency)
+    while not scheduler.cyclus_server_ready:
+        await asyncio.sleep(frequency)
     url = 'ws://{}:{}'.format(host, port)
-    #connected = False
-    #while not connected:
-    #    try:
-    #        async with websockets.connect(url) as websocket:
-    #            connected = True
-    #            await websocket_handler(websocket, None)
-            #connection = websockets.connect(url)
-            #connected = True
-    #    except websockets.exceptions.InvalidHandshake:
-    #        pass
-    #async with websockets.connect(url) as websocket:
     async with websockets.connect(url) as websocket:
-        await websocket_handler(websocket, None)
+        await websocket_handler(websocket, scheduler)
+    scheduler.stop_cyclus_server()
 
 
-async def start_cyclus_server(loop, executor):
+async def start_cyclus_server(loop, executor, scheduler):
     """Starts up remote cyclus server"""
-    run_task = loop.run_in_executor(executor, SCHEDULER.start_cyclus_server)
+    run_task = loop.run_in_executor(executor, scheduler.start_cyclus_server)
     await asyncio.wait([run_task])
 
 
@@ -161,24 +152,16 @@ def main(args=None):
     # start up tasks
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
-    SCHEDULER = scheduler = DockerScheduler()
+    scheduler = DockerScheduler()
     if ns.debug:
         _start_debug(loop)
-    #open_port = _find_open_port(ns.host, ns.port)
-    #if open_port != ns.port:
-    #    msg = "port {} already bound, next available port is {}"
-    #    print(msg.format(ns.port, open_port), file=sys.stderr)
-    #    ns.port = open_port
-    #server = websockets.serve(websocket_handler, ns.host, ns.port)
-    #server = websockets.connect(websocket_handler, ns.host, ns.port)
     print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
     # run the loop!
     try:
         loop.run_until_complete(asyncio.gather(
-            #asyncio.ensure_future(server),
             asyncio.ensure_future(websocket_client(ns.host, ns.port, scheduler)),
-            asyncio.ensure_future(gather_annotations()),
-            #asyncio.ensure_future(start_cyclus_server(loop, executor)),
+            asyncio.ensure_future(gather_annotations(scheduler)),
+            asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
             ))
     finally:
         if not loop.is_closed():

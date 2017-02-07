@@ -15,10 +15,10 @@ class DockerScheduler(Scheduler):
         self.cyclus_tag = "ergs/cyclus-server-dev"
         self.cyclus_cmd = "--debug"
         self.cyclus_server_ready = False
+        self.gathered_annotations = False
 
     def __del__(self):
-        if self.cyclus_container is not None:
-            self.cyclus_container.stop()
+        self.stop_cyclus_server()
 
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
@@ -32,10 +32,13 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_ready = True
         for line in cc.logs(stream=True):
             print('[cyclus] ' + line.decode(), end='')
-        self.cyclus_server_ready = False
-        cc.stop()
-        self.cyclus_container = None
 
+    def stop_cyclus_server(self):
+        """Stops the cyclus server running in a remote location"""
+        if self.cyclus_container is not None:
+            self.cyclus_container.stop()
+            self.cyclus_container = None
+        self.cyclus_server_ready = False
 
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled

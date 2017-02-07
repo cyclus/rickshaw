@@ -8,10 +8,16 @@ class Scheduler(metaclass=ABCMeta):
     """A metaclass for all schedulers."""
 
     cyclus_server_ready = False
+    gathered_annotations = False
 
     @abstractmethod
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
+        ...
+
+    @abstractmethod
+    def stop_cyclus_server(self):
+        """Stops up a cyclus server at a remote location."""
         ...
 
     @abstractmethod
