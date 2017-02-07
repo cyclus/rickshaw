@@ -7,6 +7,8 @@ from abc import ABCMeta, abstractmethod
 class Scheduler(metaclass=ABCMeta):
     """A metaclass for all schedulers."""
 
+    cyclus_server_ready = False
+
     @abstractmethod
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""

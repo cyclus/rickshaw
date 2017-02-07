@@ -1,9 +1,10 @@
 """The asynchronous rickshaw server that communicates with scheduling queues and
 provides randomly generated input files.
 """
+import sys
 import json
-import asyncio
 import socket
+import asyncio
 import concurrent.futures
 from argparse import ArgumentParser
 
@@ -31,6 +32,10 @@ async def gather_annotations(frequency=0.001):
     curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
     staged_tasks = []
     while curr_arches < all_arches:
+        if SEND_QUEUE.qsize() > 0:
+            await asyncio.sleep(frequency)
+            curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+            continue
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
             msg = json.dumps(msg)
@@ -57,15 +62,11 @@ async def queue_message_action(message):
         spec = params['spec']
         choose_archetypes.ANNOTATIONS[spec] = event['data']
     else:
-        raise KeyError(kind + "action could not be found in either"
-                       "EVENT_ACTIONS or MONITOR_ACTIONS.")
+        print("ignoring recived " + kind + " event")
 
 
 async def websocket_handler(websocket, path):
     """Sends and recieves data via a websocket."""
-    print("x")
-    SCHEDULER.start_cyclus_server()
-    print("y")
     while True:
         recv_task = asyncio.ensure_future(websocket.recv())
         send_task = asyncio.ensure_future(get_send_data())
@@ -74,6 +75,7 @@ async def websocket_handler(websocket, path):
         # handle incoming
         if recv_task in done:
             message = recv_task.result()
+            print("got message", message)
             await queue_message_action(message)
         else:
             recv_task.cancel()
@@ -85,7 +87,34 @@ async def websocket_handler(websocket, path):
             send_task.cancel()
 
 
+async def websocket_client(host, port, scheduler, frequency=0.001):
+    """Runs a websocket client on a host/port."""
+    #while not scheduler.cyclus_server_ready:
+    #    await asyncio.sleep(frequency)
+    url = 'ws://{}:{}'.format(host, port)
+    #connected = False
+    #while not connected:
+    #    try:
+    #        async with websockets.connect(url) as websocket:
+    #            connected = True
+    #            await websocket_handler(websocket, None)
+            #connection = websockets.connect(url)
+            #connected = True
+    #    except websockets.exceptions.InvalidHandshake:
+    #        pass
+    #async with websockets.connect(url) as websocket:
+    async with websockets.connect(url) as websocket:
+        await websocket_handler(websocket, None)
+
+
+async def start_cyclus_server(loop, executor):
+    """Starts up remote cyclus server"""
+    run_task = loop.run_in_executor(executor, SCHEDULER.start_cyclus_server)
+    await asyncio.wait([run_task])
+
+
 def _start_debug(loop):
+    import logging
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger('websockets.server')
     logger.setLevel(logging.ERROR)
@@ -135,18 +164,21 @@ def main(args=None):
     SCHEDULER = scheduler = DockerScheduler()
     if ns.debug:
         _start_debug(loop)
-    open_port = _find_open_port(ns.host, ns.port)
-    if open_port != ns.port:
-        msg = "port {} already bound, next available port is {}"
-        print(msg.format(ns.port, open_port), file=sys.stderr)
-        ns.port = open_port
-    server = websockets.serve(websocket_handler, ns.host, ns.port)
+    #open_port = _find_open_port(ns.host, ns.port)
+    #if open_port != ns.port:
+    #    msg = "port {} already bound, next available port is {}"
+    #    print(msg.format(ns.port, open_port), file=sys.stderr)
+    #    ns.port = open_port
+    #server = websockets.serve(websocket_handler, ns.host, ns.port)
+    #server = websockets.connect(websocket_handler, ns.host, ns.port)
     print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
     # run the loop!
     try:
         loop.run_until_complete(asyncio.gather(
-            asyncio.ensure_future(server),
+            #asyncio.ensure_future(server),
+            asyncio.ensure_future(websocket_client(ns.host, ns.port, scheduler)),
             asyncio.ensure_future(gather_annotations()),
+            #asyncio.ensure_future(start_cyclus_server(loop, executor)),
             ))
     finally:
         if not loop.is_closed():

@@ -1,4 +1,6 @@
 """Scheduler for running via docker."""
+import time
+
 import docker
 
 from rickshaw.scheduler import Scheduler
@@ -9,12 +11,31 @@ class DockerScheduler(Scheduler):
 
     def __init__(self):
         self.client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+        self.cyclus_container = None
+        self.cyclus_tag = "ergs/cyclus-server-dev"
+        self.cyclus_cmd = "--debug"
+        self.cyclus_server_ready = False
+
+    def __del__(self):
+        if self.cyclus_container is not None:
+            self.cyclus_container.stop()
 
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        self.client.containers.run("ergs/ergs-cyclusdev", "python -m cyclus.server")
+        cc = self.cyclus_container = self.client.containers.run(self.cyclus_tag,
+                                                                self.cyclus_cmd,
+                                                                ports={'4242/tcp': 4242},
+                                                                detach=True)
         print("cyclus server started")
+        time.sleep(3)
+        self.cyclus_server_ready = True
+        for line in cc.logs(stream=True):
+            print('[cyclus] ' + line.decode(), end='')
+        self.cyclus_server_ready = False
+        cc.stop()
+        self.cyclus_container = None
+
 
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled
