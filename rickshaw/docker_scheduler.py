@@ -12,10 +12,11 @@ class DockerScheduler(Scheduler):
     def __init__(self):
         self.client = docker.DockerClient(base_url='unix://var/run/docker.sock')
         self.cyclus_container = None
-        self.cyclus_tag = "ergs/cyclus-server-dev"
-        self.cyclus_cmd = "--debug"
+        self.server_tag = "ergs/cyclus-server-dev"
+        self.server_cmd = "--debug"
         self.cyclus_server_ready = False
         self.gathered_annotations = False
+        self.ncpu = self.client.info()['NCPU']
 
     def __del__(self):
         self.stop_cyclus_server()
@@ -23,8 +24,8 @@ class DockerScheduler(Scheduler):
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_container = self.client.containers.run(self.cyclus_tag,
-                                                                self.cyclus_cmd,
+        cc = self.cyclus_container = self.client.containers.run(self.server_tag,
+                                                                self.server_cmd,
                                                                 ports={'4242/tcp': 4242},
                                                                 detach=True)
         print("cyclus server started")
@@ -44,8 +45,13 @@ class DockerScheduler(Scheduler):
         """Obtains the current queue status and retuns the jobs that are scheduled
         and status of each job.
         """
-        ...
+        return [(c.id, c.status) for c in self.client.containers.list()]
 
     def schedule(self, sim):
         """Schedules a simulation to be executed."""
-        ...
+        print("would have scheduled sim: ", repr(sim))
+
+    def want_n_more_jobs(self):
+        """Determine how many more new jobs to schedule."""
+        n = self.ncpu + 1 - len(self.queue())
+        return n

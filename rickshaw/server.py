@@ -104,6 +104,21 @@ async def start_cyclus_server(loop, executor, scheduler):
     await asyncio.wait([run_task])
 
 
+async def schedule_sims(scheduler, frequency=0.001):
+    """Loads jobs into the hopper, as needed."""
+    freq = min(frequency*1e3, 1.0)
+    while not scheduler.gathered_annotations:
+        await asyncio.sleep(freq)
+    while True:
+        n = scheduler.want_n_more_jobs()
+        if n == 0:
+            await asyncio.sleep(freq)
+            continue
+        for i in range(n):
+            sim = generate()
+            scheduler.schedule(sim)
+
+
 def _start_debug(loop):
     import logging
     logging.basicConfig(level=logging.DEBUG)
@@ -146,7 +161,6 @@ def make_parser():
 
 
 def main(args=None):
-    global SCHEDULER
     p = make_parser()
     ns = p.parse_args(args=args)
     # start up tasks
@@ -162,6 +176,7 @@ def main(args=None):
             asyncio.ensure_future(websocket_client(ns.host, ns.port, scheduler)),
             asyncio.ensure_future(gather_annotations(scheduler)),
             asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
+            asyncio.ensure_future(schedule_sims(scheduler)),
             ))
     finally:
         if not loop.is_closed():
