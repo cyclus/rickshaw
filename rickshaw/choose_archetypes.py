@@ -135,25 +135,32 @@ def generate_archetype(arche, in_commod, out_commod):
         ANNOTATIONS[arche] = anno
     annotations = ANNOTATIONS[arche]
     vals = {}
+    #dereference aliases
+    for name, var in list(annotations["vars"].items()):
+        if isinstance(var, str):
+            annotations["vars"][name] = annotations["vars"].pop(var)
+    #fill in and randomly generate state variables        
     for name, var in annotations["vars"].items():
         uitype = var.get("uitype", None)
-
-        if uitype is None:
-            continue
-        elif uitype == "range":
+        var_type = var["type"]
+        if uitype == "range":
             if "nichedomain" in var:
                 rng = var["nichedomain"].get(niche, var["range"])
             else:
                 rng = var["range"]
             val = random.uniform(*rng)
             vals[name] = val
-        elif uitype == "incommodity":
+        elif uitype == "incommodity" or uitype == ["oneormore", "incommodity"]:
             vals[name] = in_commod
-        elif uitype == "outcommodity":
+        elif uitype == "outcommodity" or uitype == ["oneormore", "outcommodity"]:
             vals[name] = out_commod
-        elif uitype == "commodity":
+        elif uitype == "commodity" or uitype == ["oneormore", "commodity"]:
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
+        elif var_type == "double" or var_type == "float":
+            vals[name] = var.get("default", 0.0)
+        elif var_type == "int":
+            vals[name] = var.get("default", 0)
     alias = arche.rpartition(":")[-1]
     config = {"name": alias, "config": {alias: vals}}
     return config
