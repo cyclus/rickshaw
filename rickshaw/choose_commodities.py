@@ -7,6 +7,7 @@ import random
 
 COMMODITIES = {
     ("mine", "enrichment"): "natural_uranium",
+    ("mine", "reactor:hwr"): "natural_uranium_fuel",
     ("enrichment", "fuel_fab"): "low_enriched_uranium",
     ("enrichment", "repository"): "enrichment_waste_stream",
     ("fuel_fab", "reactor"): "fresh_fuel",
@@ -58,19 +59,17 @@ def choose_commodity(keyfrom, keyto, unique_commods):
     
     Parameters
     ----------
-        keyfrom : str
-            Origin archetype name.
-        keyto : str
-            Following achetype name.
-        unique_commods : set
-            Current names used by chosen commodities.
+    keyfrom : str
+        Origin niche name.
+    keyto : str
+        Following niche name.
+    unique_commods : set
+        Current names used by chosen commodities.
     
     Returns
     -------
-        commod : str
-            The commodity, with no unique identifier concatenated.
-        commod_name : str
-            A unique commodity name.
+    commod_name : str
+        A unique commodity name.
     """
     commod = orig_commod = up_hierarchy((keyfrom, keyto))
     if commod is None:
@@ -81,21 +80,21 @@ def choose_commodity(keyfrom, keyto, unique_commods):
         commod_name = orig_commod + str(n)
         n = n + 1
     unique_commods.add(commod_name)
-    return commod, commod_name
+    return commod_name
 
 def choose_commodities(niches):
     """Creates list of commodities individually chosen by the choose_commodity function
     
     Parameters
     ----------
-        niches : list
-            List of sequential niches returned from choose_niches.py
+    niches : list
+        List of sequential niches returned from choose_niches.py
     
     Returns
     -------
-        commods : list
-            List of in and out commodities to be added to the archetypes in the
-            input file.
+    commods : list
+        List of in and out commodities to be added to the archetypes in the
+        input file.
     """
     commods = []
     unique_commods = set()

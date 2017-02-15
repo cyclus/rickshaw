@@ -31,7 +31,6 @@ def generate(max_num_niches=10):
     niches = choose_niches.random_niches(max_niches=max_num_niches)
     arches = choose_archetypes.choose_archetypes(niches)
     commods = choose_commodities.choose_commodities(niches)
-    commod_names = [x[1] for x in commods]
     recipes = choose_recipes.choose_recipes(commods)
     if len(recipes) == 1:
         recipes = recipes[0]
@@ -40,15 +39,15 @@ def generate(max_num_niches=10):
     sim["recipe"] = recipes
     protos = {}
     protos[arches[0]] = choose_archetypes.generate_archetype(arches[0], None,
-                                                         commod_names[0])
+                                                         commods[0])
 
-    for arche, in_commod, out_commod in zip(arches[1:-1], commod_names[:-1],
-                                            commod_names[1:]):
+    for arche, in_commod, out_commod in zip(arches[1:-1], commods[:-1],
+                                            commods[1:]):
         protos[arche] = choose_archetypes.generate_archetype(arche, in_commod,
                                                              out_commod)
 
     protos[arches[-1]] = choose_archetypes.generate_archetype(arches[-1],
-                                                         commod_names[-1], None)
+                                                         commods[-1], None)
     sim["facility"] = list(protos.values())
     return inp
 

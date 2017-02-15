@@ -128,7 +128,10 @@ def generate_archetype(arche, in_commod, out_commod):
     if arche not in ANNOTATIONS:
         anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
                                        env=CYCLUS_ENV)
-        anno = json.loads(anno.decode())
+        try:
+            anno = json.loads(anno.decode())
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError("JSON could not decode annotation " + anno.decode())
         ANNOTATIONS[arche] = anno
     annotations = ANNOTATIONS[arche]
     vals = {}

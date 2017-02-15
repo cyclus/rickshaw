@@ -27,7 +27,7 @@ T = {
     "storage:wet" : {"separations", "repository"},  
     "storage:dry" : {"separations", "repository"}, 
     "storage:interim" : {"separations", "repository"},        
-    "separations" : {"enrichment", "reactor:hwr", "fuel_fab:mox"},
+    "separations" : {"storage", "fuel_fab", "repository"},
     "repository" : {None},          
     }
 
