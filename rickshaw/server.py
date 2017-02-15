@@ -1,9 +1,10 @@
 """The asynchronous rickshaw server that communicates with scheduling queues and
 provides randomly generated input files.
 """
+import sys
 import json
-import asyncio
 import socket
+import asyncio
 import concurrent.futures
 from argparse import ArgumentParser
 
@@ -15,22 +16,25 @@ from rickshaw.docker_scheduler import DockerScheduler
 from rickshaw.generate import generate
 
 
-SCHEDULER = None
 SEND_QUEUE = asyncio.Queue()
 
 def all_archetypes():
     arches = choose_archetypes.DEFAULT_SOURCES | choose_archetypes.DEFAULT_SINKS
     for v in choose_archetypes.NICHE_ARCHETYPES.values():
         arches |= v
-    return v
+    return arches
 
 
-async def gather_annotations(frequency=0.001):
+async def gather_annotations(scheduler, frequency=0.001):
     """The basic consumer of actions."""
     all_arches = all_archetypes()
     curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
     staged_tasks = []
     while curr_arches < all_arches:
+        if SEND_QUEUE.qsize() > 0:
+            await asyncio.sleep(min(frequency*1e3, 1.0))
+            curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+            continue
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
             msg = json.dumps(msg)
@@ -41,6 +45,8 @@ async def gather_annotations(frequency=0.001):
             staged_tasks.clear()
         await asyncio.sleep(frequency)
         curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+    await SEND_QUEUE.put('{"event": "shutdown", "params": {"when": "now"}}')
+    scheduler.gathered_annotations = True
 
 
 async def get_send_data():
@@ -55,16 +61,15 @@ async def queue_message_action(message):
     kind = event["event"]
     if kind == 'agent_annotations':
         spec = params['spec']
+        print('received agent annotations for ' + spec, file=sys.stderr)
         choose_archetypes.ANNOTATIONS[spec] = event['data']
     else:
-        raise KeyError(kind + "action could not be found in either"
-                       "EVENT_ACTIONS or MONITOR_ACTIONS.")
+        print("ignoring received " + kind + " event", file=sys.stderr)
 
 
-async def websocket_handler(websocket, path):
+async def websocket_handler(websocket, scheduler):
     """Sends and recieves data via a websocket."""
-    SCHEDULER.start_cyclus_server()
-    while True:
+    while not scheduler.gathered_annotations:
         recv_task = asyncio.ensure_future(websocket.recv())
         send_task = asyncio.ensure_future(get_send_data())
         done, pending = await asyncio.wait([recv_task, send_task],
@@ -83,7 +88,39 @@ async def websocket_handler(websocket, path):
             send_task.cancel()
 
 
+async def websocket_client(host, port, scheduler, frequency=0.001):
+    """Runs a websocket client on a host/port."""
+    while not scheduler.cyclus_server_ready:
+        await asyncio.sleep(frequency)
+    url = 'ws://{}:{}'.format(host, port)
+    async with websockets.connect(url) as websocket:
+        await websocket_handler(websocket, scheduler)
+    scheduler.stop_cyclus_server()
+
+
+async def start_cyclus_server(loop, executor, scheduler):
+    """Starts up remote cyclus server"""
+    run_task = loop.run_in_executor(executor, scheduler.start_cyclus_server)
+    await asyncio.wait([run_task])
+
+
+async def schedule_sims(scheduler, frequency=0.001):
+    """Loads jobs into the hopper, as needed."""
+    freq = min(frequency*1e3, 1.0)
+    while not scheduler.gathered_annotations:
+        await asyncio.sleep(freq)
+    while True:
+        n = scheduler.want_n_more_jobs()
+        if n == 0:
+            await asyncio.sleep(freq)
+            continue
+        for i in range(n):
+            sim = generate()
+            scheduler.schedule(sim)
+
+
 def _start_debug(loop):
+    import logging
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger('websockets.server')
     logger.setLevel(logging.ERROR)
@@ -124,27 +161,22 @@ def make_parser():
 
 
 def main(args=None):
-    global SCHEDULER
     p = make_parser()
     ns = p.parse_args(args=args)
     # start up tasks
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
-    SCHEDULER = scheduler = DockerScheduler()
+    scheduler = DockerScheduler()
     if ns.debug:
         _start_debug(loop)
-    open_port = _find_open_port(ns.host, ns.port)
-    if open_port != ns.port:
-        msg = "port {} already bound, next available port is {}"
-        print(msg.format(ns.port, open_port), file=sys.stderr)
-        ns.port = open_port
-    server = websockets.serve(websocket_handler, ns.host, ns.port)
-    print("serving cyclus at http://{}:{}".format(ns.host, ns.port))
+    print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
     # run the loop!
     try:
         loop.run_until_complete(asyncio.gather(
-            asyncio.ensure_future(server),
-            asyncio.ensure_future(gather_annotations()),
+            asyncio.ensure_future(websocket_client(ns.host, ns.port, scheduler)),
+            asyncio.ensure_future(gather_annotations(scheduler)),
+            asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
+            asyncio.ensure_future(schedule_sims(scheduler)),
             ))
     finally:
         if not loop.is_closed():

@@ -7,9 +7,18 @@ from abc import ABCMeta, abstractmethod
 class Scheduler(metaclass=ABCMeta):
     """A metaclass for all schedulers."""
 
+    ncpu = None
+    cyclus_server_ready = False
+    gathered_annotations = False
+
     @abstractmethod
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
+        ...
+
+    @abstractmethod
+    def stop_cyclus_server(self):
+        """Stops up a cyclus server at a remote location."""
         ...
 
     @abstractmethod
@@ -22,4 +31,9 @@ class Scheduler(metaclass=ABCMeta):
     @abstractmethod
     def schedule(self, sim):
         """Schedules a simulation to be executed."""
+        ...
+
+    @abstractmethod
+    def want_n_more_jobs(self):
+        """How many more jobs should be scheduled."""
         ...
