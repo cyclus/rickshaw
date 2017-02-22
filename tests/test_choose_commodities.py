@@ -27,6 +27,7 @@ def test_up_hierarchy(key, expected):
 
 @pytest.mark.parametrize("keyfrom, keyto, expected", [
     ("mine", "enrichment", "natural_uranium"),
+    ("mine", "reactor:hwr", "natural_uranium_fuel"),
 ])
 def test_choose_commodity(keyfrom, keyto, expected):
     unique_commods = set()
@@ -35,13 +36,15 @@ def test_choose_commodity(keyfrom, keyto, expected):
 
 
 @pytest.mark.parametrize("niches, expected", [
-    [["mine", "enrichment", "fuel_fab", "reactor:lwr", "storage", "separations", "storage", "repository"],
+    [["mine", "enrichment", "fuel_fab", "reactor:lwr", "storage", "separations",
+      "storage", "repository"],
       ["natural_uranium", "low_enriched_uranium", "fresh_fuel", "used_uox", "stored_used_fuel",
        "separated_waste", "stored_used_fuel1"]],
     [["storage", "separations", "storage", "separations", "storage", "repository"],
-     ["stored_used_fuel", "separated_waste", "stored_used_fuel1", "separated_waste1", "stored_used_fuel2"]],
-
-
+     ["stored_used_fuel", "separated_waste", "stored_used_fuel1", "separated_waste1",
+      "stored_used_fuel2"]],
+    [["mine", "reactor:hwr", "repository"],
+     ["natural_uranium_fuel", "used_fuel"]],
 ])
 def test_choose_commodities(niches, expected):
     observed = choose_commodities(niches)

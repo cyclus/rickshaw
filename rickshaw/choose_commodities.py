@@ -7,7 +7,7 @@ import random
 
 COMMODITIES = {
     ("mine", "enrichment"): "natural_uranium",
-   # ("mine", "reactor:hwr"): "natural_uranium_fuel", #in case of hwr
+    ("mine", "reactor:hwr"): "natural_uranium_fuel",  # in case of hwr
     ("enrichment", "fuel_fab"): "low_enriched_uranium",
     ("enrichment", "repository"): "enrichment_waste_stream",
     ("fuel_fab", "reactor"): "fresh_fuel",
@@ -27,10 +27,10 @@ COMMODITIES = {
 }
 
 def up_hierarchy(key):
-    #If we have it, immediately return
+    # If we have it, immediately return
     if key in COMMODITIES:
         return COMMODITIES[key]
-    #If the key contains a colon, we may be able to provide a more basic form
+    # If the key contains a colon, we may be able to provide a more basic form
     if ":" in key[0]:
         keyfrom, _, _ = key[0].rpartition(":")
     else:
@@ -39,7 +39,7 @@ def up_hierarchy(key):
         keyto, _, _ = key[1].rpartition(":")
     else:
         keyto = key[1]
-    #If our new key is identical to the original, we can't support it
+    # If our new key is identical to the original, we can't support it
     if (keyfrom, keyto) == key:
         return None
     else:
@@ -53,10 +53,11 @@ def up_hierarchy(key):
                 return commod
         commod = up_hierarchy((keyfrom, keyto))
         return commod
-    
+
+
 def choose_commodity(keyfrom, keyto, unique_commods):
     """Determine commodity based on a from/to pairs.
-    
+
     Parameters
     ----------
     keyfrom : str
@@ -65,7 +66,7 @@ def choose_commodity(keyfrom, keyto, unique_commods):
         Following niche name.
     unique_commods : set
         Current names used by chosen commodities.
-    
+
     Returns
     -------
     commod_name : str
@@ -82,14 +83,15 @@ def choose_commodity(keyfrom, keyto, unique_commods):
     unique_commods.add(commod_name)
     return commod_name
 
+
 def choose_commodities(niches):
     """Creates list of commodities individually chosen by the choose_commodity function
-    
+
     Parameters
     ----------
     niches : list
         List of sequential niches returned from choose_niches.py
-    
+
     Returns
     -------
     commods : list
