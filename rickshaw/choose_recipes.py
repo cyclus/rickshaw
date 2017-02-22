@@ -35,13 +35,11 @@ def choose_recipes(commods):
     recipes = []
     for commod in commods:    
         recipe_dict = {}
-        commod_base = commod[0]
-        commod_name = commod[1]
-        if commod_base not in NUCLIDES:
+        if commod not in NUCLIDES:
             continue
-        recipe_dict['name'] = commod_name
+        recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
-        recipe_dict['nuclide'] = NUCLIDES[commod_base]
+        recipe_dict['nuclide'] = NUCLIDES[commod]
         recipes.append(recipe_dict)
     return recipes
 

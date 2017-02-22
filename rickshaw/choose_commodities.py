@@ -7,7 +7,7 @@ import random
 
 COMMODITIES = {
     ("mine", "enrichment"): "natural_uranium",
-    ("mine", "reactor:hwr"): "natural_uranium_fuel",
+   # ("mine", "reactor:hwr"): "natural_uranium_fuel", #in case of hwr
     ("enrichment", "fuel_fab"): "low_enriched_uranium",
     ("enrichment", "repository"): "enrichment_waste_stream",
     ("fuel_fab", "reactor"): "fresh_fuel",

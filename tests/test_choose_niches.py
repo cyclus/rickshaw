@@ -30,10 +30,10 @@ def test_random_niches_startkey(i):
     assert len(obs) <= 10
     for niche in obs:
         assert niche in T
-"""     
-def test_has_commodity():
+""" 
+def test_has_commodity():    #up_hierarchy function minimizes the error of a commodity not existing
     obs_niches = random_niches(10)
     for keyfrom, keyto in zip(obs_niches[:-1], obs_niches[1:]):
         commod = choose_commodity(keyfrom, keyto, ())
-        assert commod in COMMODITIES
-"""    
+        assert commod in COMMODITIES.values() #check to see if the chosen commodity exists as a value
+"""
