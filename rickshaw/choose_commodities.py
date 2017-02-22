@@ -1,8 +1,4 @@
-"""
-Created on Wed Dec 28 13:19:28 2016
-
-@author: adam
-"""
+"""Tools for choosing commodities from niches."""
 import random
 
 COMMODITIES = {
