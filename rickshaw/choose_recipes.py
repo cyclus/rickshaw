@@ -15,6 +15,7 @@ NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.007},
                           {'id': 'Cm244', 'comp': .0000706}]
            }
 
+NUCLIDES['natural_uranium'] = NUCLIDES['natural_uranium_fuel']
 NUCLIDES['stored_used_fuel'] = NUCLIDES['used_uox'] = NUCLIDES['used_fuel'] 
 
 def choose_recipes(commods):
