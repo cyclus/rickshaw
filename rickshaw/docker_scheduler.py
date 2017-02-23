@@ -9,11 +9,14 @@ from rickshaw.scheduler import Scheduler
 class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
-    def __init__(self):
+    def __init__(self, debug=False, **kwargs):
         self.client = docker.DockerClient(base_url='unix://var/run/docker.sock')
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
-        self.server_cmd = "--debug"
+        if debug:
+            self.server_cmd = "--debug"
+        else:
+            self.server_cmd = ""
         self.cyclus_server_ready = False
         self.gathered_annotations = False
         self.ncpu = self.client.info()['NCPU']
