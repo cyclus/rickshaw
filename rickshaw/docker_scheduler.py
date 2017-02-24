@@ -36,7 +36,8 @@ class DockerScheduler(Scheduler):
                                                                 name="cyclus_server",
                                                                 detach=True)
         print("cyclus server started")
-        print(dir(cc))
+
+        print(type(cc))
         print("not stuck")
         time.sleep(10)
         self.cyclus_server_ready = True
