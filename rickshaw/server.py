@@ -103,7 +103,7 @@ async def websocket_client(host, port, scheduler, frequency=0.001):
                 await websocket_handler(websocket, scheduler)
         except Exception:
             n += 1
-            if n == 10:
+            if n > 10:
                 raise
             print("failed to connect to websocket, retrying {0}/10".format(n))
     scheduler.stop_cyclus_server()
