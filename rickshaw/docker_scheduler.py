@@ -36,9 +36,6 @@ class DockerScheduler(Scheduler):
                                                                 name="cyclus_server",
                                                                 detach=True)
         print(cc.name)
-        print(cc.network_mode)
-        cc.rename('host')
-        print(cc.name)
         print("cyclus server started")
         time.sleep(3)
         self.cyclus_server_ready = True
