@@ -37,7 +37,9 @@ class DockerScheduler(Scheduler):
                                                         publish_all_ports=True,
                                                                 detach=True)
         #cc = self.client.containers.get("cyclus_server")
-        print("hostname", self.client.networks.get("bridge").containers)
+        while not cc.attrs['NetworkSetting']['IPAddress']:
+            print("waiting on IP.")
+            time.sleep(1)
         print("cyclus server started")
         time.sleep(3)
         self.cyclus_server_ready = True
