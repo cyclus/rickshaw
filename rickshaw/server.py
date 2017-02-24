@@ -97,7 +97,7 @@ async def websocket_client(host, port, scheduler, frequency=0.001):
     connected = False
     while not connected:
         try:
-            async with websockets.connect(url, origin='http://127.0.0.1: 4242') as websocket:
+            async with websockets.connect(url, origin='http://127.0.0.1:4242') as websocket:
                 connected = True
                 print("connected to cyclus server websocket")
                 await websocket_handler(websocket, scheduler)
