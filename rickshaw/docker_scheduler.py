@@ -28,14 +28,15 @@ class DockerScheduler(Scheduler):
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_container = self.client.containers.run(self.server_tag,
-                                                                self.server_cmd,
-                                        ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                           hostname='127.0.0.1',
-                                               links=[("rickshaw", "rickshaw")],
-                                                        name="cyclus_server",
-                                                        publish_all_ports=True,
-                                                                detach=True)
+        #cc = self.cyclus_container = self.client.containers.run(self.server_tag,
+        #                                                        self.server_cmd,
+        #                                ports={'4242/tcp': ('127.0.0.1', 4242)},
+        #                                                   hostname='127.0.0.1',
+        #                                       links=[("rickshaw", "rickshaw")],
+        #                                                name="cyclus_server",
+        #                                                publish_all_ports=True,
+        #                                                        detach=True)
+        cc = self.client.containers.get("cyclus_server")
         print("cyclus server started")
         time.sleep(3)
         self.cyclus_server_ready = True
