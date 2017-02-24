@@ -30,7 +30,7 @@ class DockerScheduler(Scheduler):
         print("starting cyclus server")
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
                                                                 self.server_cmd,
-                                                                ports={'4242/tcp': 4242},
+                                        ports={'4242/tcp': ('127.0.0.1', 4242)},
                                                            hostname='127.0.0.1',
                                                                 detach=True)
         print("cyclus server started")
