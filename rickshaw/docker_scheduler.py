@@ -34,6 +34,7 @@ class DockerScheduler(Scheduler):
                                                            hostname='127.0.0.1',
                                                links=[("rickshaw", "rickshaw")],
                                                         name="cyclus_server",
+                                                        publish_all_ports=True,
                                                                 detach=True)
         print("cyclus server started")
         time.sleep(3)
