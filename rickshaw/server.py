@@ -93,8 +93,15 @@ async def websocket_client(host, port, scheduler, frequency=0.001):
     while not scheduler.cyclus_server_ready:
         await asyncio.sleep(frequency)
     url = 'ws://{}:{}'.format(host, port)
-    async with websockets.connect(url) as websocket:
-        await websocket_handler(websocket, scheduler)
+    connected = False
+    while not connected:
+        try:
+            async with websockets.connect(url) as websocket:
+                connected = True
+                print("connected to cyclus server websocket")
+                await websocket_handler(websocket, scheduler)
+        except Exception:
+            print("failed to connect to websocket, retrying")
     scheduler.stop_cyclus_server()
 
 
