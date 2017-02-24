@@ -32,6 +32,7 @@ class DockerScheduler(Scheduler):
                                                                 self.server_cmd,
                                         ports={'4242/tcp': ('127.0.0.1', 4242)},
                                                            hostname='127.0.0.1',
+                                                        links=["rickshaw"],
                                                         name="cyclus_server",
                                                                 detach=True)
         print("cyclus server started")
