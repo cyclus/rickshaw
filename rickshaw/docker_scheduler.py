@@ -31,7 +31,7 @@ class DockerScheduler(Scheduler):
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
                                                                 self.server_cmd,
                                         ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                           hostname='cserv',
+        #                                                   hostname='cserv',
         #                                       links=[("rickshaw", "rickshaw")],
                                                         name="cyclus_server",
                                                         publish_all_ports=True,
