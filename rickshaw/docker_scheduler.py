@@ -38,7 +38,7 @@ class DockerScheduler(Scheduler):
                                                         publish_all_ports=True,
                                                                 detach=True)
         print(cc.attrs['NetworkSettings'])
-        while not cc.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']:
+        while not cc.attrs['NetworkSettings']['Networks']['host']['IPAddress']:
             print(cc.attrs['NetworkSettings'])
             print("waiting on IP.")
             time.sleep(1)
