@@ -31,16 +31,16 @@ class DockerScheduler(Scheduler):
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
                                                                 self.server_cmd,
                                         ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                          hostname='127.0.0.1:',
+                                                          hostname='127.0.0.1',
         #                                       links=[("rickshaw", "rickshaw")],
                                                         name="cyclus_server",
                                                         publish_all_ports=True,
                                                                 detach=True)
         print(self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address'])
-        while not cc.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']:
-            print(cc.attrs['NetworkSettings'])
-            print("waiting on IP.")
-            time.sleep(1)
+        #while not cc.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']:
+        #    print(cc.attrs['NetworkSettings'])
+        #    print("waiting on IP.")
+        #    time.sleep(1)
         print("cyclus server started")
         time.sleep(3)
         self.cyclus_server_ready = True
