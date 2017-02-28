@@ -44,6 +44,8 @@ class DockerScheduler(Scheduler):
         print("cyclus server started")
         time.sleep(3)
         self.cyclus_server_ready = True
+        for line in cc.logs:
+            print(line)
         for line in cc.logs(stream=True):
             print(line)
             print('[cyclus] ' + line.decode(), end='')
