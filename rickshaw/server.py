@@ -88,10 +88,11 @@ async def websocket_handler(websocket, scheduler):
             send_task.cancel()
 
 
-async def websocket_client(host, port, scheduler, frequency=0.001):
+async def websocket_client(port, scheduler, frequency=0.001):
     """Runs a websocket client on a host/port."""
     while not scheduler.cyclus_server_ready:
         await asyncio.sleep(frequency)
+    host = scheduler.cyclus_server_host
     url = 'ws://{}:{}'.format(host, port)
     n = 0
     connected = False
@@ -184,7 +185,7 @@ def main(args=None):
     # run the loop!
     try:
         loop.run_until_complete(asyncio.gather(
-            asyncio.ensure_future(websocket_client(ns.host, ns.port, scheduler)),
+            asyncio.ensure_future(websocket_client(ns.port, scheduler)),
             asyncio.ensure_future(gather_annotations(scheduler)),
             asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
             asyncio.ensure_future(schedule_sims(scheduler)),

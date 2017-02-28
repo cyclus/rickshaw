@@ -18,6 +18,7 @@ class DockerScheduler(Scheduler):
             self.server_cmd = "--debug"
         else:
             self.server_cmd = ""
+        self.cyclus_server_host = None
         self.cyclus_server_ready = False
         self.gathered_annotations = False
         self.ncpu = self.client.info()['NCPU']
@@ -31,24 +32,18 @@ class DockerScheduler(Scheduler):
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
                                                                 self.server_cmd,
                                         ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                          hostname='127.0.0.1',
-        #                                       links=[("rickshaw", "rickshaw")],
-                                                        name="cyclus_server",
-                                                        publish_all_ports=True,
-                                                                detach=True)
-        print(self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address'])
-        print(cc.attrs)
-        #while not cc.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']:
-        #    print(cc.attrs['NetworkSettings'])
-        #    print("waiting on IP.")
-        #    time.sleep(1)
-        print("cyclus server started")
+                                                           name="cyclus_server",
+                                                         publish_all_ports=True,
+                                                                    detach=True)
+        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address'])
+        if '/' in host:
+            self.cyclus_server_host, _, _ = host.rpartition('/')
+        else:
+            self.cyclus_server_host = host
+        print("cyclus server started at host " + host)
         time.sleep(3)
         self.cyclus_server_ready = True
-        for line in cc.logs(stdout=True):
-            print(line)
         for line in cc.logs(stream=True):
-            print(line)
             print('[cyclus] ' + line.decode(), end='')
 
     def stop_cyclus_server(self):

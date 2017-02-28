@@ -8,6 +8,7 @@ class Scheduler(metaclass=ABCMeta):
     """A metaclass for all schedulers."""
 
     ncpu = None
+    cyclus_server_host = None
     cyclus_server_ready = False
     gathered_annotations = False
 
