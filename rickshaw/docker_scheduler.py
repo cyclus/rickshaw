@@ -37,6 +37,7 @@ class DockerScheduler(Scheduler):
                                                         publish_all_ports=True,
                                                                 detach=True)
         print(self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address'])
+        print(cc.attrs)
         #while not cc.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']:
         #    print(cc.attrs['NetworkSettings'])
         #    print("waiting on IP.")
