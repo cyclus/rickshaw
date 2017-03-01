@@ -18,6 +18,7 @@ class DockerScheduler(Scheduler):
             self.server_cmd = "--debug"
         else:
             self.server_cmd = ""
+        self.cyclus_server_name = "rickshaw_metadata_server"
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
         self.gathered_annotations = False
@@ -32,7 +33,7 @@ class DockerScheduler(Scheduler):
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
                                                                 self.server_cmd,
                                         ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                           name="cyclus_server",
+                                                   name=self.cyclus_server_name,
                                                          publish_all_ports=True,
                                                                     detach=True)
         host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
