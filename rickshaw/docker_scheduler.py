@@ -22,8 +22,16 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
         self.gathered_annotations = False
-        print([node.attrs for node in self.client.nodes.list()])
-        self.ncpu = self.client.info()['NCPU']
+        self._find_ncpu()
+
+    def _find_ncpu(self):
+        try:
+            ncpu = 0.0
+            for node in self.client.nodes.list():
+                ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
+        except docker.errors.APIError:
+            ncpu = self.client.info()['NCPU']
+        self.ncpu = int(ncpu)
 
     def __del__(self):
         self.stop_cyclus_server()
