@@ -61,9 +61,10 @@ class DockerScheduler(Scheduler):
 
     def schedule(self, sim):
         """Schedules a simulation to be executed."""
-        print("would have scheduled sim: ", repr(sim))
+        #print("would have scheduled sim: ", repr(sim))
 
     def want_n_more_jobs(self):
         """Determine how many more new jobs to schedule."""
-        n = self.ncpu + 1 - len(self.queue())
+        n = self.ncpu*2 - len(self.queue())
+        print("will want, " + str(n))
         return n
