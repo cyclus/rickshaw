@@ -35,7 +35,7 @@ class DockerScheduler(Scheduler):
                                                            name="cyclus_server",
                                                          publish_all_ports=True,
                                                                     detach=True)
-        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address'])
+        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')
         else:
