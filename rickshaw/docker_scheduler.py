@@ -2,6 +2,10 @@
 import time
 
 import docker
+try:
+    from pprintpp import pprint
+except ImportError:
+    from pprint import pprint
 
 from rickshaw.scheduler import Scheduler
 
@@ -22,15 +26,20 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
         self.gathered_annotations = False
+        self._have_swarm = False
         self._find_ncpu()
 
     def _find_ncpu(self):
         try:
+            # get NCPUs for swarm
             ncpu = 0.0
             for node in self.client.nodes.list():
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
+            self._have_swarm = True
         except docker.errors.APIError:
+            # get NCPUs for local host
             ncpu = self.client.info()['NCPU']
+            self._have_swarm = False
         self.ncpu = int(ncpu)
 
     def __del__(self):
@@ -77,4 +86,5 @@ class DockerScheduler(Scheduler):
         """Determine how many more new jobs to schedule."""
         n = self.ncpu*2 - len(self.queue())
         print("will want, " + str(n))
+        pprint(self.client.swarm.attrs)
         return n
