@@ -22,6 +22,7 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
         self.gathered_annotations = False
+        print([node.attrs for node in seld.nodes.list()])
         self.ncpu = self.client.info()['NCPU']
 
     def __del__(self):
