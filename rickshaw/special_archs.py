@@ -23,7 +23,7 @@ def enrich_tails(name, vals, commod):
 def sep_streams(name, vals, commod):
     sep_rand = random.uniform(0.0, 1.0)
     sep = 1 - (0.0000001)**(1-sep_rand)*(0.1)**sep_rand
-    nucs = ["U", "Pu", "UPu", "Act"]
+    nucs = ["U", "Pu"]
     streams = {"streams":{
                   "item":[{
                       "commod": commod,
