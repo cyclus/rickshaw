@@ -4,6 +4,7 @@ import json
 import random
 import subprocess
 import shutil
+import special_archs as sa
 
 from collections.abc import Sequence
 from copy import deepcopy
@@ -59,6 +60,8 @@ NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
                                 {'id': 'U238', 'comp': 0.99289}],
             'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
                                      {'id': 'U238', 'comp': None}],
+            'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
+                                     {'id': 'U238', 'comp': None}],
             'used_fuel': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
                           {'id': 'U238', 'comp': None},
                           {'id': 'Pu238', 'comp': [0.000235, 0.000275]},
@@ -99,6 +102,11 @@ NICHE_ARCHETYPES = {
     "storage:interim": {":cycamore:Sink"}, #
     "separations": {":cycamore:Separations"},
     "repository": {":cycamore:Sink"} #
+    }
+
+SPECIAL_CALLS = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
+    (":cycamore:Separations", "streams"): sa.sep_streams,
+    (":cycamore:FuelFab", "fill_commods"): sa.ff_fill
     }
 
 ANNOTATIONS = {}
@@ -347,13 +355,21 @@ def archetype_block(arches):
     unique_arches = sorted(set(arches))
     if ':agents:Sink' not in unique_arches:
         unique_arches.append(':agents:Sink')
+    if ':agents:Source' not in unique_arches:
+        unique_arches.append(':agents:Source')
     block = {"spec" : []}
     spec_keys = ["path", "lib", "name"]
     for a in unique_arches:
         if a == ':agents:Sink':
+            spec_keys.append('alias')
+            a +=':agents_sink'
             spec = dict(zip(spec_keys, a.split(":")))
-            spec[alias] = 'agents_sink'    
-        spec = dict(zip(spec_keys, a.split(":")))
+        if a == ':agents:Source':
+            spec_keys.append('alias')
+            a +=':agents_source'
+            spec = dict(zip(spec_keys, a.split(":")))
+        else:
+            spec = dict(zip(spec_keys, a.split(":")))
         block["spec"].append(spec)
     return block
 
@@ -385,6 +401,7 @@ def generate_archetype(arche, in_commod, out_commod):
             raise RuntimeError("JSON could not decode annotation " + anno.decode())
         ANNOTATIONS[arche] = anno
     annotations = ANNOTATIONS[arche]
+    config = []
     vals = {}
     #dereference aliases
     for name, var in list(annotations["vars"].items()):
@@ -392,6 +409,11 @@ def generate_archetype(arche, in_commod, out_commod):
             annotations["vars"][name] = annotations["vars"].pop(var)
     #fill in and randomly generate state variables        
     for name, var in annotations["vars"].items():
+        if (arche, name) in SPECIAL_CALLS:
+            temp = SPECIAL_CALLS[(arche, name)](name, vals, out_commod)
+            if temp != 0:
+                config.append(temp)
+            continue
         uitype = var.get("uitype", None)
         var_type = var["type"]
         if uitype == "range":
@@ -415,7 +437,9 @@ def generate_archetype(arche, in_commod, out_commod):
     alias = arche.rpartition(":")[-1]
     if arche == ':agents:Sink':
         alias = 'agents_sink'
-    config = {"name": alias, "config": {alias: vals}}
+    if arche == ':agents:Source':
+        alias = 'agents_source'
+    config.append({"name": alias, "config": {alias: vals}})
     return config
 
 def generate(max_num_niches=10):
@@ -447,16 +471,13 @@ def generate(max_num_niches=10):
     #put the other things in here
     sim["recipe"] = recipes
     protos = {}
-    protos[arches[0]] = generate_archetype(arches[0], None,
-                                                         commods[0])
+    protos[arches[0]] = generate_archetype(arches[0], None, commods[0])[0]
+    for arche, in_commod, out_commod in zip(arches[1:-1], commods[:-1], commods[1:]):
+        temp_arch = generate_archetype(arche, in_commod, out_commod)
+        for arch in temp_arch:
+            protos[arch["name"]] = arch
 
-    for arche, in_commod, out_commod in zip(arches[1:-1], commods[:-1],
-                                            commods[1:]):
-        protos[arche] = generate_archetype(arche, in_commod,
-                                                             out_commod)
-
-    protos[arches[-1]] = generate_archetype(arches[-1],
-                                                         commods[-1], None)
+    protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None)[0]
     sim["facility"] = list(protos.values())
     return inp
 
