@@ -345,9 +345,14 @@ def choose_archetypes(niches):
 
 def archetype_block(arches):
     unique_arches = sorted(set(arches))
+    if ':agents:Sink' not in unique_arches:
+        unique_arches.add(':agents:Sink')
     block = {"spec" : []}
     spec_keys = ["path", "lib", "name"]
     for a in unique_arches:
+        if a == ':agents:Sink':
+            spec = dict(zip(spec_keys, a.split(":")))
+            spec[alias] = 'agents_sink'    
         spec = dict(zip(spec_keys, a.split(":")))
         block["spec"].append(spec)
     return block
