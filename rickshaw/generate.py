@@ -413,6 +413,8 @@ def generate_archetype(arche, in_commod, out_commod):
         elif var_type == "int":
             vals[name] = var.get("default", 0)
     alias = arche.rpartition(":")[-1]
+    if arche == ':agents:Sink':
+        alias = 'agents_sink'
     config = {"name": alias, "config": {alias: vals}}
     return config
 
