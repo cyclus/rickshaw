@@ -345,9 +345,14 @@ def choose_archetypes(niches):
 
 def archetype_block(arches):
     unique_arches = sorted(set(arches))
+    if ':agents:Sink' not in unique_arches:
+        unique_arches.append(':agents:Sink')
     block = {"spec" : []}
     spec_keys = ["path", "lib", "name"]
     for a in unique_arches:
+        if a == ':agents:Sink':
+            spec = dict(zip(spec_keys, a.split(":")))
+            spec[alias] = 'agents_sink'    
         spec = dict(zip(spec_keys, a.split(":")))
         block["spec"].append(spec)
     return block
@@ -408,6 +413,8 @@ def generate_archetype(arche, in_commod, out_commod):
         elif var_type == "int":
             vals[name] = var.get("default", 0)
     alias = arche.rpartition(":")[-1]
+    if arche == ':agents:Sink':
+        alias = 'agents_sink'
     config = {"name": alias, "config": {alias: vals}}
     return config
 
