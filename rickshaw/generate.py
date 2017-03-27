@@ -370,6 +370,8 @@ def archetype_block(arches):
             spec = dict(zip(spec_keys, a.split(":")))
         else:
             spec = dict(zip(spec_keys, a.split(":")))
+        if spec["path"] == "":
+            del spec["path"]
         block["spec"].append(spec)
     return block
 
