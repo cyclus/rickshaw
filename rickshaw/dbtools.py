@@ -1,14 +1,14 @@
 """Tools for merging and splitting Cyclus databases."""
 import os
 import shutil
-from argparase import ArgumentParser
+from argparse import ArgumentParser
 from contextlib import contextmanager
 
 from cyclus import lib
 
 @contextmanager
 def db_open(file_name):
-    rec = lib.Recorder()
+    rec = lib.Recorder(inject_sim_id=False)
     prefix, ext = os.path.splitext(file_name)
     if ext == '.h5':
         db = lib.Hdf5Back(file_name)
@@ -35,8 +35,9 @@ def merge(first, second, outfile=None):
                 d = srec.new_datum(table)
                 for colinfo in schema:
                     colname = colinfo.col
-                    d.add_val(colname, datad[colname][i], dbtype=colinfo.dbtype, shape=colinfo.shape)
+                    d.add_val(colname, datad[colname][i], type=colinfo.dbtype, shape=colinfo.shape)
                 d.record()
+                srec.flush()
 
 def merge_action(ns):
     merge(ns.first, ns.second, outfile=ns.outfile)
@@ -47,7 +48,7 @@ def build_parser():
     mergep = subp.add_parser('merge', help='Merges databases.')
     mergep.add_argument('first', help='First file to merge.')
     mergep.add_argument('second', help='Second file to merge.')
-    mergep.add_argument('-o', '--outfile', dest=outfile, default=None, help='Optional file to store merge result.')
+    mergep.add_argument('-o', '--outfile', dest='outfile', default=None, help='Optional file to store merge result.')
     return p
 
 MAIN_ACTIONS = {'merge': merge_action}
