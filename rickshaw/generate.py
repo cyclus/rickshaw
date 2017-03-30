@@ -4,13 +4,12 @@ import json
 import random
 import subprocess
 import shutil
-import special_archs as sa
-
 from collections.abc import Sequence
 from copy import deepcopy
 from random import randrange
-from rickshaw.lazyasd import lazyobject
 
+from rickshaw import special_archs as sa
+from rickshaw.lazyasd import lazyobject
 
 
 T = {
@@ -24,15 +23,15 @@ T = {
     "reactor:fr" : {"storage", "separations", "repository"},
     "reactor:lwr" : {"storage", "separations", "repository"},
     "reactor:hwr" : {"storage",  "repository"},
-    "reactor:htgr" : {"storage", "separations", "repository"},         
-    "reactor:rbmk" : {"storage", "separations", "repository"},         
-    "reactor:pb" : {"storage", "repository"},         
+    "reactor:htgr" : {"storage", "separations", "repository"},
+    "reactor:rbmk" : {"storage", "separations", "repository"},
+    "reactor:pb" : {"storage", "repository"},
     "storage" : {"separations", "repository"},
-    "storage:wet" : {"separations", "repository"},  
-    "storage:dry" : {"separations", "repository"}, 
-    "storage:interim" : {"separations", "repository"},        
+    "storage:wet" : {"separations", "repository"},
+    "storage:dry" : {"separations", "repository"},
+    "storage:interim" : {"separations", "repository"},
     "separations" : {"storage", "fuel_fab", "repository"},
-    "repository" : {None},          
+    "repository" : {None},
     }
 
 COMMODITIES = {
@@ -146,19 +145,19 @@ def CYCLUS_ENV():
 
 def random_niches(max_niches, choice="mine", niches=None):
     """Generates a randomized list of niches of the nuclear fuel cycle.
-    
+
     Parameters
     ----------
         max_niches : int
             The maximum number of niches desired by the user, the total number
             of generated niches does not have to reach this number.
         choice : str
-            If desired the starting point of the list of niches can be set. 
+            If desired the starting point of the list of niches can be set.
             Preset to the natural starting point of "mine"
         niches : None
             This will be set to be a list at the beginning of the function and
             will contain the chosen niches.
-            
+
     Returns
     -------
         niches : list
@@ -176,31 +175,31 @@ def random_niches(max_niches, choice="mine", niches=None):
             return niches
         return random_niches(max_niches-1, choice, niches)
 
-def choose_control():  
-    """This program will choose the control scheme at random for a cyclus 
+def choose_control():
+    """This program will choose the control scheme at random for a cyclus
     input file in JSON
-    
+
     Returns
     -------
         control : dict
             Dictionary generated to be the control scheme in the JSON cyclus
             input file
-    """    
-    
+    """
+
     duration = randrange(12, 600, 6)
     start_month = randrange(1, 12)
     start_year = randrange(2000, 2050)
     dt = randrange(2629846, 31558152, 2629846)
-    
+
     control = {
-    
+
                 'duration' : duration,
                 'startmonth' : start_month,
                 'startyear' : start_year,
                 'dt' : dt,
-                
+
                 }
-                
+
     return control
 
 def up_hierarchy(key):
@@ -412,7 +411,7 @@ def generate_archetype(arche, in_commod, out_commod):
     for name, var in list(annotations["vars"].items()):
         if isinstance(var, str):
             annotations["vars"][name] = annotations["vars"].pop(var)
-    #fill in and randomly generate state variables        
+    #fill in and randomly generate state variables
     for name, var in annotations["vars"].items():
         if (arche, name) in SPECIAL_CALLS:
             temp = SPECIAL_CALLS[(arche, name)](name, vals, out_commod)
@@ -453,14 +452,14 @@ def generate_archetype(arche, in_commod, out_commod):
 
 def generate_reg_inst():
     """Creates a null region and inst for the randomized runs.
-        
+
     Parameters
     ----------
-    
+
     Returns
     -------
-    
-    """ 
+
+    """
 
 def generate(max_num_niches=10):
     """Creates a random Cyclus simulation input file dict.

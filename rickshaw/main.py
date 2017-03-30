@@ -10,7 +10,7 @@ from rickshaw import generate
 
 
 def main(args=None):
-    p = ArgrumentParser('rickshaw')
+    p = ArgumentParser('rickshaw')
     p.add_argument('-n', dest='n', type=int, help='number of files to generate',
                    default=None)
     ns = p.parse_args(args=args)
