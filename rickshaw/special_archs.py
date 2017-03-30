@@ -3,7 +3,7 @@ import random
 def generate_throwsink(commod, name):
     vals = {}
     vals["capacity"] = 1e299
-    vals["in_commods"] = commod 
+    vals["in_commods"] = [commod, "test"] 
     config = {"name": name, "config": {"agents_sink": vals}}
     return config
 

@@ -337,7 +337,6 @@ def choose_archetypes(niches):
 
     Returns
     -------
-
         arches : list
             List of assigned archetypes. Same list length as niches.
     """
@@ -357,6 +356,10 @@ def archetype_block(arches):
         unique_arches.append(':agents:Sink')
     if ':agents:Source' not in unique_arches:
         unique_arches.append(':agents:Source')
+    if ':agents:NullInst' not in unique_arches:
+        unique_arches.append(':agents:NullInst')
+    if ':agents:NullRegion' not in unique_arches:
+        unique_arches.append(':agents:NullRegion')
     block = {"spec" : []}
     spec_keys = ["path", "lib", "name"]
     for a in unique_arches:
@@ -425,10 +428,14 @@ def generate_archetype(arche, in_commod, out_commod):
                 rng = var["range"]
             val = random.uniform(*rng)
             vals[name] = val
-        elif uitype == "incommodity" or uitype == ["oneormore", "incommodity"]:
+        elif uitype == "incommodity":
             vals[name] = in_commod
-        elif uitype == "outcommodity" or uitype == ["oneormore", "outcommodity"]:
+        elif uitype == ["oneormore", "incommodity"]:
+            vals[name] = [in_commod]
+        elif uitype == "outcommodity":
             vals[name] = out_commod
+        elif uitype == ["oneormore", "outcommodity"]:
+            vals[name] = [out_commod]
         elif uitype == "commodity" or uitype == ["oneormore", "commodity"]:
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
@@ -443,6 +450,17 @@ def generate_archetype(arche, in_commod, out_commod):
         alias = 'agents_source'
     config.append({"name": alias, "config": {alias: vals}})
     return config
+
+def generate_reg_inst():
+    """Creates a null region and inst for the randomized runs.
+        
+    Parameters
+    ----------
+    
+    Returns
+    -------
+    
+    """ 
 
 def generate(max_num_niches=10):
     """Creates a random Cyclus simulation input file dict.
