@@ -306,7 +306,7 @@ def choose_recipes(commods):
     for commod in commods:
         recipe_dict = {}
         if commod not in NUCLIDES:
-            recipes.append(None)    
+            recipes.append(None)
             continue
         recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
@@ -469,17 +469,25 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
     config.append({"name": alias, "config": {alias: vals}})
     return config
 
-def generate_reg_inst():
+
+def generate_region_inst(sim):
     """Creates a null region and inst for the randomized runs.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
+    This operated in-place.
     """
-    
+    sim["region"] = region = {
+        "name": "SingleRegion",
+        "config": {"NullRegion": None},
+        "institution": {
+            "name": "SingleInstitution",
+            "config": {"NullInst": None},
+            "initialfacilitylist": {"entry": []},
+            }
+        }
+    entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
+    for facility in sim["facility"]:
+        entry = {"prototype": facility["name"], "number": randrange(1, 1001)}
+        entries.append(entry)
+
 
 def generate(max_num_niches=10):
     """Creates a random Cyclus simulation input file dict.
@@ -514,7 +522,7 @@ def generate(max_num_niches=10):
     print("-"*10)
     protos = {}
     protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
-    for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1], 
+    for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
                                             recipes[:-1], recipes[1:]):
         temp_arch = generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe)
@@ -528,5 +536,6 @@ def generate(max_num_niches=10):
 
     protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
+    generate_region_inst(sim)
     return inp
 
