@@ -51,3 +51,10 @@ def ff_fill(name, vals, commod):
     vals[name] = {"val": 'fillcommod'}
     source = generate_throwsource('fillcommod', 'ffsource')
     return source
+
+def ff_fill_recipe(name, vals, commod):
+    vals[name] = "natural_uranium"
+    return 0
+
+def skip(name, vals, commod):
+    return 0

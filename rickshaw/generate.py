@@ -60,8 +60,6 @@ NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
                                 {'id': 'U238', 'comp': 0.99289}],
             'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
                                      {'id': 'U238', 'comp': None}],
-            'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
-                                     {'id': 'U238', 'comp': None}],
             'used_fuel': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
                           {'id': 'U238', 'comp': None},
                           {'id': 'Pu238', 'comp': [0.000235, 0.000275]},
@@ -76,7 +74,8 @@ NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
            }
 
 NUCLIDES['natural_uranium_fuel'] = NUCLIDES['natural_uranium']
-NUCLIDES['stored_used_fuel'] = NUCLIDES['used_uox'] = NUCLIDES['used_fuel']
+NUCLIDES['fresh_uox'] = NUCLIDES['fresh_triso'] = NUCLIDES['fresh_fuel'] = NUCLIDES['low_enriched_uranium']
+NUCLIDES['stored_used_fuel'] = NUCLIDES['used_uox'] = NUCLIDES['used_triso'] = NUCLIDES['used_fuel']
 
 DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
 DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
@@ -107,7 +106,10 @@ NICHE_ARCHETYPES = {
 SPECIAL_CALLS = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
     (":cycamore:Separations", "streams"): sa.sep_streams,
     (":cycamore:Separations", "leftover_commod"): sa.sep_leftover,
-    (":cycamore:FuelFab", "fill_commods"): sa.ff_fill
+    (":cycamore:FuelFab", "fill_commods"): sa.ff_fill,
+    (":cycamore:FuelFab", "fill_recipe"): sa.ff_fill_recipe,
+    (":cycamore:Reactor", "recipe_change_in"): sa.skip,
+    (":cycamore:Reactor", "recipe_change_out"): sa.skip,
     }
 
 ANNOTATIONS = {}
@@ -429,6 +431,8 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
             else:
                 rng = var["range"]
             val = random.uniform(*rng)
+            if var_type == "int":
+                val = int(val)
             vals[name] = val
         elif uitype == "incommodity":
             vals[name] = in_commod
@@ -441,14 +445,18 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
         elif uitype == "commodity" or uitype == ["oneormore", "commodity"]:
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
-        elif uitype == "inrecipe":
-            vals[name] = var.get("default", in_recipe)
-        elif uitype == ["oneormore", "inrecipe"]:
-            vals[name] = {"val" : [var.get("default", in_recipe)]}
-        elif uitype == "outrecipe":
-            vals[name] = var.get("default", out_recipe)
-        elif uitype == ["oneormore", "outrecipe"]:
-            vals[name] = {"val" : [var.get("default", out_recipe)]}
+        elif uitype == "inrecipe" and "default" not in var:
+            print(arche, " ", var )
+            vals[name] = in_recipe["name"]
+        elif uitype == ["oneormore", "inrecipe"] and "default" not in var:
+            print(arche, " ", var )
+            vals[name] = {"val" : [in_recipe["name"]]}
+        elif uitype == "outrecipe" and "default" not in var:
+            print(arche, " ", var )
+            vals[name] = out_recipe["name"]
+        elif uitype == ["oneormore", "outrecipe"] and "default" not in var:
+            print(arche, " ", var )
+            vals[name] = {"val" : [out_recipe["name"]]}
         elif var_type == "double" or var_type == "float":
             vals[name] = var.get("default", 0.0)
         elif var_type == "int":
@@ -471,6 +479,7 @@ def generate_reg_inst():
     -------
 
     """
+    
 
 def generate(max_num_niches=10):
     """Creates a random Cyclus simulation input file dict.
@@ -500,6 +509,9 @@ def generate(max_num_niches=10):
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
+    print(arches)
+    print(commods)
+    print("-"*10)
     protos = {}
     protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1], 
@@ -516,8 +528,5 @@ def generate(max_num_niches=10):
 
     protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
-    print(arches)
-    print(commods)
-    print("-"*10)
     return inp
 
