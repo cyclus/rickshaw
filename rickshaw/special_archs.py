@@ -42,6 +42,11 @@ def sep_streams(name, vals, commod):
     vals[name] = streams["streams"]
     return 0
 
+def sep_leftover(name, vals, commod):
+    vals[name] = 'leftovercommod'
+    sink = generate_throwsink('leftovercommod', 'sepsink')
+    return sink    
+
 def ff_fill(name, vals, commod):
     vals[name] = {"val": 'fillcommod'}
     source = generate_throwsource('fillcommod', 'ffsource')

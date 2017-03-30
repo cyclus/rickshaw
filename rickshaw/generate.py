@@ -38,6 +38,7 @@ COMMODITIES = {
     ("mine", "enrichment"): "natural_uranium",
     ("mine", "reactor:hwr"): "natural_uranium_fuel",  # in case of hwr
     ("enrichment", "fuel_fab"): "low_enriched_uranium",
+    ("enrichment", "reactor"): "low_enriched_uranium",
     ("enrichment", "repository"): "enrichment_waste_stream",
     ("fuel_fab", "reactor"): "fresh_fuel",
     ("fuel_fab:uo2", "reactor:lwr"): "fresh_uox",
@@ -95,16 +96,17 @@ NICHE_ARCHETYPES = {
     "reactor:htgr": {":cycamore:Reactor"},
     "reactor:rbmk": {":cycamore:Reactor"},
     "reactor:pb": {":cycamore:Reactor"},
-    "storage": {":cycamore:Sink"}, #
-    "storage:wet": {":cycamore:Sink"}, #
-    "storage:dry": {":cycamore:Sink"}, #
-    "storage:interim": {":cycamore:Sink"}, #
+    "storage": {":cycamore:Storage"}, #
+    "storage:wet": {":cycamore:Storage"}, #
+    "storage:dry": {":cycamore:Storage"}, #
+    "storage:interim": {":cycamore:Storage"}, #
     "separations": {":cycamore:Separations"},
     "repository": {":cycamore:Sink"} #
     }
 
 SPECIAL_CALLS = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
     (":cycamore:Separations", "streams"): sa.sep_streams,
+    (":cycamore:Separations", "leftover_commod"): sa.sep_leftover,
     (":cycamore:FuelFab", "fill_commods"): sa.ff_fill
     }
 
@@ -302,6 +304,7 @@ def choose_recipes(commods):
     for commod in commods:
         recipe_dict = {}
         if commod not in NUCLIDES:
+            recipes.append(None)    
             continue
         recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
@@ -377,7 +380,7 @@ def archetype_block(arches):
         block["spec"].append(spec)
     return block
 
-def generate_archetype(arche, in_commod, out_commod):
+def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
     """Pulls in the metadata for each archetype
 
         Parameters
@@ -438,6 +441,14 @@ def generate_archetype(arche, in_commod, out_commod):
         elif uitype == "commodity" or uitype == ["oneormore", "commodity"]:
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
+        elif uitype == "inrecipe":
+            vals[name] = var.get("default", in_recipe)
+        elif uitype == ["oneormore", "inrecipe"]:
+            vals[name] = {"val" : [var.get("default", in_recipe)]}
+        elif uitype == "outrecipe":
+            vals[name] = var.get("default", out_recipe)
+        elif uitype == ["oneormore", "outrecipe"]:
+            vals[name] = {"val" : [var.get("default", out_recipe)]}
         elif var_type == "double" or var_type == "float":
             vals[name] = var.get("default", 0.0)
         elif var_type == "int":
@@ -488,15 +499,25 @@ def generate(max_num_niches=10):
         recipes = recipes[0]
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
-    sim["recipe"] = recipes
+    sim["recipe"] = [r for r in recipes if r is not None]
     protos = {}
-    protos[arches[0]] = generate_archetype(arches[0], None, commods[0])[0]
-    for arche, in_commod, out_commod in zip(arches[1:-1], commods[:-1], commods[1:]):
-        temp_arch = generate_archetype(arche, in_commod, out_commod)
+    protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
+    for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1], 
+                                            commods[:-1], commods[1:],
+                                            recipes[:-1], recipes[1:]):
+        temp_arch = generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe)
         for arch in temp_arch:
+            base_name = arch["name"]
+            i = 1
+            while arch["name"] in protos:
+                arch["name"] = base_name + str(i)
+                i+=1
             protos[arch["name"]] = arch
 
-    protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None)[0]
+    protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
+    print(arches)
+    print(commods)
+    print("-"*10)
     return inp
 
