@@ -431,11 +431,11 @@ def generate_archetype(arche, in_commod, out_commod):
         elif uitype == "incommodity":
             vals[name] = in_commod
         elif uitype == ["oneormore", "incommodity"]:
-            vals[name] = [in_commod]
+            vals[name] = {"val" : [in_commod]}
         elif uitype == "outcommodity":
             vals[name] = out_commod
         elif uitype == ["oneormore", "outcommodity"]:
-            vals[name] = [out_commod]
+            vals[name] = {"val" : [out_commod]}
         elif uitype == "commodity" or uitype == ["oneormore", "commodity"]:
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
