@@ -4,20 +4,27 @@ try:
 except ImportError:
     from pprint import pprint
 import json
+from argparse import ArgumentParser
 
 from rickshaw import generate
 
 
-def main():
-    input_file = generate.generate()
-    pprint(input_file)
-    i = 0
-    while i < 100:
+def main(args=None):
+    p = ArgrumentParser('rickshaw')
+    p.add_argument('-n', dest='n', type=int, help='number of files to generate',
+                   default=None)
+    ns = p.parse_args(args=args)
+
+    if ns.n is not None:
+        i = 0
+        for i in range(ns.n):
+            input_file = generate.generate()
+            jsonfile = str(i) + '.json'
+            with open(jsonfile, 'w') as jf:
+                json.dump(input_file, jf, indent=4)
+    else:
         input_file = generate.generate()
-        jsonfile = str(i)+'.json'
-        with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)
-        i+=1
+        pprint(input_file)
 
 
 if __name__ == '__main__':
