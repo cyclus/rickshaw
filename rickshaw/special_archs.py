@@ -3,7 +3,7 @@ import random
 def generate_throwsink(commod, name):
     vals = {}
     vals["capacity"] = 1e299
-    vals["in_commods"] = commod 
+    vals["in_commods"] = {"val": [commod]} 
     config = {"name": name, "config": {"agents_sink": vals}}
     return config
 
@@ -43,6 +43,6 @@ def sep_streams(name, vals, commod):
     return 0
 
 def ff_fill(name, vals, commod):
-    vals[name] = 'fillcommod'
+    vals[name] = {"val": 'fillcommod'}
     source = generate_throwsource('fillcommod', 'ffsource')
     return source
