@@ -6,7 +6,7 @@ import subprocess
 import shutil
 from collections.abc import Sequence
 from copy import deepcopy
-from random import randrange
+from random import randrange, choice
 
 from rickshaw import special_archs as sa
 from rickshaw.lazyasd import lazyobject
@@ -110,6 +110,9 @@ SPECIAL_CALLS = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
     (":cycamore:FuelFab", "fill_recipe"): sa.ff_fill_recipe,
     (":cycamore:Reactor", "recipe_change_in"): sa.skip,
     (":cycamore:Reactor", "recipe_change_out"): sa.skip,
+    (":cycamore:Reactor", "recipe_change_in"): sa.skip,
+    (":cycamore:Reactor", "pref_change_commods"): sa.skip,
+    (":cycamore:Reactor", "recipe_change_commods"): sa.skip,
     }
 
 ANNOTATIONS = {}
@@ -434,6 +437,8 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
             if var_type == "int":
                 val = int(val)
             vals[name] = val
+        elif uitype == "combobox":
+            vals[name] = choice(var["categorical"])
         elif uitype == "incommodity":
             vals[name] = in_commod
         elif uitype == ["oneormore", "incommodity"]:
@@ -485,7 +490,7 @@ def generate_region_inst(sim):
         }
     entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
     for facility in sim["facility"]:
-        entry = {"prototype": facility["name"], "number": randrange(1, 1001)}
+        entry = {"prototype": facility["name"], "number": 1}
         entries.append(entry)
 
 
