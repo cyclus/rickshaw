@@ -17,11 +17,15 @@ def main(args=None):
 
     if ns.n is not None:
         i = 0
-        for i in range(ns.n):
-            input_file = generate.generate()
+        while i < ns.n:
+            try:
+                input_file = generate.generate()
+            except Exception:
+                continue
             jsonfile = str(i) + '.json'
             with open(jsonfile, 'w') as jf:
                 json.dump(input_file, jf, indent=4)
+            i += 1
     else:
         input_file = generate.generate()
         pprint(input_file)
