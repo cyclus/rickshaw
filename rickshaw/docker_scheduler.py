@@ -14,8 +14,7 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.from_env()
-        print('test')        
+        self.client = docker.from_env()        
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
@@ -29,6 +28,7 @@ class DockerScheduler(Scheduler):
         self._have_swarm = False
         print('test')
         self._find_ncpu()
+        print('test')
 
     def _find_ncpu(self):
         try:

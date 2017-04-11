@@ -177,7 +177,6 @@ def main(args=None):
     # start up tasks
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
-    print('test')
     scheduler = DockerScheduler(debug=ns.debug)
     if ns.debug:
         _start_debug(loop)
