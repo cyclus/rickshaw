@@ -32,11 +32,12 @@ class DockerScheduler(Scheduler):
         try:
             # get NCPUs for swarm
             ncpu = 0.0
+            print('try')
             for node in self.client.nodes.list():
-                pprint(node.attrs)
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
             self._have_swarm = True
         except docker.errors.APIError:
+            print('except')
             # get NCPUs for local host
             ncpu = self.client.info()['NCPU']
             self._have_swarm = False
