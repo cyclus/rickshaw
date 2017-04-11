@@ -14,7 +14,7 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.client.from_env()        
+        self.client = docker.from_env()        
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
@@ -33,13 +33,13 @@ class DockerScheduler(Scheduler):
             # get NCPUs for swarm
             ncpu = 0.0
             print('try')
-            for node in self.client.nodes.list():
+            for node in self.nodes.list():
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
             self._have_swarm = True
         except docker.errors.APIError:
             print('except')
             # get NCPUs for local host
-            ncpu = self.client.info()['NCPU']
+            ncpu = self.info()['NCPU']
             self._have_swarm = False
         self.ncpu = int(ncpu)
 
