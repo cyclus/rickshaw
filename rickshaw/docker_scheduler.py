@@ -29,6 +29,7 @@ class DockerScheduler(Scheduler):
         self._find_ncpu()
 
     def _find_ncpu(self):
+        print('try')        
         try:
             # get NCPUs for swarm
             ncpu = 0.0
