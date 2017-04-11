@@ -28,13 +28,13 @@ class DockerScheduler(Scheduler):
         self._have_swarm = False
         self._find_ncpu()
 
-    def _find_ncpu(self):
-        print('try')        
+    def _find_ncpu(self):        
         try:
             # get NCPUs for swarm
             ncpu = 0.0
             print('try')
             for node in self.client.nodes.list():
+                pprint(node.attrs)
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
             self._have_swarm = True
         except docker.errors.APIError:
