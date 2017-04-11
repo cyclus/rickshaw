@@ -32,7 +32,7 @@ class DockerScheduler(Scheduler):
         try:
             # get NCPUs for swarm
             ncpu = 0.0
-            print(self.client)
+            print(self.client.nodes)
             for node in self.client.nodes.list():
                 print(node)
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
