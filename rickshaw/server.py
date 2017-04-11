@@ -179,7 +179,6 @@ def main(args=None):
     loop = asyncio.get_event_loop()
     print('test')
     scheduler = DockerScheduler(debug=ns.debug)
-    print('test')    
     if ns.debug:
         _start_debug(loop)
     print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
