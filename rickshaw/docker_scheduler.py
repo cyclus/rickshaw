@@ -26,15 +26,15 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_ready = False
         self.gathered_annotations = False
         self._have_swarm = False
-        #self._find_ncpu()
-        self.ncpu = 8
+        self._find_ncpu()
+        #self.ncpu = 8
 
     def _find_ncpu(self):        
         try:
             # get NCPUs for swarm
             ncpu = 0.0
             print('test')
-            print(self.client.nodes)
+            print(self.client.nodes.list())
             for node in self.client.nodes.list():
                 print(node)
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
