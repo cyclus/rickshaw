@@ -2,7 +2,6 @@
 import time
 
 import docker
-from docker import Client
 try:
     from pprintpp import pprint
 except ImportError:
@@ -15,7 +14,7 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = Client(**kwargs_from_env(assert_hostname=False))       
+        self.client = docker.from_env()        
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
@@ -28,14 +27,13 @@ class DockerScheduler(Scheduler):
         self.gathered_annotations = False
         self._have_swarm = False
         self._find_ncpu()
-        #self.ncpu = 8
 
     def _find_ncpu(self):        
         try:
             # get NCPUs for swarm
             ncpu = 0.0
             print('test')
-            print(self.client.nodes.list())
+            print(self.client.nodes)
             for node in self.client.nodes.list():
                 print(node)
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
