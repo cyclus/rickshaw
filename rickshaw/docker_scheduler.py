@@ -18,10 +18,12 @@ class DockerScheduler(Scheduler):
         try:
             try_test = self.client.nodes.list()
         except:
-            print( 'This container probably failed to connect to docker. \n'+
-                   'Remember to give this container/service access to the \n'+
-                   'docker socket on the host machine with the following command: \n'+
-                   '-v /var/run/docker.sock:/var/run/docker.sock')       
+            print( '***************************************************\n'+
+                   'This container probably failed to connect to docker. '+
+                   'Remember to give this container/service access to the '+
+                   'docker socket on the host machine with the following command: '+
+                   '-v /var/run/docker.sock:/var/run/docker.sock\n' +
+                   '***************************************************')       
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
