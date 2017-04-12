@@ -12,7 +12,7 @@ import docker
 import websockets
 
 from rickshaw.docker_scheduler import DockerScheduler
-from rickshaw.generate import generate
+import rickshaw.generate as generate
 
 
 SEND_QUEUE = asyncio.Queue()
