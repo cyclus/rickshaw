@@ -18,8 +18,8 @@ from rickshaw.generate import generate
 SEND_QUEUE = asyncio.Queue()
 
 def all_archetypes():
-    arches = choose_archetypes.DEFAULT_SOURCES | choose_archetypes.DEFAULT_SINKS
-    for v in choose_archetypes.NICHE_ARCHETYPES.values():
+    arches = generate.DEFAULT_SOURCES | generate.DEFAULT_SINKS
+    for v in generate.NICHE_ARCHETYPES.values():
         arches |= v
     return arches
 
@@ -27,12 +27,12 @@ def all_archetypes():
 async def gather_annotations(scheduler, frequency=0.001):
     """The basic consumer of actions."""
     all_arches = all_archetypes()
-    curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+    curr_arches = set(generate.ANNOTATIONS.keys())
     staged_tasks = []
     while curr_arches < all_arches:
         if SEND_QUEUE.qsize() > 0:
             await asyncio.sleep(min(frequency*1e3, 1.0))
-            curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+            curr_arches = set(generate.ANNOTATIONS.keys())
             continue
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
@@ -43,7 +43,7 @@ async def gather_annotations(scheduler, frequency=0.001):
             await asyncio.wait(staged_tasks)
             staged_tasks.clear()
         await asyncio.sleep(frequency)
-        curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+        curr_arches = set(generate.ANNOTATIONS.keys())
     await SEND_QUEUE.put('{"event": "shutdown", "params": {"when": "now"}}')
     scheduler.gathered_annotations = True
 
@@ -61,7 +61,7 @@ async def queue_message_action(message):
     if kind == 'agent_annotations':
         spec = params['spec']
         print('received agent annotations for ' + spec, file=sys.stderr)
-        choose_archetypes.ANNOTATIONS[spec] = event['data']
+        generate.ANNOTATIONS[spec] = event['data']
     else:
         print("ignoring received " + kind + " event", file=sys.stderr)
 
