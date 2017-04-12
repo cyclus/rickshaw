@@ -26,7 +26,7 @@ class DockerScheduler(Scheduler):
         if debug:
             self.server_cmd = "--debug"
         else:
-            self.server_cmd = "-m"
+            self.server_cmd = ""
         self.cyclus_server_name = "rickshaw_metadata_server"
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
