@@ -18,9 +18,9 @@ class DockerScheduler(Scheduler):
         try:
             try_test = self.client.nodes.list()
         except:
-            print('Remember to give this container/service access to the \
-                   docker socket on the host machine with the following command \
-                   -v /var/run/docker.sock:/var/run/docker.sock')       
+            print('Remember to give this container/service access to the '+
+                   'docker socket on the host machine with the following command: '+
+                   '-v /var/run/docker.sock:/var/run/docker.sock')       
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
