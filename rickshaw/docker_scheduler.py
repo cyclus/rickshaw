@@ -14,13 +14,17 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.from_env()        
+        self.client = docker.from_env() 
+        try:
+            try_test = self.client.nodes.list()
+        except:
+                   
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
             self.server_cmd = "--debug"
         else:
-            self.server_cmd = ""
+            self.server_cmd = "-m"
         self.cyclus_server_name = "rickshaw_metadata_server"
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
