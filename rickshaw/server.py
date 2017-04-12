@@ -126,7 +126,6 @@ async def schedule_sims(scheduler, frequency=0.001):
             await asyncio.sleep(freq)
             continue
         for i in range(n):
-            print('test ' + i)
             sim = generate()
             scheduler.schedule(sim)
 
@@ -188,7 +187,7 @@ def main(args=None):
             asyncio.ensure_future(websocket_client(ns.port, scheduler)),
             asyncio.ensure_future(gather_annotations(scheduler)),
             asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
-            asyncio.ensure_future(schedule_sims(scheduler)),
+            #asyncio.ensure_future(schedule_sims(scheduler)),
             ))
     finally:
         if not loop.is_closed():
