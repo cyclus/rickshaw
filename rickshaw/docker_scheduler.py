@@ -94,6 +94,6 @@ class DockerScheduler(Scheduler):
     def want_n_more_jobs(self):
         """Determine how many more new jobs to schedule."""
         n = self.ncpu*2 - len(self.queue())
-        print("will want, " + str(n))
+        print("Will want to fill out, " + str(n)+ " jobs")
         pprint(self.client.swarm.attrs)
         return n
