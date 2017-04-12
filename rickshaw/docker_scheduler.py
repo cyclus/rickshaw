@@ -2,6 +2,7 @@
 import time
 
 import docker
+from docker import Client
 try:
     from pprintpp import pprint
 except ImportError:
@@ -14,7 +15,7 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.from_env()        
+        self.client = Client(**kwargs_from_env(assert_hostname=False))       
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
