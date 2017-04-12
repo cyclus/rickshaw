@@ -185,7 +185,7 @@ def main(args=None):
     try:
         loop.run_until_complete(asyncio.gather(
             asyncio.ensure_future(websocket_client(ns.port, scheduler)),
-            asyncio.ensure_future(gather_annotations(scheduler)),
+            #asyncio.ensure_future(gather_annotations(scheduler)),
             #asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
             #asyncio.ensure_future(schedule_sims(scheduler)),
             ))
