@@ -26,7 +26,8 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_ready = False
         self.gathered_annotations = False
         self._have_swarm = False
-        self._find_ncpu()
+        #self._find_ncpu()
+        self.ncpu = 8
 
     def _find_ncpu(self):        
         try:
