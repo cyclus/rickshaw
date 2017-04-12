@@ -126,6 +126,7 @@ async def schedule_sims(scheduler, frequency=0.001):
             await asyncio.sleep(freq)
             continue
         for i in range(n):
+            print(i)
             sim = generate()
             scheduler.schedule(sim)
 
