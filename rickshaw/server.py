@@ -87,7 +87,7 @@ async def websocket_handler(websocket, scheduler):
             send_task.cancel()
 
 
-async def websocket_client(port, scheduler, frequency=0.1):
+async def websocket_client(port, scheduler, frequency=1.0):
     """Runs a websocket client on a host/port."""
     while not scheduler.cyclus_server_ready:
         await asyncio.sleep(frequency)
