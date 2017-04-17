@@ -12,6 +12,7 @@ import docker
 import websockets
 
 from rickshaw.docker_scheduler import DockerScheduler
+from rickshaw.server_scheduler import ServerScheduler
 import rickshaw.generate as generate
 
 
@@ -168,6 +169,8 @@ def make_parser():
                    help='port to run the server on')
     p.add_argument('-n', '--nthreads', type=int, dest='nthreads', default=4,
                    help='Maximum number of thread workers to run with.')
+    p.add_argument('-s', '--swarm', action='store_true', dest='swarm', default=False,
+                   help='Run the server in swarm mode.')
     return p
 
 
@@ -177,7 +180,10 @@ def main(args=None):
     # start up tasks
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
-    scheduler = DockerScheduler(debug=ns.debug)
+    if ns.swarm:
+        scheduler = ServerScheduler(debug=ns.debug)
+    else:
+        scheduler = DockerScheduler(debug=ns.debug)
     if ns.debug:
         _start_debug(loop)
     print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))
