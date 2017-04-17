@@ -89,7 +89,7 @@ class DockerScheduler(Scheduler):
 
     def schedule(self, sim):
         """Schedules a simulation to be executed."""
-        #print("would have scheduled sim: ", repr(sim))
+        print("would have scheduled sim: ", repr(sim))
 
     def want_n_more_jobs(self):
         """Determine how many more new jobs to schedule."""
