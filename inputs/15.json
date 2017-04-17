@@ -1,0 +1,246 @@
+{
+    "simulation": {
+        "facility": [
+            {
+                "name": "Reactor",
+                "config": {
+                    "Reactor": {
+                        "fuel_outrecipes": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "fuel_incommods": {
+                            "val": [
+                                "low_enriched_uranium"
+                            ]
+                        },
+                        "n_assem_fresh": 1,
+                        "n_assem_core": 1,
+                        "refuel_time": 1,
+                        "fuel_inrecipes": {
+                            "val": [
+                                "low_enriched_uranium"
+                            ]
+                        },
+                        "power_cap": 206.327656731625,
+                        "n_assem_batch": 0,
+                        "n_assem_spent": 77105476,
+                        "assem_size": 0.0,
+                        "fuel_outcommods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "cycle_time": 18,
+                        "cycle_step": 0
+                    }
+                }
+            },
+            {
+                "name": "agents_source",
+                "config": {
+                    "agents_source": {
+                        "capacity": 0.0,
+                        "commod": "natural_uranium"
+                    }
+                }
+            },
+            {
+                "name": "enrichsink",
+                "config": {
+                    "agents_sink": {
+                        "capacity": 1e+299,
+                        "in_commods": {
+                            "val": [
+                                "tailcommod"
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Enrichment",
+                "config": {
+                    "Enrichment": {
+                        "tails_commod": "tailcommod",
+                        "feed_recipe": "natural_uranium",
+                        "product_commod": "low_enriched_uranium",
+                        "feed_commod": "natural_uranium",
+                        "tails_assay": 0.0018370409854933237,
+                        "max_enrich": 0.5606673674132993,
+                        "initial_feed": 0,
+                        "max_feed_inventory": 9.15876288470184e+298,
+                        "swu_capacity": 7.041073829350908e+297
+                    }
+                }
+            },
+            {
+                "name": "agents_sink",
+                "config": {
+                    "agents_sink": {
+                        "capacity": 0.0,
+                        "in_commods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "max_inv_size": 1e+299
+                    }
+                }
+            }
+        ],
+        "region": {
+            "institution": {
+                "initialfacilitylist": {
+                    "entry": [
+                        {
+                            "number": 1,
+                            "prototype": "Reactor"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "agents_source"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "enrichsink"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "Enrichment"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "agents_sink"
+                        }
+                    ]
+                },
+                "name": "SingleInstitution",
+                "config": {
+                    "NullInst": null
+                }
+            },
+            "name": "SingleRegion",
+            "config": {
+                "NullRegion": null
+            }
+        },
+        "control": {
+            "duration": 204,
+            "dt": 15779076,
+            "startyear": 2029,
+            "startmonth": 6
+        },
+        "archetypes": {
+            "spec": [
+                {
+                    "alias": "agents_sink",
+                    "lib": "agents",
+                    "name": "Sink"
+                },
+                {
+                    "alias": "agents_source",
+                    "lib": "agents",
+                    "name": "Source"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Enrichment"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Reactor"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullInst"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullRegion"
+                }
+            ]
+        },
+        "recipe": [
+            {
+                "basis": "mass",
+                "name": "natural_uranium",
+                "nuclide": [
+                    {
+                        "comp": 0.00711,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.99289,
+                        "id": "U238"
+                    }
+                ]
+            },
+            {
+                "basis": "mass",
+                "name": "low_enriched_uranium",
+                "nuclide": [
+                    {
+                        "comp": 0.04124577409288205,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.958754225907118,
+                        "id": "U238"
+                    }
+                ]
+            },
+            {
+                "basis": "mass",
+                "name": "used_fuel",
+                "nuclide": [
+                    {
+                        "comp": 0.00714530036327891,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.9806932333850634,
+                        "id": "U238"
+                    },
+                    {
+                        "comp": 0.00027187430647308055,
+                        "id": "Pu238"
+                    },
+                    {
+                        "comp": 0.0059031145970962085,
+                        "id": "Pu239"
+                    },
+                    {
+                        "comp": 0.003043114597096208,
+                        "id": "Pu240"
+                    },
+                    {
+                        "comp": 0.001776557298548104,
+                        "id": "Pu241"
+                    },
+                    {
+                        "comp": 0.0008304371532365403,
+                        "id": "Pu242"
+                    },
+                    {
+                        "comp": 5.634371532365403e-05,
+                        "id": "Am241"
+                    },
+                    {
+                        "comp": 0.00018443715323654026,
+                        "id": "Am243"
+                    },
+                    {
+                        "comp": 2.414371532365403e-05,
+                        "id": "Cm242"
+                    },
+                    {
+                        "comp": 7.144371532365403e-05,
+                        "id": "Cm244"
+                    }
+                ]
+            }
+        ]
+    }
+}

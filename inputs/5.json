@@ -1,0 +1,195 @@
+{
+    "simulation": {
+        "facility": [
+            {
+                "name": "agents_source",
+                "config": {
+                    "agents_source": {
+                        "capacity": 0.0,
+                        "commod": "natural_uranium_fuel"
+                    }
+                }
+            },
+            {
+                "name": "Reactor",
+                "config": {
+                    "Reactor": {
+                        "fuel_outrecipes": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "fuel_incommods": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        },
+                        "n_assem_fresh": 0,
+                        "n_assem_core": 1,
+                        "refuel_time": 1,
+                        "fuel_inrecipes": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        },
+                        "power_cap": 1123.5688684511792,
+                        "n_assem_batch": 0,
+                        "n_assem_spent": 275476424,
+                        "assem_size": 0.0,
+                        "fuel_outcommods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "cycle_time": 18,
+                        "cycle_step": 0
+                    }
+                }
+            },
+            {
+                "name": "Sink",
+                "config": {
+                    "Sink": {
+                        "max_inv_size": 9.160212537253654e+297,
+                        "in_commods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "capacity": 4.0322009571763663e+298
+                    }
+                }
+            }
+        ],
+        "region": {
+            "institution": {
+                "initialfacilitylist": {
+                    "entry": [
+                        {
+                            "number": 1,
+                            "prototype": "agents_source"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "Reactor"
+                        },
+                        {
+                            "number": 1,
+                            "prototype": "Sink"
+                        }
+                    ]
+                },
+                "name": "SingleInstitution",
+                "config": {
+                    "NullInst": null
+                }
+            },
+            "name": "SingleRegion",
+            "config": {
+                "NullRegion": null
+            }
+        },
+        "control": {
+            "duration": 414,
+            "dt": 7889538,
+            "startyear": 2002,
+            "startmonth": 7
+        },
+        "archetypes": {
+            "spec": [
+                {
+                    "alias": "agents_source",
+                    "lib": "agents",
+                    "name": "Source"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Reactor"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Sink"
+                },
+                {
+                    "alias": "agents_sink",
+                    "lib": "agents",
+                    "name": "Sink"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullInst"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullRegion"
+                }
+            ]
+        },
+        "recipe": [
+            {
+                "basis": "mass",
+                "name": "natural_uranium_fuel",
+                "nuclide": [
+                    {
+                        "comp": 0.00711,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.99289,
+                        "id": "U238"
+                    }
+                ]
+            },
+            {
+                "basis": "mass",
+                "name": "used_fuel",
+                "nuclide": [
+                    {
+                        "comp": 0.0071290258131271695,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.9807463814159876,
+                        "id": "U238"
+                    },
+                    {
+                        "comp": 0.0002709443321786954,
+                        "id": "Pu238"
+                    },
+                    {
+                        "comp": 0.0058891649826804315,
+                        "id": "Pu239"
+                    },
+                    {
+                        "comp": 0.0030291649826804314,
+                        "id": "Pu240"
+                    },
+                    {
+                        "comp": 0.0017695824913402157,
+                        "id": "Pu241"
+                    },
+                    {
+                        "comp": 0.0008299721660893477,
+                        "id": "Pu242"
+                    },
+                    {
+                        "comp": 5.629721660893477e-05,
+                        "id": "Am241"
+                    },
+                    {
+                        "comp": 0.0001839721660893477,
+                        "id": "Am243"
+                    },
+                    {
+                        "comp": 2.409721660893477e-05,
+                        "id": "Cm242"
+                    },
+                    {
+                        "comp": 7.139721660893478e-05,
+                        "id": "Cm244"
+                    }
+                ]
+            }
+        ]
+    }
+}
