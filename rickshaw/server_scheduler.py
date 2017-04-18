@@ -55,7 +55,7 @@ class ServerScheduler(Scheduler):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
         cc = self.cyclus_service = self.client.services.create(self.server_tag)
-        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
+        host = self.client.networks.get('bridge').attrs['Services'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')
         else:
@@ -77,7 +77,7 @@ class ServerScheduler(Scheduler):
         """Obtains the current queue status and retuns the jobs that are scheduled
         and status of each job.
         """
-        return [(c.id, c.status) for c in self.client.containers.list()]
+        return [(c.id, c.status) for c in self.client.services.list()]
 
     def schedule(self, sim):
         """Schedules a simulation to be executed."""

@@ -181,8 +181,10 @@ def main(args=None):
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
     if ns.swarm:
+        print('started in swarm mode')
         scheduler = ServerScheduler(debug=ns.debug)
     else:
+        print('started in docker mode')
         scheduler = DockerScheduler(debug=ns.debug)
     if ns.debug:
         _start_debug(loop)
