@@ -25,7 +25,7 @@ def all_archetypes():
     return arches
 
 
-async def gather_annotations(scheduler, frequency=0.01):
+async def gather_annotations(scheduler, frequency=0.001):
     """The basic consumer of actions."""
     all_arches = all_archetypes()
     curr_arches = set(generate.ANNOTATIONS.keys())
@@ -116,7 +116,7 @@ async def start_cyclus_server(loop, executor, scheduler):
     await asyncio.wait([run_task])
 
 
-async def schedule_sims(scheduler, frequency=0.01):
+async def schedule_sims(scheduler, frequency=0.001):
     """Loads jobs into the hopper, as needed."""
     freq = min(frequency*1e3, 1.0)
     while not scheduler.gathered_annotations:
