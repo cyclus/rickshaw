@@ -28,7 +28,7 @@ install:
 script:
     - set -e
     - cd docs && make html && cd ..
-    - pip install doctr
+    - conda install doctr
     - doctr deploy --deploy-repo ergs/rickshaw-docs .
 
 env:
