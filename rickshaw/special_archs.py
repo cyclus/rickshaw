@@ -1,3 +1,4 @@
+"""Special archetypes provided as necessary to the Rickshaw input file. Used for fuel cycle niches that have more than just one incommodity and outcommodity"""
 import random 
 
 def generate_throwsink(commod, name):
