@@ -558,7 +558,7 @@ def generate(max_num_niches=10, sim_spec=None):
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
                                             recipes[:-1], recipes[1:]):
-        temp_arch = generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe)
+        temp_arch = generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe)
         for arch in temp_arch:
             base_name = arch["name"]
             i = 1
@@ -567,7 +567,7 @@ def generate(max_num_niches=10, sim_spec=None):
                 i+=1
             protos[arch["name"]] = arch
 
-    protos[arches[-1]] = generate_archetype(arches[-1], commods[-1], None, None, None)[0]
+    protos[arches[-1]] = generate_archetype(sim_spec, arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
     generate_region_inst(sim)
     return inp

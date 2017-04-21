@@ -52,7 +52,7 @@ def main(args=None):
             i += 1
     else:
         input_file = generate.generate(sim_spec=spec)
-        #pprint(input_file)
+        pprint(input_file)
 
 
 if __name__ == '__main__':
