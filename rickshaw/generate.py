@@ -1,4 +1,9 @@
-"""Generates a random Cyclus input file."""
+"""Generates a random Cyclus input file. Contains functions to stochastically 
+generate a niche path through the nuclear fuel cycle as well as the appropriate
+archetypes, recipes, commodities, and a control scheme for the nuclear fuel cycle
+those niches represent. Archetypes state variables with a "range" uitype are 
+stochastically generated within a physically valid range.
+"""
 import os
 import json
 import random
@@ -358,6 +363,19 @@ def choose_archetypes(niches):
     return arches
 
 def archetype_block(arches):
+    """Formats the archetypes into the input file format
+    
+    Parameters
+    ----------
+    arches : list
+        List of assigned archetype.
+        
+    Returns
+    -------
+    block : dictionary
+        Dictionary containing each necessary element of the archetype
+        block in a Cyclus input file.
+    """
     unique_arches = sorted(set(arches))
     if ':agents:Sink' not in unique_arches:
         unique_arches.append(':agents:Sink')
