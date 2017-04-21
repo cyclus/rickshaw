@@ -7,115 +7,133 @@ import shutil
 from collections.abc import Sequence
 from copy import deepcopy
 from random import randrange, choice
+try:
+    from pprintpp import pprint
+except ImportError:
+    from pprint import pprint
 
 from rickshaw import special_archs as sa
 from rickshaw.lazyasd import lazyobject
 
+class SimSpec(object):
+    def __init__(self, spec={}):
+        self.spec = spec
+        self.niche_links = {
+            "mine" : {"enrichment", "reactor:hwr"},
+            "enrichment" : {"fuel_fab:uo2", "fuel_fab:triso", "reactor:hwr"},
+            "fuel_fab" : {"reactor:lwr", "reactor:htgr", "reactor:rbmk", "reactor:pb"},
+            "fuel_fab:uo2" : {"reactor:lwr", "reactor:htgr", "reactor:rbmk"},
+            "fuel_fab:triso" : {"reactor:pb"},
+            "fuel_fab:mox" : {"reactor:fr", "reactor:lwr", "reactor:htgr", "reactor:rbmk"},
+            "reactor" : {"storage", "separations", "repository"},
+            "reactor:fr" : {"storage", "separations", "repository"},
+            "reactor:lwr" : {"storage", "separations", "repository"},
+            "reactor:hwr" : {"storage",  "repository"},
+            "reactor:htgr" : {"storage", "separations", "repository"},
+            "reactor:rbmk" : {"storage", "separations", "repository"},
+            "reactor:pb" : {"storage", "repository"},
+            "storage" : {"separations", "repository"},
+            "storage:wet" : {"separations", "repository"},
+            "storage:dry" : {"separations", "repository"},
+            "storage:interim" : {"separations", "repository"},
+            "separations" : {"storage", "fuel_fab", "repository"},
+            "repository" : {None},
+            }
 
-T = {
-    "mine" : {"enrichment", "reactor:hwr"},
-    "enrichment" : {"fuel_fab:uo2", "fuel_fab:triso", "reactor:hwr"},
-    "fuel_fab" : {"reactor:lwr", "reactor:htgr", "reactor:rbmk", "reactor:pb"},
-    "fuel_fab:uo2" : {"reactor:lwr", "reactor:htgr", "reactor:rbmk"},
-    "fuel_fab:triso" : {"reactor:pb"},
-    "fuel_fab:mox" : {"reactor:fr", "reactor:lwr", "reactor:htgr", "reactor:rbmk"},
-    "reactor" : {"storage", "separations", "repository"},
-    "reactor:fr" : {"storage", "separations", "repository"},
-    "reactor:lwr" : {"storage", "separations", "repository"},
-    "reactor:hwr" : {"storage",  "repository"},
-    "reactor:htgr" : {"storage", "separations", "repository"},
-    "reactor:rbmk" : {"storage", "separations", "repository"},
-    "reactor:pb" : {"storage", "repository"},
-    "storage" : {"separations", "repository"},
-    "storage:wet" : {"separations", "repository"},
-    "storage:dry" : {"separations", "repository"},
-    "storage:interim" : {"separations", "repository"},
-    "separations" : {"storage", "fuel_fab", "repository"},
-    "repository" : {None},
-    }
+        self.commodities = {
+            ("mine", "enrichment"): "natural_uranium",
+            ("mine", "reactor:hwr"): "natural_uranium_fuel",  # in case of hwr
+            ("enrichment", "fuel_fab"): "low_enriched_uranium",
+            ("enrichment", "reactor"): "low_enriched_uranium",
+            ("enrichment", "repository"): "enrichment_waste_stream",
+            ("fuel_fab", "reactor"): "fresh_fuel",
+            ("fuel_fab:uo2", "reactor:lwr"): "fresh_uox",
+            ("fuel_fab:triso", "reactor:pb"): "fresh_triso",
+            ("reactor", "storage"): "used_fuel",
+            ("reactor", "repository"): "used_fuel",
+            ("reactor:lwr", "storage"): "used_uox",
+            ("reactor:pb", "storage"): "used_triso",
+            ("reactor", "separations"): "used_fuel",
+            ("reactor:lwr", "separations"): "used_uox",
+            ("storage", "separations"): "stored_used_fuel",
+            ("storage", "repository"): "stored_used_fuel",
+            ("separations", "fuel_fab"): "separated_product",
+            ("separations", "storage"): "separated_waste",
+            ("separations", "repository"): "separated_waste"
+        }
 
-COMMODITIES = {
-    ("mine", "enrichment"): "natural_uranium",
-    ("mine", "reactor:hwr"): "natural_uranium_fuel",  # in case of hwr
-    ("enrichment", "fuel_fab"): "low_enriched_uranium",
-    ("enrichment", "reactor"): "low_enriched_uranium",
-    ("enrichment", "repository"): "enrichment_waste_stream",
-    ("fuel_fab", "reactor"): "fresh_fuel",
-    ("fuel_fab:uo2", "reactor:lwr"): "fresh_uox",
-    ("fuel_fab:triso", "reactor:pb"): "fresh_triso",
-    ("reactor", "storage"): "used_fuel",
-    ("reactor", "repository"): "used_fuel",
-    ("reactor:lwr", "storage"): "used_uox",
-    ("reactor:pb", "storage"): "used_triso",
-    ("reactor", "separations"): "used_fuel",
-    ("reactor:lwr", "separations"): "used_uox",
-    ("storage", "separations"): "stored_used_fuel",
-    ("storage", "repository"): "stored_used_fuel",
-    ("separations", "fuel_fab"): "separated_product",
-    ("separations", "storage"): "separated_waste",
-    ("separations", "repository"): "separated_waste"
-}
+        self.recipes = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
+                                            {'id': 'U238', 'comp': 0.99289}],
+                        'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
+                                             {'id': 'U238', 'comp': None}],
+                        'used_fuel': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
+                                      {'id': 'U238', 'comp': None},
+                                      {'id': 'Pu238', 'comp': [0.000235, 0.000275]},
+                                      {'id': 'Pu239', 'comp': [0.00535, 0.00595]},
+                                      {'id': 'Pu240', 'comp': [0.00249, 0.00309]},
+                                      {'id': 'Pu241', 'comp': [0.00150, 0.00180]},
+                                      {'id': 'Pu242', 'comp': [0.000812, 0.000832]},
+                                      {'id': 'Am241', 'comp': [0.0000545, 0.0000565]},
+                                      {'id': 'Am243', 'comp': [0.000166, 0.000186]},
+                                      {'id': 'Cm242', 'comp': [0.0000223, 0.0000243]},
+                                      {'id': 'Cm244', 'comp': [0.0000696, 0.0000716]}]
+                       }
 
-NUCLIDES = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
-                                {'id': 'U238', 'comp': 0.99289}],
-            'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
-                                     {'id': 'U238', 'comp': None}],
-            'used_fuel': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
-                          {'id': 'U238', 'comp': None},
-                          {'id': 'Pu238', 'comp': [0.000235, 0.000275]},
-                          {'id': 'Pu239', 'comp': [0.00535, 0.00595]},
-                          {'id': 'Pu240', 'comp': [0.00249, 0.00309]},
-                          {'id': 'Pu241', 'comp': [0.00150, 0.00180]},
-                          {'id': 'Pu242', 'comp': [0.000812, 0.000832]},
-                          {'id': 'Am241', 'comp': [0.0000545, 0.0000565]},
-                          {'id': 'Am243', 'comp': [0.000166, 0.000186]},
-                          {'id': 'Cm242', 'comp': [0.0000223, 0.0000243]},
-                          {'id': 'Cm244', 'comp': [0.0000696, 0.0000716]}]
-           }
+        self.recipes['natural_uranium_fuel'] = self.recipes['natural_uranium']
+        self.recipes['fresh_uox'] = self.recipes['fresh_triso'] = self.recipes['fresh_fuel'] = self.recipes['low_enriched_uranium']
+        self.recipes['stored_used_fuel'] = self.recipes['used_uox'] = self.recipes['used_triso'] = self.recipes['used_fuel']
 
-NUCLIDES['natural_uranium_fuel'] = NUCLIDES['natural_uranium']
-NUCLIDES['fresh_uox'] = NUCLIDES['fresh_triso'] = NUCLIDES['fresh_fuel'] = NUCLIDES['low_enriched_uranium']
-NUCLIDES['stored_used_fuel'] = NUCLIDES['used_uox'] = NUCLIDES['used_triso'] = NUCLIDES['used_fuel']
+        self.default_sources = {':agents:Source', ':cycamore:Source'}
+        self.default_sinks = {':agents:Sink', ':cycamore:Sink'}
 
-DEFAULT_SOURCES = {':agents:Source', ':cycamore:Source'}
-DEFAULT_SINKS = {':agents:Sink', ':cycamore:Sink'}
+        self.archetypes = {
+            "mine": {":cycamore:Source"}, #
+            "conversion" : {":cycamore:Storage"}, #
+            "enrichment": {":cycamore:Enrichment"},
+            "fuel_fab" : {":cycamore:FuelFab"},
+            "fuel_fab:uo2": {":cycamore:FuelFab"}, #not the correct archetype currently possibly
+            "fuel_fab:triso": {":cycamore:FuelFab"},
+            "fuel_fab:mox": {":cycamore:FuelFab"},
+            "reactor": {":cycamore:Reactor"},
+            "reactor:fr": {":cycamore:Reactor"},
+            "reactor:lwr": {":cycamore:Reactor"},
+            "reactor:hwr": {":cycamore:Reactor"},
+            "reactor:htgr": {":cycamore:Reactor"},
+            "reactor:rbmk": {":cycamore:Reactor"},
+            "reactor:pb": {":cycamore:Reactor"},
+            "storage": {":cycamore:Storage"}, #
+            "storage:wet": {":cycamore:Storage"}, #
+            "storage:dry": {":cycamore:Storage"}, #
+            "storage:interim": {":cycamore:Storage"}, #
+            "separations": {":cycamore:Separations"},
+            "repository": {":cycamore:Sink"} #
+            }
 
-NICHE_ARCHETYPES = {
-    "mine": {":cycamore:Source"}, #
-    "conversion" : {":cycamore:Storage"}, #
-    "enrichment": {":cycamore:Enrichment"},
-    "fuel_fab" : {":cycamore:FuelFab"},
-    "fuel_fab:uo2": {":cycamore:FuelFab"}, #not the correct archetype currently possibly
-    "fuel_fab:triso": {":cycamore:FuelFab"},
-    "fuel_fab:mox": {":cycamore:FuelFab"},
-    "reactor": {":cycamore:Reactor"},
-    "reactor:fr": {":cycamore:Reactor"},
-    "reactor:lwr": {":cycamore:Reactor"},
-    "reactor:hwr": {":cycamore:Reactor"},
-    "reactor:htgr": {":cycamore:Reactor"},
-    "reactor:rbmk": {":cycamore:Reactor"},
-    "reactor:pb": {":cycamore:Reactor"},
-    "storage": {":cycamore:Storage"}, #
-    "storage:wet": {":cycamore:Storage"}, #
-    "storage:dry": {":cycamore:Storage"}, #
-    "storage:interim": {":cycamore:Storage"}, #
-    "separations": {":cycamore:Separations"},
-    "repository": {":cycamore:Sink"} #
-    }
+        self.special_calls = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
+            (":cycamore:Separations", "streams"): sa.sep_streams,
+            (":cycamore:Separations", "leftover_commod"): sa.sep_leftover,
+            (":cycamore:FuelFab", "fill_commods"): sa.ff_fill,
+            (":cycamore:FuelFab", "fill_recipe"): sa.ff_fill_recipe,
+            (":cycamore:Reactor", "recipe_change_in"): sa.skip,
+            (":cycamore:Reactor", "recipe_change_out"): sa.skip,
+            (":cycamore:Reactor", "recipe_change_in"): sa.skip,
+            (":cycamore:Reactor", "pref_change_commods"): sa.skip,
+            (":cycamore:Reactor", "recipe_change_commods"): sa.skip,
+            }
 
-SPECIAL_CALLS = {(":cycamore:Enrichment", "tails_commod"): sa.enrich_tails,
-    (":cycamore:Separations", "streams"): sa.sep_streams,
-    (":cycamore:Separations", "leftover_commod"): sa.sep_leftover,
-    (":cycamore:FuelFab", "fill_commods"): sa.ff_fill,
-    (":cycamore:FuelFab", "fill_recipe"): sa.ff_fill_recipe,
-    (":cycamore:Reactor", "recipe_change_in"): sa.skip,
-    (":cycamore:Reactor", "recipe_change_out"): sa.skip,
-    (":cycamore:Reactor", "recipe_change_in"): sa.skip,
-    (":cycamore:Reactor", "pref_change_commods"): sa.skip,
-    (":cycamore:Reactor", "recipe_change_commods"): sa.skip,
-    }
-
-ANNOTATIONS = {}
+        self.annotations = {}
+        
+        # Check for specifications
+        if 'niche_links' in self.spec:
+            self.niche_links = self.spec['niche_links']
+        if 'archetypes' in self.spec:
+            self.archetypes = self.spec['archetypes']
+        if 'commodities' in self.spec:
+            self.commodities = self.spec['commodities']
+        if 'recipes' in self.spec:
+            self.recipes = self.spec['recipes']
+            
+                
 
 @lazyobject
 def CYCLUS_EXECUTABLE():
@@ -150,11 +168,13 @@ def CYCLUS_ENV():
     return env
 
 
-def random_niches(max_niches, choice="mine", niches=None):
+def random_niches(sim_spec, max_niches, choice="mine", niches=None):
     """Generates a randomized list of niches of the nuclear fuel cycle.
 
     Parameters
     ----------
+        sim_spec : SimSpec
+            Specification for simulation generation
         max_niches : int
             The maximum number of niches desired by the user, the total number
             of generated niches does not have to reach this number.
@@ -177,15 +197,15 @@ def random_niches(max_niches, choice="mine", niches=None):
     if max_niches == 1:
         return niches
     else:
-        choice = random.sample(T[choice], 1)[0]
+        choice = random.sample(sim_spec.niche_links[choice], 1)[0]
         if choice is None:
             return niches
-        return random_niches(max_niches-1, choice, niches)
+        return random_niches(sim_spec, max_niches-1, choice, niches)
 
 def choose_control():
     """This program will choose the control scheme at random for a cyclus
     input file in JSON
-
+    
     Returns
     -------
         control : dict
@@ -209,10 +229,10 @@ def choose_control():
 
     return control
 
-def up_hierarchy(key):
+def up_hierarchy(sim_spec, key):
     # If we have it, immediately return
-    if key in COMMODITIES:
-        return COMMODITIES[key]
+    if key in sim_spec.commodities:
+        return sim_spec.commodities[key]
     # If the key contains a colon, we may be able to provide a more basic form
     if ":" in key[0]:
         keyfrom, _, _ = key[0].rpartition(":")
@@ -227,22 +247,24 @@ def up_hierarchy(key):
         return None
     else:
         if (keyfrom, key[1]) != key:
-            commod = up_hierarchy((keyfrom, key[1]))
+            commod = up_hierarchy(sim_spec, (keyfrom, key[1]))
             if commod is not None:
                 return commod
         if (key[0], keyto) != key:
-            commod = up_hierarchy((key[0], keyto))
+            commod = up_hierarchy(sim_spec, (key[0], keyto))
             if commod is not None:
                 return commod
-        commod = up_hierarchy((keyfrom, keyto))
+        commod = up_hierarchy(sim_spec, (keyfrom, keyto))
         return commod
 
 
-def choose_commodity(keyfrom, keyto, unique_commods):
+def choose_commodity(sim_spec, keyfrom, keyto, unique_commods):
     """Determine commodity based on a from/to pairs.
 
     Parameters
     ----------
+    sim_spec : SimSpec
+            Specification for simulation generation
     keyfrom : str
         Origin niche name.
     keyto : str
@@ -255,7 +277,7 @@ def choose_commodity(keyfrom, keyto, unique_commods):
     commod_name : str
         A unique commodity name.
     """
-    commod = orig_commod = up_hierarchy((keyfrom, keyto))
+    commod = orig_commod = up_hierarchy(sim_spec, (keyfrom, keyto))
     if commod is None:
         return None
     n = 1
@@ -267,11 +289,13 @@ def choose_commodity(keyfrom, keyto, unique_commods):
     return commod_name
 
 
-def choose_commodities(niches):
+def choose_commodities(sim_spec, niches):
     """Creates list of commodities individually chosen by the choose_commodity function
 
     Parameters
     ----------
+    sim_spec : SimSpec
+            Specification for simulation generation
     niches : list
         List of sequential niches returned from choose_niches.py
 
@@ -284,17 +308,19 @@ def choose_commodities(niches):
     commods = []
     unique_commods = set()
     for keyfrom, keyto in zip(niches[:-1], niches[1:]):
-        commod = choose_commodity(keyfrom, keyto, unique_commods)
+        commod = choose_commodity(sim_spec, keyfrom, keyto, unique_commods)
         if commod is None:
             continue
         commods.append(commod)
     return commods
 
-def choose_recipes(commods):
+def choose_recipes(sim_spec, commods):
     """Chooses the specific recipe for each commodity in the commods list
 
     Parameters
     ----------
+        sim_spec : SimSpec
+            Specification for simulation generation
         commods : list
             List of in and out commodities to be added to the archetypes in the
             input file.
@@ -308,12 +334,12 @@ def choose_recipes(commods):
     recipes = []
     for commod in commods:
         recipe_dict = {}
-        if commod not in NUCLIDES:
+        if commod not in sim_spec.recipes:
             recipes.append(None)
             continue
         recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
-        nucs = recipe_dict['nuclide'] = deepcopy(NUCLIDES[commod])
+        nucs = recipe_dict['nuclide'] = deepcopy(sim_spec.recipes[commod])
         none_i = None
         total = 0.0
         u = random.uniform(0.0, 1.0)
@@ -334,11 +360,13 @@ def choose_recipes(commods):
 def generate_nuclide(commod):
     pass
 
-def choose_archetypes(niches):
+def choose_archetypes(sim_spec, niches):
     """Determines the correct archetype from cyclus or cycamore based on the niche
 
     Parameters
     ----------
+        sim_spec : SimSpec
+            Specification for simulation generation
         niches : list
             List of sequential niches returned from choose_niches.py
 
@@ -347,13 +375,13 @@ def choose_archetypes(niches):
         arches : list
             List of assigned archetypes. Same list length as niches.
     """
-    arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
+    arches = [random.choice(tuple(sim_spec.archetypes[niches[0]] | sim_spec.default_sources))]
     for niche in niches[1:-1]:
-        a = random.choice(tuple(NICHE_ARCHETYPES[niche]))
+        a = random.choice(tuple(sim_spec.archetypes[niche]))
         arches.append(a)
     if len(niches) > 1:
         #used to be NICHE_ARCHETYPES[niches][-1]
-        a = random.choice(tuple(NICHE_ARCHETYPES[niches[-1]] | DEFAULT_SINKS))
+        a = random.choice(tuple(sim_spec.archetypes[niches[-1]] | sim_spec.default_sinks))
         arches.append(a)
     return arches
 
@@ -385,11 +413,13 @@ def archetype_block(arches):
         block["spec"].append(spec)
     return block
 
-def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
+def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe):
     """Pulls in the metadata for each archetype
 
         Parameters
         ----------
+            sim_spec : SimSpec
+                Specification for simulation generation
             arche : str
                 The name of the archetype that is being generated.
             in_commod : str
@@ -404,15 +434,15 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
             config : dict
                 The JSON formatted archetype dictionary to be put in the input file
     """
-    if arche not in ANNOTATIONS:
+    if arche not in sim_spec.annotations:
         anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
                                        env=CYCLUS_ENV)
         try:
             anno = json.loads(anno.decode())
         except json.decoder.JSONDecodeError:
             raise RuntimeError("JSON could not decode annotation " + anno.decode())
-        ANNOTATIONS[arche] = anno
-    annotations = ANNOTATIONS[arche]
+        sim_spec.annotations[arche] = anno
+    annotations = sim_spec.annotations[arche]
     config = []
     vals = {}
     #dereference aliases
@@ -421,8 +451,8 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
             annotations["vars"][name] = annotations["vars"].pop(var)
     #fill in and randomly generate state variables
     for name, var in annotations["vars"].items():
-        if (arche, name) in SPECIAL_CALLS:
-            temp = SPECIAL_CALLS[(arche, name)](name, vals, out_commod)
+        if (arche, name) in sim_spec.special_calls:
+            temp = sim_spec.special_calls[(arche, name)](name, vals, out_commod)
             if temp != 0:
                 config.append(temp)
             continue
@@ -494,7 +524,7 @@ def generate_region_inst(sim):
         entries.append(entry)
 
 
-def generate(max_num_niches=10, simspec=None):
+def generate(max_num_niches=10, sim_spec=None):
     """Creates a random Cyclus simulation input file dict.
 
     Parameters
@@ -509,21 +539,22 @@ def generate(max_num_niches=10, simspec=None):
         as a Cyclus input file.
     """
     # intial structure
+    #pprint(sim_spec)
     inp = {"simulation": {}}
     sim = inp["simulation"]
     sim["control"] = choose_control()
     # choose niches and archtypes
-    niches = random_niches(max_niches=max_num_niches)
-    arches = choose_archetypes(niches)
-    commods = choose_commodities(niches)
-    recipes = choose_recipes(commods)
+    niches = random_niches(sim_spec, max_niches=max_num_niches)
+    arches = choose_archetypes(sim_spec, niches)
+    commods = choose_commodities(sim_spec, niches)
+    recipes = choose_recipes(sim_spec, commods)
     if len(recipes) == 1:
         recipes = recipes[0]
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
     protos = {}
-    protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
+    protos[arches[0]] = generate_archetype(sim_spec, arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
                                             recipes[:-1], recipes[1:]):

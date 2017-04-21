@@ -17,6 +17,7 @@ def main(args=None):
     p.add_argument('-i', dest='i', type=str, help='name of input file', default=None)
     ns = p.parse_args(args=args)
     
+    simspec = {}
     if ns.i is not None:
         try:
             ext = os.path.splitext(ns.i)[1]
@@ -33,13 +34,16 @@ def main(args=None):
                     py_str = pf.read()
                     simspec = eval(py_str)
                     print(simspec) 
-            except:
-                pass
+        except:
+            pass
+            
+    spec = generate.SimSpec(simspec)
+            
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
-                input_file = generate.generate()
+                input_file = generate.generate(sim_spec=spec)
             except Exception:
                 continue
             jsonfile = str(i) + '.json'
@@ -47,7 +51,7 @@ def main(args=None):
                 json.dump(input_file, jf, indent=4)
             i += 1
     else:
-        input_file = generate.generate()
+        input_file = generate.generate(sim_spec=spec)
         #pprint(input_file)
 
 
