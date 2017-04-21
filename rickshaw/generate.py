@@ -155,21 +155,21 @@ def random_niches(max_niches, choice="mine", niches=None):
 
     Parameters
     ----------
-        max_niches : int
-            The maximum number of niches desired by the user, the total number
-            of generated niches does not have to reach this number.
-        choice : str
-            If desired the starting point of the list of niches can be set.
-            Preset to the natural starting point of "mine"
-        niches : None
-            This will be set to be a list at the beginning of the function and
-            will contain the chosen niches.
+    max_niches : int
+        The maximum number of niches desired by the user, the total number
+        of generated niches does not have to reach this number.
+    choice : str
+        If desired the starting point of the list of niches can be set.
+        Preset to the natural starting point of "mine"
+    niches : None
+        This will be set to be a list at the beginning of the function and
+        will contain the chosen niches.
 
     Returns
     -------
-        niches : list
-            List of connected niches that model the steps of the full nuclear
-            fuel cycle.
+    niches : list
+        List of connected niches that model the steps of the full nuclear
+        fuel cycle.
     """
     if niches is None:
         niches = []
@@ -339,13 +339,13 @@ def choose_archetypes(niches):
 
     Parameters
     ----------
-        niches : list
-            List of sequential niches returned from choose_niches.py
+    niches : list
+        List of sequential niches returned from choose_niches.py
 
     Returns
     -------
-        arches : list
-            List of assigned archetypes. Same list length as niches.
+    arches : list
+        List of assigned archetypes. Same list length as niches.
     """
     arches = [random.choice(tuple(NICHE_ARCHETYPES[niches[0]] | DEFAULT_SOURCES))]
     for niche in niches[1:-1]:
@@ -388,21 +388,21 @@ def archetype_block(arches):
 def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
     """Pulls in the metadata for each archetype
 
-        Parameters
-        ----------
-            arche : str
-                The name of the archetype that is being generated.
-            in_commod : str
-                The incommodity received by the specific archetype as
-                determined by choose_commodities.py
-            out_commod : str
-                The outcommodity produced by the specific archetype as
-                determined by choose_commodities.py
+    Parameters
+    ----------
+    arche : str
+        The name of the archetype that is being generated.
+    in_commod : str
+        The incommodity received by the specific archetype as
+        determined by choose_commodities.py
+    out_commod : str
+        The outcommodity produced by the specific archetype as
+        determined by choose_commodities.py
 
-        Returns
-        -------
-            config : dict
-                The JSON formatted archetype dictionary to be put in the input file
+    Returns
+    -------
+    config : dict
+        The JSON formatted archetype dictionary to be put in the input file
     """
     if arche not in ANNOTATIONS:
         anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
