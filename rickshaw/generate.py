@@ -494,7 +494,7 @@ def generate_region_inst(sim):
         entries.append(entry)
 
 
-def generate(max_num_niches=10):
+def generate(max_num_niches=10, simspec=None):
     """Creates a random Cyclus simulation input file dict.
 
     Parameters
