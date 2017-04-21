@@ -18,6 +18,7 @@ from rickshaw.lazyasd import lazyobject
 class SimSpec(object):
     def __init__(self, spec={}):
         self.spec = spec
+        self.customized = False     
         self.niche_links = {
             "mine" : {"enrichment", "reactor:hwr"},
             "enrichment" : {"fuel_fab:uo2", "fuel_fab:triso", "reactor:hwr"},
@@ -126,6 +127,7 @@ class SimSpec(object):
         # Check for specifications
         if 'niche_links' in self.spec:
             self.niche_links = self.spec['niche_links']
+            self.customized = True
         if 'archetypes' in self.spec:
             self.archetypes = self.spec['archetypes']
         if 'commodities' in self.spec:
@@ -375,13 +377,20 @@ def choose_archetypes(sim_spec, niches):
         arches : list
             List of assigned archetypes. Same list length as niches.
     """
-    arches = [random.choice(tuple(sim_spec.archetypes[niches[0]] | sim_spec.default_sources))]
+    print(sim_spec.customized)
+    if sim_spec.customized:
+        arches = [random.choice(tuple(sim_spec.archetypes[niches[0]]))]
+    else:
+        arches = [random.choice(tuple(sim_spec.archetypes[niches[0]] | sim_spec.default_sources))]
     for niche in niches[1:-1]:
         a = random.choice(tuple(sim_spec.archetypes[niche]))
         arches.append(a)
     if len(niches) > 1:
         #used to be NICHE_ARCHETYPES[niches][-1]
-        a = random.choice(tuple(sim_spec.archetypes[niches[-1]] | sim_spec.default_sinks))
+        if sim_spec.customized:
+            a = random.choice(tuple(sim_spec.archetypes[niches[-1]]))
+        else:
+            a = random.choice(tuple(sim_spec.archetypes[niches[-1]] | sim_spec.default_sinks))
         arches.append(a)
     return arches
 

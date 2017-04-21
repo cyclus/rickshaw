@@ -3,8 +3,8 @@
     "niche_links": {"mine": ["enrichment"], 
                 "enrichment": ["fuel_fab:uo2", "reactor:hwr"], 
                 "fuel_fab:uo2": ["reactor:lwr"], 
-                "reactor:hwr": ["repository"] ,
-                "reactor:lwr": ["repository"]
+                "reactor:hwr": ["repository"],
+                "reactor:lwr": ["repository"],
                 "repository": [null]
               },
     "archetypes": {"mine": [":cycamore:Source"],
