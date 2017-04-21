@@ -1,6 +1,6 @@
 {
     'simulation': {},
-    'niches': {"mine": {"enrichment"}, 
+    'niche_links': {"mine": {"enrichment"}, 
                 "enrichment": {"fuel_fab:uo2", "reactor:hwr"}, 
                 "fuel_fab:uo2": {"reactor:lwr"}, 
                 "reactor:hwr": {"repository"} ,
