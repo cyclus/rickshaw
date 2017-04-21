@@ -24,8 +24,8 @@ def main(args=None):
             if ext == '.json':
                 with open(ns.i) as jf:
                     simspec = json.load(jf)
-                    for k,v in simspec['niches'].items():
-                        simspec['niches'][k] = set(v)
+                    for k,v in simspec['niche_links'].items():
+                        simspec['niche_links'][k] = set(v)
                     for k,v in simspec['archetypes'].items():
                         simspec['archetypes'][k] = set(v)
                     print(simspec) 
