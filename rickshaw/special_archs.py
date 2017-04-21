@@ -1,9 +1,24 @@
 """Special archetypes provided as necessary to the Rickshaw input file. 
-Used for fuel cycle niches that have more than just one incommodity and outcommodity
+Used for fuel cycle niches that have more than just one incommodity and outcommodity.
 """
 import random 
 
 def generate_throwsink(commod, name):
+    """Generic sink for outcommodities that do not become the
+    incommodity of the following archetype.
+    
+    Parameters
+    ----------
+    commod : String
+        Name of the commidity that the throwsink is receiving.
+    name : String
+        Name for the archetype in the input file.
+        
+    Returns
+    -------
+    config : Dictionary
+        Dictionary formatted to represent the archetype in the input file.
+    """
     vals = {}
     vals["capacity"] = 1e299
     vals["in_commods"] = {"val": [commod]} 
@@ -11,6 +26,20 @@ def generate_throwsink(commod, name):
     return config
 
 def generate_throwsource(commod, name):
+    """Generic source for commidities.
+    
+    Parameters
+    ----------
+    commod : String
+        Name of the commidity that the throwsource is generating.
+    name : String
+        Name for the archetype in the input file.
+        
+    Returns
+    -------
+    config : Dictionary
+        Dictionary formatted to represent the archetype in the input file.
+    """
     vals = {}
     vals["capacity"] = 1e200
     vals["commod"] = commod
@@ -19,6 +48,20 @@ def generate_throwsource(commod, name):
     return config
 
 def enrich_tails(name, vals, commod):
+    """Generates a sink for the tails commodity stream. 
+    
+    Parameters
+    ----------
+    commod : String
+        The commod name will be tailcommd in this case.
+    name : String
+        Name for the archetype in the input file.
+        
+    Returns
+    -------
+    sink : Dictionary
+        Dictionary formatted to represent the archetype in the input file.
+    """
     vals[name] = 'tailcommod'
     sink = generate_throwsink('tailcommod', 'enrichsink')
     return sink
