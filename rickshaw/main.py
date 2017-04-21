@@ -19,11 +19,16 @@ def main(args=None):
     
     if ns.i is not None:
         try:
+            print(ns.i)
             ext = os.path.splitext(ns.i)[1]
             if ext == '.json':
                 with open(ns.i) as jf:
                     simspec = json.load(jf)
-                    print(simspec)  
+                    print(simspec) 
+            elif ext == '.py':
+                with open(ns.i) as pf:
+                    simspec = json.load(pf)
+                    print(simspec) 
         except:
             pass 
     
