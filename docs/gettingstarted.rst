@@ -22,17 +22,17 @@ First, make sure you have the following dependencies installed for Rickshaw to w
 
 
 1. Cloning the Repo
-----------------
+-------------------
 Run the following from the command line:
 
 ``git clone https://github.com/ergs/rickshaw.git``
 
 2. Installing Rickshaw
--------------------
+----------------------
 From the top-level ``rickshaw`` directory, run ``python setup.py install``
 
 3. Writing a Specification File (optional)
----------------------------------------
+------------------------------------------
 Specification files are Rickshaw input files in which you can define constraints 
 for generation. For instance, you have the ability to restrict Rickshaw to a subset 
 of Archetypes, Niches, Recipes, etc.
