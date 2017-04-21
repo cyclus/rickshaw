@@ -63,11 +63,11 @@ class SimSpec(object):
             ("separations", "repository"): "separated_waste"
         }
 
-        self.recipes = {'natural_uranium': [{'id': 'U235', 'comp': 0.00711},
-                                            {'id': 'U238', 'comp': 0.99289}],
-                        'low_enriched_uranium': [{'id': 'U235', 'comp': [0.03, 0.05]},
-                                             {'id': 'U238', 'comp': None}],
-                        'used_fuel': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
+        self.recipes = {'natural_uranium': {'nuclide': [{'id': 'U235', 'comp': 0.00711},
+                                            {'id': 'U238', 'comp': 0.99289}]},
+                        'low_enriched_uranium': {'nuclide': [{'id': 'U235', 'comp': [0.03, 0.05]},
+                                             {'id': 'U238', 'comp': None}]},
+                        'used_fuel': {'nuclide': [{'id': 'U235', 'comp': [0.00650, 0.00720]},
                                       {'id': 'U238', 'comp': None},
                                       {'id': 'Pu238', 'comp': [0.000235, 0.000275]},
                                       {'id': 'Pu239', 'comp': [0.00535, 0.00595]},
@@ -77,9 +77,8 @@ class SimSpec(object):
                                       {'id': 'Am241', 'comp': [0.0000545, 0.0000565]},
                                       {'id': 'Am243', 'comp': [0.000166, 0.000186]},
                                       {'id': 'Cm242', 'comp': [0.0000223, 0.0000243]},
-                                      {'id': 'Cm244', 'comp': [0.0000696, 0.0000716]}]
+                                      {'id': 'Cm244', 'comp': [0.0000696, 0.0000716]}]}
                        }
-
         self.recipes['natural_uranium_fuel'] = self.recipes['natural_uranium']
         self.recipes['fresh_uox'] = self.recipes['fresh_triso'] = self.recipes['fresh_fuel'] = self.recipes['low_enriched_uranium']
         self.recipes['stored_used_fuel'] = self.recipes['used_uox'] = self.recipes['used_triso'] = self.recipes['used_fuel']
@@ -126,19 +125,16 @@ class SimSpec(object):
         
         # Check for specifications
         if 'niche_links' in self.spec:
-            print('hey')
             self.niche_links = self.spec['niche_links']
             self.customized = True
         if 'archetypes' in self.spec:
             self.archetypes = self.spec['archetypes']
         if 'commodities' in self.spec:
             self.commodities = self.spec['commodities']
-        print(self.spec['simulation'])
         if 'recipe' in self.spec['simulation']:
             self.recipes = {}
             for recipe in self.spec['simulation']['recipe']:
                 self.recipes[recipe['name']] = recipe
-            print(self.recipes)
 
 @lazyobject
 def CYCLUS_EXECUTABLE():
@@ -344,8 +340,7 @@ def choose_recipes(sim_spec, commods):
             continue
         recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
-        print(sim_spec.recipes[commod])
-        nucs = recipe_dict['nuclide'] = deepcopy(sim_spec.recipes[commod])
+        nucs = recipe_dict['nuclide'] = deepcopy(sim_spec.recipes[commod]['nuclide'])
         none_i = None
         total = 0.0
         u = random.uniform(0.0, 1.0)

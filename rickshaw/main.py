@@ -28,12 +28,10 @@ def main(args=None):
                         simspec['niche_links'][k] = set(v)
                     for k,v in simspec['archetypes'].items():
                         simspec['archetypes'][k] = set(v)
-                    print(simspec) 
             elif ext == '.py':
                 with open(ns.i) as pf:
                     py_str = pf.read()
                     simspec = eval(py_str)
-                    print(simspec) 
         except:
             pass
             

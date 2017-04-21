@@ -1,7 +1,8 @@
 {"simulation": 
     {'recipe': [{'basis': 'mass',
                  'name': 'commod_recipe',
-                 'nuclide': [{'comp': int('1'), 'id': int('010010000')}]}]},
+                 'nuclide': [{'comp': [0.5, 1.0], 'id': int('010010000')},
+                            {'comp': None, 'id': int('010010000')}]}]},
                                           
  "niche_links": {"mine": {"repository"},
                     "repository": [None]},
