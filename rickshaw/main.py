@@ -19,19 +19,22 @@ def main(args=None):
     
     if ns.i is not None:
         try:
-            print(ns.i)
             ext = os.path.splitext(ns.i)[1]
             if ext == '.json':
                 with open(ns.i) as jf:
                     simspec = json.load(jf)
+                    for k,v in simspec['niches'].items():
+                        simspec['niches'][k] = set(v)
+                    for k,v in simspec['archetypes'].items():
+                        simspec['archetypes'][k] = set(v)
                     print(simspec) 
             elif ext == '.py':
                 with open(ns.i) as pf:
-                    simspec = json.load(pf)
+                    py_str = pf.read()
+                    simspec = eval(py_str)
                     print(simspec) 
-        except:
-            pass 
-    
+            except:
+                pass
     if ns.n is not None:
         i = 0
         while i < ns.n:
@@ -45,7 +48,7 @@ def main(args=None):
             i += 1
     else:
         input_file = generate.generate()
-        pprint(input_file)
+        #pprint(input_file)
 
 
 if __name__ == '__main__':

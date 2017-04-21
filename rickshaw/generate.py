@@ -451,16 +451,16 @@ def generate_archetype(arche, in_commod, out_commod, in_recipe, out_recipe):
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
         elif uitype == "inrecipe" and "default" not in var:
-            print(arche, " ", var )
+            #print(arche, " ", var )
             vals[name] = in_recipe["name"]
         elif uitype == ["oneormore", "inrecipe"] and "default" not in var:
-            print(arche, " ", var )
+            #print(arche, " ", var )
             vals[name] = {"val" : [in_recipe["name"]]}
         elif uitype == "outrecipe" and "default" not in var:
-            print(arche, " ", var )
+            #print(arche, " ", var )
             vals[name] = out_recipe["name"]
         elif uitype == ["oneormore", "outrecipe"] and "default" not in var:
-            print(arche, " ", var )
+            #print(arche, " ", var )
             vals[name] = {"val" : [out_recipe["name"]]}
         elif var_type == "double" or var_type == "float":
             vals[name] = var.get("default", 0.0)
@@ -522,9 +522,6 @@ def generate(max_num_niches=10, simspec=None):
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
-    print(arches)
-    print(commods)
-    print("-"*10)
     protos = {}
     protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
