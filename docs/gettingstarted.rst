@@ -80,27 +80,28 @@ At this time, only the ``recipe`` block placed here is read by Rickshaw.
 
 Running Rickshaw
 ----------------
-
 After following the steps above, you can run Rickshaw via the ``rickshaw`` command from the command line.
 With no flags or options set, Rickshaw will produce one output file with no constraining specification.
 
-To specify the number of input files to generate, use ``rickshaw -n [number of runs]``. 
-Each file will be saved in the format ``x.json`` where ``x`` is in the range [0, n-1].
+- To specify the number of input files to generate, use ``rickshaw -n [number of runs]``. 
+  Each file will be saved in the format ``x.json`` where ``x`` is in the range [0, n-1].
 
-To load a specification file, use ``rickshaw -i [file_name]``
+- To load a specification file, use ``rickshaw -i [file_name]``
 
-To run Rickshaw in verbose mode, use ``rickshaw -v``. 
-This will pretty print every generated input file.
+- To run Rickshaw in verbose mode, use ``rickshaw -v``. 
+  This will pretty print every generated input file.
 
-To run Rickshaw in generate-and-run mode, you can use either: 
+- To run Rickshaw in generate-and-run mode, you can use either: 
 
-- ``rickshaw -rh`` (for HDF5 output) 
-- ``rickshaw -rs`` (for SQLite output)
-- **or both**
+  - ``rickshaw -rh`` (for HDF5 output) 
+  - ``rickshaw -rs`` (for SQLite output)
+  - **or both**
 
-All generated input files will immediately be run by Cyclus to the output file format(s) specified.
+  All generated input files will immediately be run by Cyclus to the output file format(s) specified.
 
-*Cool note!* The above options can be mixed to achieve your desired behavior, a la:
+Cool note!
+----------
+The above options can be mixed to achieve your desired behavior, a la:
 
 ``rickshaw -n 10 -i test.py -v -rh -rs``
 
