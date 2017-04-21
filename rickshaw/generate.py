@@ -131,10 +131,11 @@ class SimSpec(object):
             self.archetypes = self.spec['archetypes']
         if 'commodities' in self.spec:
             self.commodities = self.spec['commodities']
-        if 'recipe' in self.spec['simulation']:
-            self.recipes = {}
-            for recipe in self.spec['simulation']['recipe']:
-                self.recipes[recipe['name']] = recipe
+        if 'simulation' in self.spec:        
+            if 'recipe' in self.spec['simulation']:
+                self.recipes = {}
+                for recipe in self.spec['simulation']['recipe']:
+                    self.recipes[recipe['name']] = recipe
 
 @lazyobject
 def CYCLUS_EXECUTABLE():
@@ -345,7 +346,6 @@ def choose_recipes(sim_spec, commods):
         total = 0.0
         u = random.uniform(0.0, 1.0)
         for i, nuc in enumerate(nucs):
-            print(i, nuc)
             comp = nuc['comp']
             if isinstance(comp, float):
                 total += comp
@@ -377,7 +377,6 @@ def choose_archetypes(sim_spec, niches):
         arches : list
             List of assigned archetypes. Same list length as niches.
     """
-    print(sim_spec.customized)
     if sim_spec.customized:
         arches = [random.choice(tuple(sim_spec.archetypes[niches[0]]))]
     else:
@@ -556,10 +555,7 @@ def generate(max_num_niches=10, sim_spec=None):
     niches = random_niches(sim_spec, max_niches=max_num_niches)
     arches = choose_archetypes(sim_spec, niches)
     commods = choose_commodities(sim_spec, niches)
-    print("arches", arches)
-    print("commods", commods)
     recipes = choose_recipes(sim_spec, commods)
-    print("recipes", recipes)
     #if len(recipes) == 1:
     #    recipes = recipes[0]
     sim["archetypes"] = archetype_block(arches)
