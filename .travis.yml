@@ -27,7 +27,7 @@ install:
 
 script:
     - set -e
-    - # Command to build your docs
+    - cd docs && make html && cd ..
     - pip install doctr
     - doctr deploy --deploy-repo ergs/rickshaw-docs .
 
