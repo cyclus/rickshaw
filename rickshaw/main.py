@@ -4,6 +4,7 @@ try:
 except ImportError:
     from pprint import pprint
 import os
+import subprocess
 import json
 from argparse import ArgumentParser
 
@@ -15,8 +16,10 @@ def main(args=None):
     p.add_argument('-n', dest='n', type=int, help='number of files to generate',
                    default=None)
     p.add_argument('-i', dest='i', type=str, help='name of input file', default=None)
+    p.add_argument('-rs', dest='rs', action="store_true", help='runs the simulations after they have been generated')
+    p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
+    p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     ns = p.parse_args(args=args)
-    
     simspec = {}
     if ns.i is not None:
         try:
@@ -42,6 +45,8 @@ def main(args=None):
         while i < ns.n:
             try:
                 input_file = generate.generate(sim_spec=spec)
+                if ns.v:
+                    pprint(input_file)
             except Exception:
                 continue
             jsonfile = str(i) + '.json'
@@ -50,7 +55,19 @@ def main(args=None):
             i += 1
     else:
         input_file = generate.generate(sim_spec=spec)
-        pprint(input_file)
+        if ns.v:
+            pprint(input_file)
+        jsonfile = 'rickshaw' + '.json'
+        with open(jsonfile, 'w') as jf:
+            json.dump(input_file, jf, indent=4)        
+    if ns.rs:
+        p = os.popen('ls *.json').readlines()
+        for i in range(len(p)):            
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.sqlite'])
+    if ns.rh:
+        p = os.popen('ls *.json').readlines()
+        for i in range(len(p)):            
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.h5'])
 
 
 if __name__ == '__main__':
