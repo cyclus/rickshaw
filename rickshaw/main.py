@@ -3,6 +3,7 @@ try:
     from pprintpp import pprint
 except ImportError:
     from pprint import pprint
+import os
 import json
 from argparse import ArgumentParser
 
@@ -13,8 +14,19 @@ def main(args=None):
     p = ArgumentParser('rickshaw')
     p.add_argument('-n', dest='n', type=int, help='number of files to generate',
                    default=None)
+    p.add_argument('-i', dest='i', type=str, help='name of input file', default=None)
     ns = p.parse_args(args=args)
-
+    
+    if ns.i is not None:
+        try:
+            ext = os.path.splitext(ns.i)[1]
+            if ext == '.json':
+                with open(ns.i) as jf:
+                    simspec = json.load(jf)
+                    print(simspec)  
+        except:
+            pass 
+    
     if ns.n is not None:
         i = 0
         while i < ns.n:
