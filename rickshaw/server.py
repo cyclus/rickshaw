@@ -11,16 +11,16 @@ from argparse import ArgumentParser
 import docker
 import websockets
 
-from rickshaw import choose_archetypes
 from rickshaw.docker_scheduler import DockerScheduler
-from rickshaw.generate import generate
+from rickshaw.server_scheduler import ServerScheduler
+import rickshaw.generate as generate
 
 
 SEND_QUEUE = asyncio.Queue()
 
 def all_archetypes():
-    arches = choose_archetypes.DEFAULT_SOURCES | choose_archetypes.DEFAULT_SINKS
-    for v in choose_archetypes.NICHE_ARCHETYPES.values():
+    arches = generate.DEFAULT_SOURCES | generate.DEFAULT_SINKS
+    for v in generate.NICHE_ARCHETYPES.values():
         arches |= v
     return arches
 
@@ -28,12 +28,12 @@ def all_archetypes():
 async def gather_annotations(scheduler, frequency=0.001):
     """The basic consumer of actions."""
     all_arches = all_archetypes()
-    curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+    curr_arches = set(generate.ANNOTATIONS.keys())
     staged_tasks = []
     while curr_arches < all_arches:
         if SEND_QUEUE.qsize() > 0:
             await asyncio.sleep(min(frequency*1e3, 1.0))
-            curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+            curr_arches = set(generate.ANNOTATIONS.keys())
             continue
         for arche in all_arches - curr_arches:
             msg = {'event': 'agent_annotations', 'params': {'spec': arche}}
@@ -44,7 +44,7 @@ async def gather_annotations(scheduler, frequency=0.001):
             await asyncio.wait(staged_tasks)
             staged_tasks.clear()
         await asyncio.sleep(frequency)
-        curr_arches = set(choose_archetypes.ANNOTATIONS.keys())
+        curr_arches = set(generate.ANNOTATIONS.keys())
     await SEND_QUEUE.put('{"event": "shutdown", "params": {"when": "now"}}')
     scheduler.gathered_annotations = True
 
@@ -62,7 +62,7 @@ async def queue_message_action(message):
     if kind == 'agent_annotations':
         spec = params['spec']
         print('received agent annotations for ' + spec, file=sys.stderr)
-        choose_archetypes.ANNOTATIONS[spec] = event['data']
+        generate.ANNOTATIONS[spec] = event['data']
     else:
         print("ignoring received " + kind + " event", file=sys.stderr)
 
@@ -88,7 +88,7 @@ async def websocket_handler(websocket, scheduler):
             send_task.cancel()
 
 
-async def websocket_client(port, scheduler, frequency=0.001):
+async def websocket_client(port, scheduler, frequency=1.0):
     """Runs a websocket client on a host/port."""
     while not scheduler.cyclus_server_ready:
         await asyncio.sleep(frequency)
@@ -169,6 +169,8 @@ def make_parser():
                    help='port to run the server on')
     p.add_argument('-n', '--nthreads', type=int, dest='nthreads', default=4,
                    help='Maximum number of thread workers to run with.')
+    p.add_argument('-s', '--swarm', action='store_true', dest='swarm', default=False,
+                   help='Run the server in swarm mode.')
     return p
 
 
@@ -178,7 +180,12 @@ def main(args=None):
     # start up tasks
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=ns.nthreads)
     loop = asyncio.get_event_loop()
-    scheduler = DockerScheduler(debug=ns.debug)
+    if ns.swarm:
+        print('started in swarm mode')
+        scheduler = ServerScheduler(debug=ns.debug)
+    else:
+        print('started in docker mode')
+        scheduler = DockerScheduler(debug=ns.debug)
     if ns.debug:
         _start_debug(loop)
     print("serving rickshaw at http://{}:{}".format(ns.host, ns.port))

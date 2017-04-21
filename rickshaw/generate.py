@@ -522,9 +522,6 @@ def generate(max_num_niches=10, simspec=None):
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
-    print(arches)
-    print(commods)
-    print("-"*10)
     protos = {}
     protos[arches[0]] = generate_archetype(arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
