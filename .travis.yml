@@ -1,0 +1,9 @@
+script:
+    - set -e
+    - # Command to build your docs
+    - pip install doctr
+    - doctr deploy --deploy-repo ergs/rickshaw-docs .
+
+env:
+      global:
+        - secure: "1qQkq/Fa++W3WwbQE2zYdIEGOjfc4XZqxJ9cNozHtH2wavgSnkLnQNHjeKwtRHb4rXT1gs5N+Bl+itgkFLSkijAyinUOB3rCqy58zto/Ie2IoXpF25XeSzS7VU1uvlvvJgu0goPv88nq8OJ/Hy/qStt/U41LSluuenRPDtqI1hHbTm6vPeyM7v7c4NyuK5SAZpOzikAnugAEa5SLOKbfP7VtTclBxBO9R/6HpmfmjXCJ+6yTjHCLsDpWHyIoMr5UDELfsjl9O2oI7BxkUtK+tKFgVOvBeyavLGa/Ot7CvDQJ8e8058KqLN70A1OvyAjOI6+OBcFODejATH3NwuWeGD3408zHWK2Tr19ptXajUPfLyVnS4YOfTZvMtjZVnkOGP8GfP/fqIBiQZlqHq62jU4KvKR0aFkW++CqKSyXHbs/ydyCJyiXc8umLqeFx70ZkkZnCClo+m5V8UDfpCJ4dewqAPrKnEATpyYyt/vsXgOxd77pW70Jj/OSemDB3OLsgD+fagFA4dW+Zp+NvaTFsl3tDP/VfQ5y9P4TxE2Y6Z01wsOdxz28rzEC6Vqll5dihVNxx/Jyk0YoNHBiIVQkCTa9adDy3YPgFDGvj4C2OS5KRcdE/MIcaguiW36CnqXBx/qChoDrOaCdhoTciwe/Yz4D9+DTJDrNObiztNtcQSQ0="
