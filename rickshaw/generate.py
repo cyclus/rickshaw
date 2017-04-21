@@ -126,16 +126,19 @@ class SimSpec(object):
         
         # Check for specifications
         if 'niche_links' in self.spec:
+            print('hey')
             self.niche_links = self.spec['niche_links']
             self.customized = True
         if 'archetypes' in self.spec:
             self.archetypes = self.spec['archetypes']
         if 'commodities' in self.spec:
             self.commodities = self.spec['commodities']
-        if 'recipes' in self.spec:
-            self.recipes = self.spec['recipes']
-            
-                
+        print(self.spec['simulation'])
+        if 'recipe' in self.spec['simulation']:
+            self.recipes = {}
+            for recipe in self.spec['simulation']['recipe']:
+                self.recipes[recipe['name']] = recipe
+            print(self.recipes)
 
 @lazyobject
 def CYCLUS_EXECUTABLE():
@@ -341,11 +344,13 @@ def choose_recipes(sim_spec, commods):
             continue
         recipe_dict['name'] = commod
         recipe_dict['basis'] = 'mass'
+        print(sim_spec.recipes[commod])
         nucs = recipe_dict['nuclide'] = deepcopy(sim_spec.recipes[commod])
         none_i = None
         total = 0.0
         u = random.uniform(0.0, 1.0)
         for i, nuc in enumerate(nucs):
+            print(i, nuc)
             comp = nuc['comp']
             if isinstance(comp, float):
                 total += comp
