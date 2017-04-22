@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 try:
     from setuptools import setup
@@ -7,8 +8,11 @@ except ImportError:
     from distutils.core import setup
     HAVE_SETUPTOOLS = False
 
-
-VERSION = '0.0.1'
+localdir = os.path.dirname(__file__)
+sys.path.insert(0, localdir)
+import rickshaw
+VERSION = rickshaw.__version__
+del sys.path[0]
 
 setup_kwargs = {
     "version": VERSION,

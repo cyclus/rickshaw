@@ -10,11 +10,11 @@ except ImportError:
 from rickshaw.scheduler import Scheduler
 
 
-class DockerScheduler(Scheduler):
+class ServerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.from_env() 
+        self.client = docker.from_env()
         try:
             try_test = self.client.nodes.list()
         except:
@@ -23,8 +23,8 @@ class DockerScheduler(Scheduler):
                    'Remember to give this container/service access to the '+
                    'docker socket on the host machine with the following argument:\n '+
                    '-v /var/run/docker.sock:/var/run/docker.sock\n' +
-                   '***************************************************'*2)       
-        self.cyclus_container = None
+                   '***************************************************'*2)  
+        self.cyclus_service = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
             self.server_cmd = "--debug"
@@ -33,11 +33,9 @@ class DockerScheduler(Scheduler):
         self.cyclus_server_name = "rickshaw_metadata_server"
         self.cyclus_server_host = None
         self.cyclus_server_ready = False
-        self.gathered_annotations = False
-        self._have_swarm = False
         self._find_ncpu()
 
-    def _find_ncpu(self):        
+    def _find_ncpu(self):
         try:
             # get NCPUs for swarm
             ncpu = 0.0
@@ -45,7 +43,6 @@ class DockerScheduler(Scheduler):
                 ncpu += node.attrs['Description']['Resources']['NanoCPUs'] * 1e-9
             self._have_swarm = True
         except docker.errors.APIError:
-            print('except')
             # get NCPUs for local host
             ncpu = self.client.info()['NCPU']
             self._have_swarm = False
@@ -57,13 +54,8 @@ class DockerScheduler(Scheduler):
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_container = self.client.containers.run(self.server_tag,
-                                                                self.server_cmd,
-                                        ports={'4242/tcp': ('127.0.0.1', 4242)},
-                                                   name=self.cyclus_server_name,
-                                                         publish_all_ports=True,
-                                                                    detach=True)
-        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
+        cc = self.cyclus_service = self.client.services.create(self.server_tag)
+        host = self.client.networks.get('bridge').attrs['Services'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')
         else:
@@ -85,11 +77,11 @@ class DockerScheduler(Scheduler):
         """Obtains the current queue status and retuns the jobs that are scheduled
         and status of each job.
         """
-        return [(c.id, c.status) for c in self.client.containers.list()]
+        return [(c.id, c.status) for c in self.client.services.list()]
 
     def schedule(self, sim):
         """Schedules a simulation to be executed."""
-        print("would have scheduled sim: ", repr(sim))
+        #print("would have scheduled sim: ", repr(sim))
 
     def want_n_more_jobs(self):
         """Determine how many more new jobs to schedule."""

@@ -1,4 +1,9 @@
-"""Generates a random Cyclus input file."""
+"""Generates a random Cyclus input file. Contains functions to stochastically 
+generate a niche path through the nuclear fuel cycle as well as the appropriate
+archetypes, recipes, commodities, and a control scheme for the nuclear fuel cycle
+those niches represent. Archetypes state variables with a "range" uitype are 
+stochastically generated within a physically valid range.
+"""
 import os
 import json
 import random
@@ -189,9 +194,9 @@ def random_niches(sim_spec, max_niches, choice="mine", niches=None):
 
     Returns
     -------
-        niches : list
-            List of connected niches that model the steps of the full nuclear
-            fuel cycle.
+    niches : list
+        List of connected niches that model the steps of the full nuclear
+        fuel cycle.
     """
     if niches is None:
         niches = []
@@ -367,15 +372,17 @@ def choose_archetypes(sim_spec, niches):
 
     Parameters
     ----------
-        sim_spec : SimSpec
-            Specification for simulation generation
-        niches : list
-            List of sequential niches returned from choose_niches.py
+
+    sim_spec : SimSpec
+        Specification for simulation generation
+    niches : list
+        List of sequential niches returned from choose_niches.py
+
 
     Returns
     -------
-        arches : list
-            List of assigned archetypes. Same list length as niches.
+    arches : list
+        List of assigned archetypes. Same list length as niches.
     """
     if sim_spec.customized:
         arches = [random.choice(tuple(sim_spec.archetypes[niches[0]]))]
@@ -394,6 +401,19 @@ def choose_archetypes(sim_spec, niches):
     return arches
 
 def archetype_block(arches):
+    """Formats the archetypes into the input file format
+    
+    Parameters
+    ----------
+    arches : list
+        List of assigned archetype.
+        
+    Returns
+    -------
+    block : dictionary
+        Dictionary containing each necessary element of the archetype
+        block in a Cyclus input file.
+    """
     unique_arches = sorted(set(arches))
     if ':agents:Sink' not in unique_arches:
         unique_arches.append(':agents:Sink')
@@ -424,23 +444,24 @@ def archetype_block(arches):
 def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe):
     """Pulls in the metadata for each archetype
 
-        Parameters
-        ----------
-            sim_spec : SimSpec
-                Specification for simulation generation
-            arche : str
-                The name of the archetype that is being generated.
-            in_commod : str
-                The incommodity received by the specific archetype as
-                determined by choose_commodities.py
-            out_commod : str
-                The outcommodity produced by the specific archetype as
-                determined by choose_commodities.py
 
-        Returns
-        -------
-            config : dict
-                The JSON formatted archetype dictionary to be put in the input file
+    Parameters
+    ----------
+        sim_spec : SimSpec
+            Specification for simulation generation
+        arche : str
+            The name of the archetype that is being generated.
+        in_commod : str
+            The incommodity received by the specific archetype as
+            determined by choose_commodities.py
+        out_commod : str
+            The outcommodity produced by the specific archetype as
+            determined by choose_commodities.py
+
+    Returns
+    -------
+        config : dict
+            The JSON formatted archetype dictionary to be put in the input file
     """
     if arche not in sim_spec.annotations:
         anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
