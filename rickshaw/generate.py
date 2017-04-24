@@ -21,6 +21,48 @@ from rickshaw import special_archs as sa
 from rickshaw.lazyasd import lazyobject
 
 class SimSpec(object):
+    """
+    Manages any constraints placed on Rickshaw generation.
+    
+    Adjusts parameters based on information provided in a specification file.
+    Any attributes not found in the spec dictionary are set to a default 
+    defined in the constructor. This class is used even if no specification 
+    file is present, in which case all attributes are set to their default
+    value.
+       
+    Parameters
+    ----------
+    spec : dict
+        Dictionary representation of a specification input file.
+            
+    Attributes
+    ----------
+    spec : dict
+        Dictionary representation of a specification input file.
+    customized : bool
+        Denotes whether niche_links has been customized by the user. Prevents 
+        Rickshaw from using default Cycamore sources and sinks.
+    niche_links : dict
+        Represents allowed links between niches. Can be specified by user in a 
+        top level key in the specification file.
+    commodities : dict
+        Represents allowed commodities. Can be specified by user.
+    recipes : dict
+        Contains all recipes allowed in the simulation. Can be specified by user
+        in the simulation key of the specification file.
+    archetypes : dict
+        Represents allowed the allowed archetypes for each niche. Can be 
+        specified by the user in a top level key in the simulation file.
+    special_calls : dict
+        Returns callable function associated with a Cycamore archetype and 
+        function identifier  
+    default_sources : set
+        Contains defaults for simulation sources. Not yet customizable by user.
+    default_sinks : set
+        Contains defaults for simulation sinks. Not yet customizable by user.
+    annotations : dict
+        Container for archetype annotations.
+    """
     def __init__(self, spec={}):
         self.spec = spec
         self.customized = False     
