@@ -7,7 +7,7 @@ import os
 import subprocess
 import json
 from argparse import ArgumentParser
-
+from rickshaw import simspec
 from rickshaw import generate
 
 
@@ -20,25 +20,25 @@ def main(args=None):
     p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     ns = p.parse_args(args=args)
-    simspec = {}
+    temp_spec = {}
     if ns.i is not None:
         try:
             ext = os.path.splitext(ns.i)[1]
             if ext == '.json':
                 with open(ns.i) as jf:
-                    simspec = json.load(jf)
+                    temp_spec = json.load(jf)
                     for k,v in simspec['niche_links'].items():
-                        simspec['niche_links'][k] = set(v)
+                        temp_spec['niche_links'][k] = set(v)
                     for k,v in simspec['archetypes'].items():
-                        simspec['archetypes'][k] = set(v)
+                        temp_spec['archetypes'][k] = set(v)
             elif ext == '.py':
                 with open(ns.i) as pf:
                     py_str = pf.read()
-                    simspec = eval(py_str)
+                    temp_spec = eval(py_str)
         except:
             pass
             
-    spec = generate.SimSpec(simspec)
+    spec = simspec.SimSpec(temp_spec)
             
     if ns.n is not None:
         i = 0
@@ -63,11 +63,11 @@ def main(args=None):
     if ns.rs:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.sqlite'])
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.sqlite'])
     if ns.rh:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.h5'])
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.h5'])
 
 
 if __name__ == '__main__':
