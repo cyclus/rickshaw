@@ -37,7 +37,6 @@ def main(args=None):
                     temp_spec = eval(py_str)
         except:
             pass
-            
     spec = simspec.SimSpec(temp_spec)
             
     if ns.n is not None:

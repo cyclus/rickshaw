@@ -456,8 +456,6 @@ def generate(max_num_niches=10, sim_spec=None):
     arches = choose_archetypes(sim_spec, niches)
     commods = choose_commodities(sim_spec, niches)
     recipes = choose_recipes(sim_spec, commods)
-    #if len(recipes) == 1:
-    #    recipes = recipes[0]
     sim["archetypes"] = archetype_block(arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
