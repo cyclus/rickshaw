@@ -182,15 +182,17 @@ def read_input_def(obj, env):
         if obj[:8] == 'pyjinja:':
             rtemplate = env.from_string(obj[8:])
             obj = rtemplate.render()
+            print(obj)
+            obj = eval(obj)
         elif obj[:10] == 'jsonjinja:':
             rtemplate = env.from_string(obj[10:])
             obj = rtemplate.render()
         elif obj[:3] == 'py:':
             obj = eval(obj[3:])   
         elif obj[:5] == 'json:':
-            obj = obj
+            obj = obj[5:]
             print(obj)
-            #json.loads(obj[5:])
+            obj = json.loads(obj)
     elif isinstance(obj, collections.Mapping):
         for k, v in obj.items():
             obj[k] = read_input_def(v ,env)
