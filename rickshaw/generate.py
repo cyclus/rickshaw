@@ -279,7 +279,7 @@ def choose_archetypes(sim_spec, niches):
         arches.append(a)
     return arches
 
-def archetype_block(arches):
+def archetype_block(sim_spec, arches):
     """Formats the archetypes into the input file format
     
     Parameters
@@ -293,6 +293,7 @@ def archetype_block(arches):
         Dictionary containing each necessary element of the archetype
         block in a Cyclus input file.
     """
+    arches = sim_spec.arches + arches
     unique_arches = sorted(set(arches))
     if ':agents:Sink' not in unique_arches:
         unique_arches.append(':agents:Sink')
@@ -428,6 +429,7 @@ def generate_region_inst(sim):
         }
     entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
     for facility in sim["facility"]:
+        print(facility)
         entry = {"prototype": facility["name"], "number": 1}
         entries.append(entry)
 
@@ -456,7 +458,7 @@ def generate(max_num_niches=10, sim_spec=None):
     arches = choose_archetypes(sim_spec, niches)
     commods = choose_commodities(sim_spec, niches)
     recipes = choose_recipes(sim_spec, commods)
-    sim["archetypes"] = archetype_block(arches)
+    sim["archetypes"] = archetype_block(sim_spec, arches)
     #put the other things in here
     sim["recipe"] = [r for r in recipes if r is not None]
     protos = {}
@@ -464,6 +466,8 @@ def generate(max_num_niches=10, sim_spec=None):
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
                                             recipes[:-1], recipes[1:]):
+        if arche in sim_spec.arches:
+            continue
         temp_arch = generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe)
         for arch in temp_arch:
             base_name = arch["name"]
@@ -472,9 +476,9 @@ def generate(max_num_niches=10, sim_spec=None):
                 arch["name"] = base_name + str(i)
                 i+=1
             protos[arch["name"]] = arch
-
     protos[arches[-1]] = generate_archetype(sim_spec, arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
+    sim["facility"] += sim_spec.facilities    
     generate_region_inst(sim)
     return inp
 

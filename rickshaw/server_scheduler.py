@@ -54,7 +54,9 @@ class ServerScheduler(Scheduler):
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_service = self.client.services.create(self.server_tag)
+        cc = self.cyclus_service = self.client.services.create(self.server_tag,
+                                                               hostname = "",
+                                                               mode = ServiceMode('global'))
         host = self.client.networks.get('bridge').attrs['Services'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')

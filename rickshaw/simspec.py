@@ -255,6 +255,7 @@ class SimSpec(object):
         self.default_sources = {':agents:Source', ':cycamore:Source'}
         self.default_sinks = {':agents:Sink', ':cycamore:Sink'}
         self.special_calls = def_spec_calls()
+        self.arches = []
         self.annotations = {}
         self.facilities = {}
         env = Environment(loader=BaseLoader)
@@ -265,9 +266,9 @@ class SimSpec(object):
             self.niche_links = self.spec['niche_links']
             self.customized = True
         if 'archetypes' in self.spec:
-            self.archetypes = self.spec['archetypes']
+            self.archetypes.update(self.spec['archetypes'])
         if 'commodities' in self.spec:
-            self.commodities = self.spec['commodities']
+            self.commodities.update(self.spec['commodities'])
         if 'special_calls' in self.spec:
             self.special_calls.update(self.spec['special_calls'])
         if 'simulation' in self.spec:      
@@ -276,11 +277,15 @@ class SimSpec(object):
                     self.recipes[recipe['name']] = recipe
             if 'facility' in self.spec['simulation']:
                 for obj in self.spec['simulation']['facility']:
-                    self.facilities[obj['name']] = obj
-        print(self.facilities)        
+                    try:
+                        self.arches.append(obj['spec'])
+                        del(obj['spec'])
+                    except:
+                        continue
+                    self.facilities[obj['name']] = obj        
         for key, value in self.facilities.items():
             value = read_input_def(value, env)
-            print(key, value)                  
+        self.facilities = self.facilities.values()                
                 
 
 
