@@ -20,24 +20,24 @@ def main(args=None):
     p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     ns = p.parse_args(args=args)
-    temp_spec = {}
+    spec = {}
     if ns.i is not None:
         try:
             ext = os.path.splitext(ns.i)[1]
             if ext == '.json':
                 with open(ns.i) as jf:
-                    temp_spec = json.load(jf)
+                    spec = json.load(jf)
                     for k,v in simspec['niche_links'].items():
-                        temp_spec['niche_links'][k] = set(v)
+                        spec['niche_links'][k] = set(v)
                     for k,v in simspec['archetypes'].items():
-                        temp_spec['archetypes'][k] = set(v)
+                        spec['archetypes'][k] = set(v)
             elif ext == '.py':
                 with open(ns.i) as pf:
                     py_str = pf.read()
-                    temp_spec = eval(py_str)
+                    spec = eval(py_str)
         except:
             pass
-    spec = simspec.SimSpec(temp_spec)
+    spec = simspec.SimSpec(spec)
             
     if ns.n is not None:
         i = 0

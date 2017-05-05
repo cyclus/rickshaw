@@ -12,12 +12,12 @@ import shutil
 from collections.abc import Sequence
 from copy import deepcopy
 from random import randrange, choice
-from rickshaw import simspec
+
 try:
     from pprintpp import pprint
 except ImportError:
     from pprint import pprint
-
+from rickshaw import simspec
 from rickshaw import special_archs as sa
 from rickshaw.lazyasd import lazyobject
 
@@ -429,7 +429,6 @@ def generate_region_inst(sim):
         }
     entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
     for facility in sim["facility"]:
-        print(facility)
         entry = {"prototype": facility["name"], "number": 1}
         entries.append(entry)
 

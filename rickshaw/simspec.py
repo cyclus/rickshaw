@@ -1,3 +1,8 @@
+"""Generates a specification of a simulation for Rickshaw. The base specification
+uses default values utilizing the cyclus and cycamore agents. This will updated 
+based on user entered specifications or a user entered template. 
+"""
+
 import collections
 import json
 from jinja2 import Environment, BaseLoader
@@ -9,8 +14,6 @@ except ImportError:
     from pprint import pprint
 
 from rickshaw import special_archs as sa
-
-
 
 def def_niches():
     """
