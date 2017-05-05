@@ -19,6 +19,7 @@ def main(args=None):
     p.add_argument('-rs', dest='rs', action="store_true", help='runs the simulations after they have been generated')
     p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
+    p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     ns = p.parse_args(args=args)
     simspec = {}
     if ns.i is not None:
@@ -63,11 +64,11 @@ def main(args=None):
     if ns.rs:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.sqlite'])
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
     if ns.rh:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o rickshaw.h5'])
+            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
 
 
 if __name__ == '__main__':
