@@ -7,7 +7,7 @@ import os
 import subprocess
 import json
 from argparse import ArgumentParser
-
+from rickshaw import simspec
 from rickshaw import generate
 
 
@@ -21,25 +21,24 @@ def main(args=None):
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     ns = p.parse_args(args=args)
-    simspec = {}
+    spec = {}
     if ns.i is not None:
         try:
             ext = os.path.splitext(ns.i)[1]
             if ext == '.json':
                 with open(ns.i) as jf:
-                    simspec = json.load(jf)
+                    spec = json.load(jf)
                     for k,v in simspec['niche_links'].items():
-                        simspec['niche_links'][k] = set(v)
+                        spec['niche_links'][k] = set(v)
                     for k,v in simspec['archetypes'].items():
-                        simspec['archetypes'][k] = set(v)
+                        spec['archetypes'][k] = set(v)
             elif ext == '.py':
                 with open(ns.i) as pf:
                     py_str = pf.read()
-                    simspec = eval(py_str)
+                    spec = eval(py_str)
         except:
             pass
-            
-    spec = generate.SimSpec(simspec)
+    spec = simspec.SimSpec(spec)
             
     if ns.n is not None:
         i = 0
