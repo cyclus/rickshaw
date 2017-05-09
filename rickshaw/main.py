@@ -37,6 +37,7 @@ def main(args=None):
                     py_str = pf.read()
                     spec = eval(py_str)
         except:
+            print('Failed to parse richshaw input file, please verify file format')
             pass
     spec = simspec.SimSpec(spec)
             
