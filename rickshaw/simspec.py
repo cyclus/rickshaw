@@ -6,6 +6,7 @@ based on user entered specifications or a user entered template.
 import collections
 import json
 from jinja2 import Environment, BaseLoader
+import random
 from random import uniform
 
 try:
