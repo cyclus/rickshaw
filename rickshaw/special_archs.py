@@ -20,7 +20,7 @@ def generate_throwsink(commod, name):
         Dictionary formatted to represent the archetype in the input file.
     """
     vals = {}
-    vals["capacity"] = 1e299
+    vals["capacity"] = 1.0e299
     vals["in_commods"] = {"val": [commod]} 
     config = {"name": name, "config": {"agents_sink": vals}}
     return config
@@ -41,7 +41,7 @@ def generate_throwsource(commod, name):
         Dictionary formatted to represent the archetype in the input file.
     """
     vals = {}
-    vals["capacity"] = 1e200
+    vals["capacity"] = 1.0e200
     vals["commod"] = commod
     vals["recipe_name"] = 'natural_uranium' 
     config = {"name": name, "config": {"agents_source": vals}}

@@ -390,16 +390,12 @@ def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_re
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
         elif uitype == "inrecipe" and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = in_recipe["name"]
         elif uitype == ["oneormore", "inrecipe"] and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = {"val" : [in_recipe["name"]]}
         elif uitype == "outrecipe" and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = out_recipe["name"]
         elif uitype == ["oneormore", "outrecipe"] and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = {"val" : [out_recipe["name"]]}
         elif var_type == "double" or var_type == "float":
             vals[name] = var.get("default", 0.0)
