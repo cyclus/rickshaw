@@ -1,7 +1,7 @@
-"""Generates a random Cyclus input file. Contains functions to stochastically 
+"""Generates a random Cyclus input file. Contains functions to stochastically
 generate a niche path through the nuclear fuel cycle as well as the appropriate
 archetypes, recipes, commodities, and a control scheme for the nuclear fuel cycle
-those niches represent. Archetypes state variables with a "range" uitype are 
+those niches represent. Archetypes state variables with a "range" uitype are
 stochastically generated within a physically valid range.
 """
 import os
@@ -91,7 +91,7 @@ def random_niches(sim_spec, max_niches, choice="mine", niches=None):
 def choose_control():
     """This program will choose the control scheme at random for a cyclus
     input file in JSON
-    
+
     Returns
     -------
         control : dict
@@ -281,12 +281,12 @@ def choose_archetypes(sim_spec, niches):
 
 def archetype_block(sim_spec, arches):
     """Formats the archetypes into the input file format
-    
+
     Parameters
     ----------
     arches : list
         List of assigned archetype.
-        
+
     Returns
     -------
     block : dictionary
@@ -473,7 +473,7 @@ def generate(max_num_niches=10, sim_spec=None):
             protos[arch["name"]] = arch
     protos[arches[-1]] = generate_archetype(sim_spec, arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
-    sim["facility"] += sim_spec.facilities    
+    sim["facility"] += sim_spec.facilities
     generate_region_inst(sim)
     return inp
 

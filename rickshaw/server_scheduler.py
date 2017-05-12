@@ -23,7 +23,7 @@ class ServerScheduler(Scheduler):
                    'Remember to give this container/service access to the '+
                    'docker socket on the host machine with the following argument:\n '+
                    '-v /var/run/docker.sock:/var/run/docker.sock\n' +
-                   '***************************************************'*2)  
+                   '***************************************************'*2)
         self.cyclus_service = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
@@ -32,6 +32,7 @@ class ServerScheduler(Scheduler):
             self.server_cmd = ""
         self.cyclus_server_name = "rickshaw_metadata_server"
         self.cyclus_server_host = None
+        self.cyclus_container = None
         self.cyclus_server_ready = False
         self._find_ncpu()
 
@@ -89,3 +90,4 @@ class ServerScheduler(Scheduler):
         print("Will want to fill out, " + str(n)+ " jobs")
         pprint(self.client.swarm.attrs)
         return n
+

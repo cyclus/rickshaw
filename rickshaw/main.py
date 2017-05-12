@@ -40,7 +40,7 @@ def main(args=None):
             print('Failed to parse richshaw input file, please verify file format')
             pass
     spec = simspec.SimSpec(spec)
-            
+
     if ns.n is not None:
         i = 0
         while i < ns.n:
@@ -60,14 +60,14 @@ def main(args=None):
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
         with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)        
+            json.dump(input_file, jf, indent=4)
     if ns.rs:
         p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
+        for i in range(len(p)):
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
     if ns.rh:
         p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
+        for i in range(len(p)):
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
 
 
