@@ -27,10 +27,10 @@ install:
 
 script:
     - set -e
+    - pytest -v
     - cd docs && make html && cd ..
     - conda install doctr
     - doctr deploy --deploy-repo ergs/rickshaw-docs .
-    - pytest -v
 
 env:
       global:

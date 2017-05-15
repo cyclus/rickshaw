@@ -8,7 +8,7 @@ def test_choose_recipes():
     assert type(commods) is list
     recipes = choose_recipes(spec, commods)
     assert type(recipes) is list
-    if "mine" and "enrichment" in niches:
+    if "mine" in niches and "enrichment" in niches:
         assert "natural_uranium" in commods
     if "natural_uranium" in commods:
         assert len(recipes) > 0
