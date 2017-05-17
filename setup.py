@@ -30,7 +30,7 @@ setup_kwargs = {
         ],
     "zip_safe": False,
     "data_files": [("", ['LICENSE', 'README.rst']),],
-    "scripts": ["scripts/rickshaw"]
+    "scripts": ["scripts/rickshaw", "scripts/rickserv"]
     }
 
 

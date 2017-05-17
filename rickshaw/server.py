@@ -110,9 +110,9 @@ async def websocket_client(port, scheduler, frequency=1.0):
     scheduler.stop_cyclus_server()
 
 
-async def start_cyclus_server(loop, executor, scheduler):
+async def start_annotations_server(loop, executor, scheduler):
     """Starts up remote cyclus server"""
-    run_task = loop.run_in_executor(executor, scheduler.start_cyclus_server)
+    run_task = loop.run_in_executor(executor, scheduler.start_annotations_server)
     await asyncio.wait([run_task])
 
 
@@ -194,7 +194,7 @@ def main(args=None):
         loop.run_until_complete(asyncio.gather(
             asyncio.ensure_future(websocket_client(ns.port, scheduler)),
             asyncio.ensure_future(gather_annotations(scheduler)),
-            asyncio.ensure_future(start_cyclus_server(loop, executor, scheduler)),
+            asyncio.ensure_future(start_annotations_server(loop, executor, scheduler)),
             asyncio.ensure_future(schedule_sims(scheduler)),
             ))
     finally:

@@ -37,13 +37,12 @@ def main(args=None):
                     py_str = pf.read()
                     spec = eval(py_str)
         except:
-            pass
-    spec = simspec.SimSpec(spec)
-            
+            pass            
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
+                spec = simspec.SimSpec(spec)
                 input_file = generate.generate(sim_spec=spec)
                 if ns.v:
                     pprint(input_file)
@@ -63,20 +62,11 @@ def main(args=None):
     if ns.rs:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
-<<<<<<< HEAD
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
     if ns.rh:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
-=======
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.sqlite'])
-    if ns.rh:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.h5'])
->>>>>>> 501299ed5b5cbd0d9fc72c974831378193a64b55
-
 
 if __name__ == '__main__':
     main()

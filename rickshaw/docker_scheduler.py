@@ -54,7 +54,7 @@ class DockerScheduler(Scheduler):
     def __del__(self):
         self.stop_cyclus_server()
 
-    def start_cyclus_server(self):
+    def start_annotations_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,

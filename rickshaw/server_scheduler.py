@@ -51,11 +51,16 @@ class ServerScheduler(Scheduler):
     def __del__(self):
         self.stop_cyclus_server()
 
-    def start_cyclus_server(self):
+    def start_annotations_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_service = self.client.services.create(self.server_tag)
-        host = self.client.networks.get('bridge').attrs['Services'][cc.id]['IPv4Address']
+        cc = self.cyclus_container = self.client.containers.run(self.server_tag,
+                                                                self.server_cmd,
+                                        ports={'4242/tcp': ('127.0.0.1', 4242)},
+                                                   name=self.cyclus_server_name,
+                                                         publish_all_ports=True,
+                                                                    detach=True)
+        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')
         else:
