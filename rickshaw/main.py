@@ -39,23 +39,23 @@ def main(args=None):
         except:
             print('Failed to parse richshaw input file, please verify file format')
             pass
-
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
-                spec = simspec.SimSpec(spec)
-                input_file = generate.generate(sim_spec=spec)
+                specific_spec = simspec.SimSpec(spec)
+                input_file = generate.generate(sim_spec=specific_spec)
                 if ns.v:
                     pprint(input_file)
+                jsonfile = str(i) + '.json'
+                with open(jsonfile, 'w') as jf:
+                    json.dump(input_file, jf, indent=4)
+                i += 1
             except Exception:
                 continue
-            jsonfile = str(i) + '.json'
-            with open(jsonfile, 'w') as jf:
-                json.dump(input_file, jf, indent=4)
-            i += 1
     else:
-        input_file = generate.generate(sim_spec=spec)
+        specific_spec = simspec.SimSpec(spec)
+        input_file = generate.generate(sim_spec=specific_spec)
         if ns.v:
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
