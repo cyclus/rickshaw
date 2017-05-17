@@ -39,12 +39,12 @@ def main(args=None):
         except:
             print('Failed to parse richshaw input file, please verify file format')
             pass
-    spec = simspec.SimSpec(spec)
             
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
+                spec = simspec.SimSpec(spec)
                 input_file = generate.generate(sim_spec=spec)
                 if ns.v:
                     pprint(input_file)
