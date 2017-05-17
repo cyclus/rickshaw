@@ -14,7 +14,7 @@ class DockerScheduler(Scheduler):
     """A base docker scheduler"""
 
     def __init__(self, debug=False, **kwargs):
-        self.client = docker.from_env() 
+        self.client = docker.from_env()
         try:
             try_test = self.client.nodes.list()
         except:
@@ -23,7 +23,7 @@ class DockerScheduler(Scheduler):
                    'Remember to give this container/service access to the '+
                    'docker socket on the host machine with the following argument:\n '+
                    '-v /var/run/docker.sock:/var/run/docker.sock\n' +
-                   '***************************************************'*2)       
+                   '***************************************************'*2)
         self.cyclus_container = None
         self.server_tag = "ergs/cyclus-server-dev"
         if debug:
@@ -37,7 +37,7 @@ class DockerScheduler(Scheduler):
         self._have_swarm = False
         self._find_ncpu()
 
-    def _find_ncpu(self):        
+    def _find_ncpu(self):
         try:
             # get NCPUs for swarm
             ncpu = 0.0
@@ -97,3 +97,4 @@ class DockerScheduler(Scheduler):
         print("Will want to fill out, " + str(n)+ " jobs")
         pprint(self.client.swarm.attrs)
         return n
+

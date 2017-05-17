@@ -37,13 +37,19 @@ def main(args=None):
                     py_str = pf.read()
                     spec = eval(py_str)
         except:
+            print('Failed to parse richshaw input file, please verify file format')
             pass
-    spec = simspec.SimSpec(spec)
+<<<<<<< HEAD
             
+=======
+    spec = simspec.SimSpec(spec)
+
+>>>>>>> 97e8d9d6f3b66c47481fa043f7cf894845689fe1
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
+                spec = simspec.SimSpec(spec)
                 input_file = generate.generate(sim_spec=spec)
                 if ns.v:
                     pprint(input_file)
@@ -59,23 +65,15 @@ def main(args=None):
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
         with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)        
+            json.dump(input_file, jf, indent=4)
     if ns.rs:
         p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
-<<<<<<< HEAD
+        for i in range(len(p)):
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
     if ns.rh:
         p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
+        for i in range(len(p)):
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
-=======
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.sqlite'])
-    if ns.rh:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o', 'rickshaw.h5'])
->>>>>>> 501299ed5b5cbd0d9fc72c974831378193a64b55
 
 
 if __name__ == '__main__':

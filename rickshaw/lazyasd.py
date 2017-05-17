@@ -357,3 +357,4 @@ def load_module_in_background(name, package=None, debug='DEBUG', env=None,
     proxy = sys.modules[modname] = BackgroundModuleProxy(modname)
     BackgroundModuleLoader(name, package, replacements or {})
     return proxy
+
