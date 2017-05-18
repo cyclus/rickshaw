@@ -290,7 +290,6 @@ class SimSpec(object):
                     self.facilities[obj['name']] = obj        
         for key, value in self.facilities.items():
             value = read_input_def(value, env)
-        print(self.facilities)
         self.facilities = self.facilities.values()             
 
 
