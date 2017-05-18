@@ -460,9 +460,7 @@ def generate(max_num_niches=10, sim_spec=None):
     protos[arches[0]] = generate_archetype(sim_spec, arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
-                                            recipes[:-1], recipes[1:]):
-        print(arche)
-        print(sim_spec.arches)        
+                                            recipes[:-1], recipes[1:]):       
         if arche in sim_spec.arches:
             continue
         temp_arch = generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe)
