@@ -1,7 +1,7 @@
-"""Generates a random Cyclus input file. Contains functions to stochastically 
+"""Generates a random Cyclus input file. Contains functions to stochastically
 generate a niche path through the nuclear fuel cycle as well as the appropriate
 archetypes, recipes, commodities, and a control scheme for the nuclear fuel cycle
-those niches represent. Archetypes state variables with a "range" uitype are 
+those niches represent. Archetypes state variables with a "range" uitype are
 stochastically generated within a physically valid range.
 """
 import os
@@ -91,7 +91,7 @@ def random_niches(sim_spec, max_niches, choice="mine", niches=None):
 def choose_control():
     """This program will choose the control scheme at random for a cyclus
     input file in JSON
-    
+
     Returns
     -------
         control : dict
@@ -281,12 +281,12 @@ def choose_archetypes(sim_spec, niches):
 
 def archetype_block(sim_spec, arches):
     """Formats the archetypes into the input file format
-    
+
     Parameters
     ----------
     arches : list
         List of assigned archetype.
-        
+
     Returns
     -------
     block : dictionary
@@ -390,16 +390,12 @@ def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_re
             raise KeyError("Can't generate to commodity please use incommodity "
                            "or outcommodity")
         elif uitype == "inrecipe" and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = in_recipe["name"]
         elif uitype == ["oneormore", "inrecipe"] and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = {"val" : [in_recipe["name"]]}
         elif uitype == "outrecipe" and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = out_recipe["name"]
         elif uitype == ["oneormore", "outrecipe"] and "default" not in var:
-            #print(arche, " ", var )
             vals[name] = {"val" : [out_recipe["name"]]}
         elif var_type == "double" or var_type == "float":
             vals[name] = var.get("default", 0.0)
@@ -464,7 +460,7 @@ def generate(max_num_niches=10, sim_spec=None):
     protos[arches[0]] = generate_archetype(sim_spec, arches[0], None, commods[0], None, recipes[0])[0]
     for arche, in_commod, out_commod, in_recipe, out_recipe in zip(arches[1:-1],
                                             commods[:-1], commods[1:],
-                                            recipes[:-1], recipes[1:]):
+                                            recipes[:-1], recipes[1:]):       
         if arche in sim_spec.arches:
             continue
         temp_arch = generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe)
@@ -477,7 +473,7 @@ def generate(max_num_niches=10, sim_spec=None):
             protos[arch["name"]] = arch
     protos[arches[-1]] = generate_archetype(sim_spec, arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
-    sim["facility"] += sim_spec.facilities    
+    sim["facility"] += sim_spec.facilities
     generate_region_inst(sim)
     return inp
 

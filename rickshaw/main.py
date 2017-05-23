@@ -37,23 +37,27 @@ def main(args=None):
                     py_str = pf.read()
                     spec = eval(py_str)
         except:
-            pass            
+            print('Failed to parse richshaw input file, please verify file format')
+            pass
+    spec = simspec.SimSpec(spec)
+            
     if ns.n is not None:
         i = 0
         while i < ns.n:
             try:
-                spec = simspec.SimSpec(spec)
-                input_file = generate.generate(sim_spec=spec)
+                specific_spec = simspec.SimSpec(spec)
+                input_file = generate.generate(sim_spec=specific_spec)
                 if ns.v:
                     pprint(input_file)
+                jsonfile = str(i) + '.json'
+                with open(jsonfile, 'w') as jf:
+                    json.dump(input_file, jf, indent=4)
+                i += 1
             except Exception:
                 continue
-            jsonfile = str(i) + '.json'
-            with open(jsonfile, 'w') as jf:
-                json.dump(input_file, jf, indent=4)
-            i += 1
     else:
-        input_file = generate.generate(sim_spec=spec)
+        specific_spec = simspec.SimSpec(spec)
+        input_file = generate.generate(sim_spec=specific_spec)
         if ns.v:
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
@@ -67,6 +71,7 @@ def main(args=None):
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            
             subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
+
 
 if __name__ == '__main__':
     main()

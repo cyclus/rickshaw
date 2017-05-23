@@ -5,6 +5,8 @@ based on user entered specifications or a user entered template.
 
 import collections
 import json
+import copy
+import random
 from jinja2 import Environment, BaseLoader
 from random import uniform
 
@@ -249,7 +251,7 @@ class SimSpec(object):
         Container for archetype annotations. 
     """
     def __init__(self, spec={}):
-        self.spec = spec
+        self.spec = copy.deepcopy(spec)
         self.customized = False     
         self.niche_links = def_niches()
         self.commodities = def_commodities()
@@ -263,7 +265,7 @@ class SimSpec(object):
         self.facilities = {}
         env = Environment(loader=BaseLoader)
         env.filters['uniform'] = uniform
-        
+
         # Check for specifications
         if 'niche_links' in self.spec:
             self.niche_links = self.spec['niche_links']
@@ -288,8 +290,7 @@ class SimSpec(object):
                     self.facilities[obj['name']] = obj        
         for key, value in self.facilities.items():
             value = read_input_def(value, env)
-        self.facilities = self.facilities.values()                
-                
+        self.facilities = self.facilities.values()             
 
 
 
