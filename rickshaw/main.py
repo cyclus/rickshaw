@@ -56,7 +56,7 @@ def main(args=None):
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
             except Exception as e:
-                message = format_exc()
+                message = traceback.format_exc()
                 logging.exception(message)
             i += 1
     else:
