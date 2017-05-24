@@ -6,6 +6,8 @@ except ImportError:
 import os
 import subprocess
 import json
+import logging
+import traceback
 from argparse import ArgumentParser
 from rickshaw import simspec
 from rickshaw import generate
@@ -54,15 +56,19 @@ def main(args=None):
         while i < ns.n:
             try:
                 specific_spec = simspec.SimSpec(spec)
+            except Exception:
+                print('Simspec failed to build')
+            try:            
                 input_file = generate.generate(sim_spec=specific_spec)
                 if ns.v:
                     pprint(input_file)
                 jsonfile = str(i) + '.json'
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
-                i += 1
-            except Exception:
-                continue
+            except Exception as e:
+                message = traceback.format_exc()
+                logging.exception(message)
+            i += 1
     else:
         specific_spec = simspec.SimSpec(spec)
         input_file = generate.generate(sim_spec=specific_spec)
