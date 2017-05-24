@@ -41,7 +41,6 @@ def main(args=None):
         except:
             print('Failed to parse richshaw input file, please verify file format')
             pass
-    spec = simspec.SimSpec(spec)
     if ns.s is not None:
         ss = server_scheduler.ServerScheduler()
         #i = 0        
