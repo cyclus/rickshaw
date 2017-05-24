@@ -75,16 +75,17 @@ class ServerScheduler(Scheduler):
     def start_rickshaw_service(self, runs, servnum):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus service")
-        cmd = ["python", "-m", "rickshaw", "-rh" ,"-n", str(runs), "-o", str(servnum)]
+        out = '/rickshaw/outs/' + str(servnum)
+        cmd = ["python", "-m", "rickshaw", "-rh" ,"-n", str(runs), "-o", out]
         print(cmd)
-        #cc = self.cyclus_container = self.client.services.create("rickshaw",
-        #                                                                cmd)
-        #                 #mounts=["/home/robert/outs:/rickshaw:rw"])
-        cc = self.cyclus_container = self.client.containers.run("rickshaw",
-                                                                       cmd,
-                                                    publish_all_ports=True,
-                                                               detach=True,
-          volumes={'/home/robert/outs':{'bind':'/1.h5' ,'mode':'rw'}})
+        cc = self.cyclus_container = self.client.services.create("rickshaw",
+                                                                        cmd)
+                         #mounts=["/home/robert/outs:/rickshaw/outs:rw"])
+        #cc = self.cyclus_container = self.client.containers.run("rickshaw",
+        #                                                               cmd,
+        #                                            publish_all_ports=True,
+        #                                                       detach=True,
+        #       volumes={'/home/robert/outs':{'bind':'/rickshaw/outs' ,'mode':'rw'}})
         print("cyclus service started")
 
     def stop_cyclus_server(self):
