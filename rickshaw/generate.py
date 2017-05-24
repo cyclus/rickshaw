@@ -9,6 +9,7 @@ import json
 import random
 import subprocess
 import shutil
+import logging
 from collections.abc import Sequence
 from copy import deepcopy
 from random import randrange, choice
@@ -77,15 +78,19 @@ def random_niches(sim_spec, max_niches, choice="mine", niches=None):
         List of connected niches that model the steps of the full nuclear
         fuel cycle.
     """
+    logging.info('Starting Niches')
     if niches is None:
         niches = []
     niches.append(choice)
     if max_niches == 1:
+        logging.info('Finishing Niches')
         return niches
     else:
         choice = random.sample(sim_spec.niche_links[choice], 1)[0]
         if choice is None:
+            logging.info('Finishing Niches')
             return niches
+        logging.info('Finishing Niches')
         return random_niches(sim_spec, max_niches-1, choice, niches)
 
 def choose_control():
@@ -98,7 +103,7 @@ def choose_control():
             Dictionary generated to be the control scheme in the JSON cyclus
             input file
     """
-
+    logging.info('starting control')   
     duration = randrange(12, 600, 6)
     start_month = randrange(1, 12)
     start_year = randrange(2000, 2050)
@@ -112,10 +117,11 @@ def choose_control():
                 'dt' : dt,
 
                 }
-
+    logging.info('finishing control')
     return control
 
 def up_hierarchy(sim_spec, key):
+    logging.info('start upheir')
     # If we have it, immediately return
     if key in sim_spec.commodities:
         return sim_spec.commodities[key]
@@ -130,17 +136,21 @@ def up_hierarchy(sim_spec, key):
         keyto = key[1]
     # If our new key is identical to the original, we can't support it
     if (keyfrom, keyto) == key:
+        logging.info('end upheir')    
         return None
     else:
         if (keyfrom, key[1]) != key:
             commod = up_hierarchy(sim_spec, (keyfrom, key[1]))
             if commod is not None:
+                logging.info('end upheir')
                 return commod
         if (key[0], keyto) != key:
             commod = up_hierarchy(sim_spec, (key[0], keyto))
             if commod is not None:
+                logging.info('end upheir')
                 return commod
         commod = up_hierarchy(sim_spec, (keyfrom, keyto))
+        logging.info('end upheir')
         return commod
 
 
@@ -163,8 +173,10 @@ def choose_commodity(sim_spec, keyfrom, keyto, unique_commods):
     commod_name : str
         A unique commodity name.
     """
+    logging.info('commod')
     commod = orig_commod = up_hierarchy(sim_spec, (keyfrom, keyto))
     if commod is None:
+        logging.info('commod is none, end commod')
         return None
     n = 1
     commod_name = commod
@@ -172,6 +184,7 @@ def choose_commodity(sim_spec, keyfrom, keyto, unique_commods):
         commod_name = orig_commod + str(n)
         n = n + 1
     unique_commods.add(commod_name)
+    logging.info('end commod')
     return commod_name
 
 
@@ -191,6 +204,7 @@ def choose_commodities(sim_spec, niches):
         List of in and out commodities to be added to the archetypes in the
         input file.
     """
+    logging.info('start choose commodities')
     commods = []
     unique_commods = set()
     for keyfrom, keyto in zip(niches[:-1], niches[1:]):
@@ -198,6 +212,7 @@ def choose_commodities(sim_spec, niches):
         if commod is None:
             continue
         commods.append(commod)
+    logging.info('end choose commodities')
     return commods
 
 def choose_recipes(sim_spec, commods):
@@ -217,6 +232,7 @@ def choose_recipes(sim_spec, commods):
             List of the assigned recipes to be added to the recipe section of
             the generated input file[]
     """
+    logging.info('start choose recipes')
     recipes = []
     for commod in commods:
         recipe_dict = {}
@@ -241,6 +257,7 @@ def choose_recipes(sim_spec, commods):
         if none_i is not None:
             nucs[none_i]['comp'] = 1.0 - total
         recipes.append(recipe_dict)
+    logging.info('end recipes')
     return recipes
 
 def generate_nuclide(commod):
@@ -263,6 +280,7 @@ def choose_archetypes(sim_spec, niches):
     arches : list
         List of assigned archetypes. Same list length as niches.
     """
+    logging.info('start choose arch')
     if sim_spec.customized:
         arches = [random.choice(tuple(sim_spec.archetypes[niches[0]]))]
     else:
@@ -277,6 +295,7 @@ def choose_archetypes(sim_spec, niches):
         else:
             a = random.choice(tuple(sim_spec.archetypes[niches[-1]] | sim_spec.default_sinks))
         arches.append(a)
+    logging.info('end choose arch')    
     return arches
 
 def archetype_block(sim_spec, arches):
@@ -293,6 +312,7 @@ def archetype_block(sim_spec, arches):
         Dictionary containing each necessary element of the archetype
         block in a Cyclus input file.
     """
+    logging.info('start arch block')
     arches = sim_spec.arches + arches
     unique_arches = sorted(set(arches))
     if ':agents:Sink' not in unique_arches:
@@ -319,6 +339,7 @@ def archetype_block(sim_spec, arches):
         if spec["path"] == "":
             del spec["path"]
         block["spec"].append(spec)
+    logging.info('end arch block')
     return block
 
 def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_recipe):
@@ -343,6 +364,7 @@ def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_re
         config : dict
             The JSON formatted archetype dictionary to be put in the input file
     """
+    logging.info('start generate arch')
     if arche not in sim_spec.annotations:
         anno = subprocess.check_output([CYCLUS_EXECUTABLE[:], "--agent-annotations", arche],
                                        env=CYCLUS_ENV)
@@ -407,6 +429,7 @@ def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_re
     if arche == ':agents:Source':
         alias = 'agents_source'
     config.append({"name": alias, "config": {alias: vals}})
+    logging.info('end generate arch')
     return config
 
 
@@ -414,6 +437,7 @@ def generate_region_inst(sim):
     """Creates a null region and inst for the randomized runs.
     This operated in-place.
     """
+    logging.info('region')
     sim["region"] = region = {
         "name": "SingleRegion",
         "config": {"NullRegion": None},
@@ -427,7 +451,7 @@ def generate_region_inst(sim):
     for facility in sim["facility"]:
         entry = {"prototype": facility["name"], "number": 1}
         entries.append(entry)
-
+    logging.info('end region')
 
 def generate(max_num_niches=10, sim_spec=None):
     """Creates a random Cyclus simulation input file dict.
@@ -444,7 +468,7 @@ def generate(max_num_niches=10, sim_spec=None):
         as a Cyclus input file.
     """
     # intial structure
-    #pprint(sim_spec)
+    logging.info('generate start')
     inp = {"simulation": {}}
     sim = inp["simulation"]
     sim["control"] = choose_control()
@@ -475,5 +499,6 @@ def generate(max_num_niches=10, sim_spec=None):
     sim["facility"] = list(protos.values())
     sim["facility"] += sim_spec.facilities
     generate_region_inst(sim)
+    logging.info('generate end')
     return inp
 
