@@ -9,6 +9,7 @@ import json
 from argparse import ArgumentParser
 from rickshaw import simspec
 from rickshaw import generate
+from rickshaw import server_scheduler
 
 
 def main(args=None):
@@ -20,6 +21,7 @@ def main(args=None):
     p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
+    p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
     ns = p.parse_args(args=args)
     spec = {}
     if ns.i is not None:
@@ -40,7 +42,14 @@ def main(args=None):
             print('Failed to parse richshaw input file, please verify file format')
             pass
     spec = simspec.SimSpec(spec)
-            
+    if ns.s is not None:
+        ss = server_scheduler.ServerScheduler()
+        #i = 0        
+        #while i < ss.ncpu:
+        #    ss.start_rickshaw_service(ns.s, i)
+        #    i+= 1
+        ss.start_rickshaw_service(ns.s, 1)   
+        return     
     if ns.n is not None:
         i = 0
         while i < ns.n:
@@ -62,7 +71,7 @@ def main(args=None):
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
         with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)        
+            json.dump(input_file, jf, indent=4)   
     if ns.rs:
         p = os.popen('ls *.json').readlines()
         for i in range(len(p)):            

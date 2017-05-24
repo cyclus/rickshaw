@@ -52,7 +52,7 @@ class ServerScheduler(Scheduler):
     def __del__(self):
         self.stop_cyclus_server()
 
-    def start_annotations_server(self):
+    def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
         cc = self.cyclus_container = self.client.containers.run(self.server_tag,
@@ -72,12 +72,19 @@ class ServerScheduler(Scheduler):
         for line in cc.logs(stream=True):
             print('[cyclus] ' + line.decode(), end='')
 
+    def start_rickshaw_service(self, runs, servnum):
+        """Starts up a cyclus server at a remote location."""
+        print("starting cyclus service")
+        cmd = "rickshaw -rh -n " + str(runs) + " -o " + str(servnum)
+        print(cmd)
+        cc = self.cyclus_container = self.client.services.create("rickshaw",
+                                  cmd, 
+                                  mounts=["/home/robert/outs/:/rickshaw/rickshaw.h5:rw"])
+        print("cyclus service started")
+
+
     def stop_cyclus_server(self):
         """Stops the cyclus server running in a remote location"""
-        if self.cyclus_container is not None:
-            self.cyclus_container.stop()
-            self.cyclus_container = None
-        self.cyclus_server_ready = False
 
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled
