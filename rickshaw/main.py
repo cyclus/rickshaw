@@ -19,8 +19,8 @@ def main(args=None):
     p.add_argument('-n', dest='n', type=int, help='number of files to generate',
                    default=None)
     p.add_argument('-i', dest='i', type=str, help='name of input file', default=None)
-    p.add_argument('-rs', dest='rs', action="store_true", help='runs the simulations after they have been generated')
-    p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated')
+    p.add_argument('-rs', dest='rs', action="store_true", help='runs the simulations after they have been generated with sqlite')
+    p.add_argument('-rh', dest='rh', action="store_true", help='runs the simulations after they have been generated with hdf5')
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
@@ -65,6 +65,10 @@ def main(args=None):
                 jsonfile = str(i) + '.json'
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
+                if ns.rs:
+                    subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.sqlite'])
+                if ns.rh:
+                    subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.h5'])
             except Exception as e:
                 message = traceback.format_exc()
                 logging.exception(message)
@@ -77,14 +81,10 @@ def main(args=None):
         jsonfile = 'rickshaw' + '.json'
         with open(jsonfile, 'w') as jf:
             json.dump(input_file, jf, indent=4)   
-    if ns.rs:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
-    if ns.rh:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):            
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
+        if ns.rs:
+            subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.sqlite'])
+        if ns.rh:
+            subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.h5'])
 
 
 if __name__ == '__main__':

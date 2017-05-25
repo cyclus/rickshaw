@@ -75,12 +75,12 @@ class ServerScheduler(Scheduler):
     def start_rickshaw_service(self, runs, servnum):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus service")
-        out = '/rickshaw/outs/' + str(servnum)
+        out = str(servnum)
         cmd = ["python", "-m", "rickshaw", "-rh" ,"-n", str(runs), "-o", out]
         print(cmd)
         cc = self.cyclus_container = self.client.services.create("rickshaw",
-                                                                        cmd)
-                         #mounts=["/home/robert/outs:/rickshaw/outs:rw"])
+                                                                        cmd,
+                             mounts=["testvol:/rickshaw/outs:rw"])
         #cc = self.cyclus_container = self.client.containers.run("rickshaw",
         #                                                               cmd,
         #                                            publish_all_ports=True,
