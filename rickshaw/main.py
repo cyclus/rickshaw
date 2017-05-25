@@ -55,6 +55,10 @@ def main(args=None):
                 jsonfile = str(i) + '.json'
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
+                if ns.rs:
+                    subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.sqlite'])
+                if ns.rh:
+                    subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.h5'])
             except Exception as e:
                 message = traceback.format_exc()
                 logging.exception(message)
@@ -66,15 +70,11 @@ def main(args=None):
             pprint(input_file)
         jsonfile = 'rickshaw' + '.json'
         with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)
-    if ns.rs:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.sqlite'])
-    if ns.rh:
-        p = os.popen('ls *.json').readlines()
-        for i in range(len(p)):
-            subprocess.call(['cyclus', p[i].rstrip('\n'), '-o' +ns.o +'.h5'])
+            json.dump(input_file, jf, indent=4)   
+        if ns.rs:
+            subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.sqlite'])
+        if ns.rh:
+            subprocess.call(['cyclus', jsonfile, '-o' +ns.o +'.h5'])
 
 
 if __name__ == '__main__':
