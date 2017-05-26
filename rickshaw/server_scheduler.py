@@ -74,7 +74,7 @@ class ServerScheduler(Scheduler):
     def start_rickshaw_service(self, runs, servnum):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus service")
-        out = str(servnum)
+        out = '/rickshaw/outs/' + str(servnum)
         cmd = ["rickshaw", "-rh" ,"-n", str(runs), "-o", out]
         print(cmd)
         cc = self.cyclus_container = self.client.services.create("ergs/ergs-rickshaw",
