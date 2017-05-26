@@ -9,7 +9,6 @@ except ImportError:
 
 from rickshaw.scheduler import Scheduler
 
-
 class ServerScheduler(Scheduler):
     """A base docker scheduler"""
 

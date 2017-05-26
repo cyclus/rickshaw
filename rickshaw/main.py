@@ -1,17 +1,20 @@
 """Main entry point for rickshaw"""
-try:
-    from pprintpp import pprint
-except ImportError:
-    from pprint import pprint
+from argparse import ArgumentParser
 import os
 import subprocess
 import json
 import logging
 import traceback
-from argparse import ArgumentParser
+
+try:
+    from pprintpp import pprint
+except ImportError:
+    from pprint import pprint
+
 from rickshaw import simspec
 from rickshaw import generate
 from rickshaw import server_scheduler
+from rickshaw.generate import CYCLUS_EXECUTABLE
 
 
 def main(args=None):
@@ -74,9 +77,10 @@ def main(args=None):
                     subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
                     logging.info('CYCLUS RS END')
                 if ns.rh:
-                    logging.info('CYCLUS RH')
-                    out = subprocess.check_output(['cyclus', jsonfile, '-o', ns.o +'.h5'], 
-                                                     stderr=subprocess.STDOUT, universal_newlines=True)
+                    cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.h5']
+                    logging.info(' '.join(cmd))
+                    out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, 
+                                                        universal_newlines=True)
                     logging.info(out)
             except Exception as e:
                 message = traceback.format_exc()
