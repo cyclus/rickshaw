@@ -2,6 +2,7 @@ import logging
 from pythonjsonlogger import jsonlogger
 
 logger = logging.getLogger()
+logging.basicConfig(filename='myapp.log', level=logging.INFO)
 logHandler = logging.StreamHandler()
 formatter = jsonlogger.JsonFormatter(fmt='%(message)s %(asctime)s %(created)f '
                                          '%(pathname)s %(funcName)s %(levelname)s '
