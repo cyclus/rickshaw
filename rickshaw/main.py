@@ -52,7 +52,7 @@ def main(args=None):
                 input_file = generate.generate(sim_spec=specific_spec)
                 if ns.v:
                     pprint(input_file)
-                jsonfile = str(i) + '.json'
+                jsonfile = '/rickshaw/outs' + str(i) + '.json'
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
                 if ns.rs:
