@@ -61,9 +61,13 @@ def main(args=None):
                 logging.exception(message)
             try:
                 if ns.rs:
+                    logging.info('CYCLUS RS')
                     subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
+                    logging.info('CYCLUS RS END')
                 if ns.rh:
+                    logging.info('CYCLUS RH')
                     subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
+                    logging.info('CYCLUS RH END')
             except Exception as e:
                 message = traceback.format_exc()
                 logging.exception(message)
