@@ -79,12 +79,12 @@ def main(args=None):
                 if ns.rh:
                     cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.h5']
                     logging.info(' '.join(cmd))
-                    out = subprocess.run(cmd, stderr=subprocess.STDOUT,
-                                                        stdout=subprocess.PIPE, 
+                    out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, 
                                                         universal_newlines=True)
                     logging.info(out)
             except Exception as e:
                 message = traceback.format_exc()
+                message += e.stdout
                 logging.exception(message)
             i += 1
     else:
