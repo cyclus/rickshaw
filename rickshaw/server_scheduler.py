@@ -81,11 +81,6 @@ class ServerScheduler(Scheduler):
         cc = self.cyclus_container = self.client.services.create("ergs/ergs-rickshaw",
                                                                                   cmd,
                                                  mounts=["testvol:/rickshaw/outs:rw"])
-        #cc = self.cyclus_container = self.client.containers.run("rickshaw",
-        #                                                               cmd,
-        #                                            publish_all_ports=True,
-        #                                                       detach=True,
-        #       volumes={'/home/robert/outs':{'bind':'/rickshaw/outs' ,'mode':'rw'}})
         print("cyclus service started")
 
     def stop_cyclus_server(self):
