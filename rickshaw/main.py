@@ -56,9 +56,9 @@ def main(args=None):
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
                 if ns.rs:
-                    subprocess.call(['cyclus', jsonfile, '-o ' +ns.o +'.sqlite'])
+                    subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
                 if ns.rh:
-                    subprocess.call(['cyclus', jsonfile, '-o ' +ns.o +'.h5'])
+                    subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
             except Exception as e:
                 message = traceback.format_exc()
                 logging.exception(message)
@@ -72,9 +72,9 @@ def main(args=None):
         with open(jsonfile, 'w') as jf:
             json.dump(input_file, jf, indent=4)   
         if ns.rs:
-            subprocess.call(['cyclus', jsonfile, '-o ' +ns.o +'.sqlite'])
+            subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
         if ns.rh:
-            subprocess.call(['cyclus', jsonfile, '-o ' +ns.o +'.h5'])
+            subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
 
 
 if __name__ == '__main__':
