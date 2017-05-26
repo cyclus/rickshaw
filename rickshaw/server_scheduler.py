@@ -79,8 +79,8 @@ class ServerScheduler(Scheduler):
         cmd = ["rickshaw", "-rh" ,"-n", str(runs), "-o", out]
         print(cmd)
         cc = self.cyclus_container = self.client.services.create("ergs/ergs-rickshaw",
-                                                                        cmd,
-                             mounts=["testvol:/rickshaw/outs:rw"])
+                                                                                  cmd,
+                                                 mounts=["testvol:/rickshaw/outs:rw"])
         #cc = self.cyclus_container = self.client.containers.run("rickshaw",
         #                                                               cmd,
         #                                            publish_all_ports=True,
