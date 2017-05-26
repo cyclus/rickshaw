@@ -46,15 +46,20 @@ def main(args=None):
         while i < ns.n:
             try:
                 specific_spec = simspec.SimSpec(spec)
-            except Exception:
-                print('Simspec failed to build')
-            try:            
                 input_file = generate.generate(sim_spec=specific_spec)
-                if ns.v:
-                    pprint(input_file)
-                jsonfile = '/rickshaw/inputs/' + str(i) + '.json'
+            except Exception as e:
+                message = traceback.format_exc()
+                logging.exception(message)
+            if ns.v:
+                pprint(input_file)
+            jsonfile = '/rickshaw/inputs/' + str(i) + '.json'
+            try:
                 with open(jsonfile, 'w') as jf:
                     json.dump(input_file, jf, indent=4)
+            except Exception as e:
+                message = traceback.format_exc()
+                logging.exception(message)
+            try:
                 if ns.rs:
                     subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
                 if ns.rh:
@@ -64,17 +69,29 @@ def main(args=None):
                 logging.exception(message)
             i += 1
     else:
-        specific_spec = simspec.SimSpec(spec)
-        input_file = generate.generate(sim_spec=specific_spec)
+        try:
+            specific_spec = simspec.SimSpec(spec)
+            input_file = generate.generate(sim_spec=specific_spec)
+        except Exception as e:
+            message = traceback.format_exc()
+            logging.exception(message)
         if ns.v:
             pprint(input_file)
         jsonfile = '/rickshaw/inputs/rickshaw' + '.json'
-        with open(jsonfile, 'w') as jf:
-            json.dump(input_file, jf, indent=4)   
-        if ns.rs:
-            subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
-        if ns.rh:
-            subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
+        try:
+            with open(jsonfile, 'w') as jf:
+                json.dump(input_file, jf, indent=4)
+        except Exception as e:
+            message = traceback.format_exc()
+            logging.exception(message)
+        try:
+            if ns.rs:
+                subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
+            if ns.rh:
+                subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
+        except Exception as e:
+            message = traceback.format_exc()
+            logging.exception(message)
 
 
 if __name__ == '__main__':
