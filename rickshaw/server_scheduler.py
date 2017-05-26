@@ -77,7 +77,7 @@ class ServerScheduler(Scheduler):
         out = '/rickshaw/outs/' + str(servnum)
         cmd = ["rickshaw", "-rh" ,"-n", str(runs), "-o", out]
         print(cmd)
-        cc = self.cyclus_container = self.client.services.create("ergs/ergs-rickshaw",
+        cc = self.cyclus_container = self.client.services.create("ergs/rickshaw",
                                                                                   cmd,
                                                  mounts=["testvol:/rickshaw/outs:rw"])
         print("cyclus service started")
