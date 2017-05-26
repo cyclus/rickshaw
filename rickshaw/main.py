@@ -75,7 +75,7 @@ def main(args=None):
                     logging.info('CYCLUS RS END')
                 if ns.rh:
                     logging.info('CYCLUS RH')
-                    out = subprocess.checkout_output(['cyclus', jsonfile, '-o', ns.o +'.h5'], 
+                    out = subprocess.check_output(['cyclus', jsonfile, '-o', ns.o +'.h5'], 
                                                      stderr=subprocess.STDOUT, universal_newlines=True)
                     logging.info(out)
             except Exception as e:
