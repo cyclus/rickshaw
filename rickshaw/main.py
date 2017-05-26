@@ -48,11 +48,10 @@ def main(args=None):
             pass
     if ns.s is not None:
         ss = server_scheduler.ServerScheduler()
-        #i = 0        
-        #while i < ss.ncpu:
-        #    ss.start_rickshaw_service(ns.s, i)
-        #    i+= 1
-        ss.start_rickshaw_service(ns.s, 1)   
+        i = 0        
+        while i < ss.ncpu-2:
+            ss.start_rickshaw_service(ns.s, i)
+            i+= 1
         return     
     if ns.n is not None:
         i = 0
