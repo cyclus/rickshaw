@@ -55,8 +55,13 @@ class ServerScheduler(Scheduler):
     def start_cyclus_server(self):
         """Starts up a cyclus server at a remote location."""
         print("starting cyclus server")
-        cc = self.cyclus_service = self.client.services.create(self.server_tag)
-        host = self.client.networks.get('bridge').attrs['Services'][cc.id]['IPv4Address']
+        cc = self.cyclus_container = self.client.containers.run(self.server_tag,
+                                                                self.server_cmd,
+                                        ports={'4242/tcp': ('127.0.0.1', 4242)},
+                                                   name=self.cyclus_server_name,
+                                                         publish_all_ports=True,
+                                                                    detach=True)
+        host = self.client.networks.get('bridge').attrs['Containers'][cc.id]['IPv4Address']
         if '/' in host:
             self.cyclus_server_host, _, _ = host.rpartition('/')
         else:
@@ -67,12 +72,24 @@ class ServerScheduler(Scheduler):
         for line in cc.logs(stream=True):
             print('[cyclus] ' + line.decode(), end='')
 
+    def start_rickshaw_service(self, runs, servnum):
+        """Starts up a cyclus server at a remote location."""
+        print("starting cyclus service")
+        out = str(servnum)
+        cmd = ["rickshaw", "-rh" ,"-n", str(runs), "-o", out]
+        print(cmd)
+        cc = self.cyclus_container = self.client.services.create("ergs/ergs-rickshaw",
+                                                                                  cmd,
+                                                 mounts=["testvol:/rickshaw/outs:rw"])
+        #cc = self.cyclus_container = self.client.containers.run("rickshaw",
+        #                                                               cmd,
+        #                                            publish_all_ports=True,
+        #                                                       detach=True,
+        #       volumes={'/home/robert/outs':{'bind':'/rickshaw/outs' ,'mode':'rw'}})
+        print("cyclus service started")
+
     def stop_cyclus_server(self):
         """Stops the cyclus server running in a remote location"""
-        if self.cyclus_container is not None:
-            self.cyclus_container.stop()
-            self.cyclus_container = None
-        self.cyclus_server_ready = False
 
     def queue(self):
         """Obtains the current queue status and retuns the jobs that are scheduled
