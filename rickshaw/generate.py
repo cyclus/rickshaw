@@ -321,6 +321,8 @@ def archetype_block(sim_spec, arches):
         unique_arches.append(':agents:Source')
     if ':agents:NullInst' not in unique_arches:
         unique_arches.append(':agents:NullInst')
+    if ':cycamore:DeployInst' not in unique_arches:
+        unique_arches.append(':cycamore:DeployInst')
     if ':agents:NullRegion' not in unique_arches:
         unique_arches.append(':agents:NullRegion')
     block = {"spec" : []}
@@ -432,27 +434,6 @@ def generate_archetype(sim_spec, arche, in_commod, out_commod, in_recipe, out_re
     logging.info('end generate arch')
     return config
 
-
-def generate_region_inst(sim):
-    """Creates a null region and inst for the randomized runs.
-    This operated in-place.
-    """
-    logging.info('region')
-    sim["region"] = region = {
-        "name": "SingleRegion",
-        "config": {"NullRegion": None},
-        "institution": {
-            "name": "SingleInstitution",
-            "config": {"NullInst": None},
-            "initialfacilitylist": {"entry": []},
-            }
-        }
-    entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
-    for facility in sim["facility"]:
-        entry = {"prototype": facility["name"], "number": 1}
-        entries.append(entry)
-    logging.info('end region')
-
 def generate(max_num_niches=10, sim_spec=None):
     """Creates a random Cyclus simulation input file dict.
 
@@ -498,7 +479,7 @@ def generate(max_num_niches=10, sim_spec=None):
     protos[arches[-1]] = generate_archetype(sim_spec, arches[-1], commods[-1], None, None, None)[0]
     sim["facility"] = list(protos.values())
     sim["facility"] += sim_spec.facilities
-    generate_region_inst(sim)
+    sa.generate_region_inst(sim, sim_spec)
     logging.info('generate end')
     return inp
 

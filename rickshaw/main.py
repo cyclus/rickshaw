@@ -27,6 +27,7 @@ def main(args=None):
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
+    p.add_argument('-op', dest='op', type=str, help='name of cyclue inputfile without extension', default="rickshaw")
     ns = p.parse_args(args=args)
     spec = {}
     if ns.i is not None:
@@ -95,7 +96,7 @@ def main(args=None):
             logging.exception(message)
         if ns.v:
             pprint(input_file)
-        jsonfile = '/rickshaw/inputs/rickshaw' + '.json'
+        jsonfile = ns.op + '.json'
         try:
             with open(jsonfile, 'w') as jf:
                 json.dump(input_file, jf, indent=4)

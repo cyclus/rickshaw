@@ -20,7 +20,7 @@ def generate_throwsink(commod, name):
         Dictionary formatted to represent the archetype in the input file.
     """
     vals = {}
-    vals["capacity"] = 1.0e299
+    vals["capacity"] = 1.0e100
     vals["in_commods"] = {"val": [commod]} 
     config = {"name": name, "config": {"agents_sink": vals}}
     return config
@@ -41,7 +41,7 @@ def generate_throwsource(commod, name):
         Dictionary formatted to represent the archetype in the input file.
     """
     vals = {}
-    vals["capacity"] = 1.0e200
+    vals["capacity"] = 1.0e100
     vals["commod"] = commod
     vals["recipe_name"] = 'natural_uranium' 
     config = {"name": name, "config": {"agents_source": vals}}
@@ -104,3 +104,49 @@ def ff_fill_recipe(name, vals, commod):
 
 def skip(name, vals, commod):
     return 0
+
+
+def generate_region_inst(sim, sim_spec):
+    """Creates a null region and inst for the randomized runs.
+    This operated in-place.
+    """
+    sim["region"] = region = {
+        "name": "SingleRegion",
+        "config": {"NullRegion": None},
+        "institution": {
+            "name": "SingleInstitution",
+            "initialfacilitylist": {"entry": []},
+            }
+        }
+    if sim_spec.ni == True:
+        sim['region']['institution']['config'] = {"DeployInst": generate_deploy_inst(sim)}           
+    else:
+        sim['region']['institution']['config'] = {"NullInst": None}
+    entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
+    for facility in sim["facility"]:
+        entry = {"prototype": facility["name"], "number": 1}
+        entries.append(entry)
+
+def generate_deploy_inst(sim):
+    """This creates a deploy institution for randomized runs. 
+    It will generate a number of deployment times, randomize
+    the times and determine the what to deploy at those times.
+    It operates in place. 
+    """
+    randtimes = sim['control']['duration']/12
+    months = []
+    config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
+    i = 0
+    while i < randtimes:
+        months.append(random.randrange(1, sim['control']['duration'], 1))
+        i+=1
+    months.sort()
+    for date in months:
+        for facility in sim["facility"]:
+            config['prototypes']['val'].append(facility['name'])
+            config['build_times']['val'].append(date)
+            config['n_build']['val'].append(random.randint(1,10))
+            config['lifetimes']['val'].append(random.randint(40, 60))
+    return config
+    
+    
