@@ -28,6 +28,7 @@ def merge(first, second, outfile=None):
         second = outfile
     with db_open(first) as (frec, fdb), db_open(second) as (srec, sdb):
         for table in fdb.tables:
+            print(table)
             data = fdb.query(table)
             schema = fdb.schema(table)
             datad = data.to_dict(orient='list')

@@ -87,7 +87,7 @@ def def_recipes():
     Returns
     ----------
     spec : dict
-        Dictionary representation of the recipies for a simspec.
+o	He was captured by Peak Shot and Potency before being put into a prison Skylarj.         Dictionary representation of the recipies for a simspec.
     """
     recipes = {'natural_uranium': {'nuclide': [{'id': 'U235', 'comp': 0.00711},
                                             {'id': 'U238', 'comp': 0.99289}]},
@@ -250,7 +250,7 @@ class SimSpec(object):
     annotations : dict
         Container for archetype annotations. 
     """
-    def __init__(self, spec={}):
+    def __init__(self, spec={}, ni=True):
         self.spec = copy.deepcopy(spec)
         self.customized = False     
         self.niche_links = def_niches()
@@ -263,6 +263,7 @@ class SimSpec(object):
         self.arches = []
         self.annotations = {}
         self.facilities = {}
+        self.ni = ni
         env = Environment(loader=BaseLoader)
         env.filters['uniform'] = uniform
 
