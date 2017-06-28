@@ -27,7 +27,7 @@ def main(args=None):
     p.add_argument('-v', dest='v', action="store_true", help='verbose mode will pretty print generated files')
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
-    p.add_argument('-op', dest='op', type=str, help='name of cyclue inputfile without extension', default="rickshaw")
+    p.add_argument('-op', dest='op', type=str, help='name of cyclus input file without extension', default="rickshaw")
     ns = p.parse_args(args=args)
     spec = {}
     if ns.i is not None:
@@ -73,9 +73,10 @@ def main(args=None):
                 logging.exception(message)
             try:
                 if ns.rs:
-                    logging.info('CYCLUS RS')
-                    subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
-                    logging.info('CYCLUS RS END')
+                    cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.sqlite']
+                    logging.info(' '.join(cmd))
+                    out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, 
+                                                        universal_newlines=True)
                 if ns.rh:
                     cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.h5']
                     logging.info(' '.join(cmd))
@@ -103,11 +104,18 @@ def main(args=None):
         except Exception as e:
             message = traceback.format_exc()
             logging.exception(message)
-        try:
+        try
             if ns.rs:
-                subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.sqlite'])
+                cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.sqlite']
+                logging.info(' '.join(cmd))
+                out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, 
+                                                    universal_newlines=True)
             if ns.rh:
-                subprocess.call(['cyclus', jsonfile, '-o', ns.o +'.h5'])
+                cmd = [CYCLUS_EXECUTABLE[:], jsonfile, '-o', ns.o +'.h5']
+                logging.info(' '.join(cmd))
+                out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, 
+                                                    universal_newlines=True)
+                logging.info(out)
         except Exception as e:
             message = traceback.format_exc()
             logging.exception(message)
