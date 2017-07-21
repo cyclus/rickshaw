@@ -52,10 +52,13 @@ def enrich_tails(name, vals, commod):
     
     Parameters
     ----------
-    commod : String
-        The commod name will be tailcommd in this case.
     name : String
         Name for the archetype in the input file.
+    vals : Dictionary
+        Dictionary containing the specifications for the facilities
+        in the simulation. 
+    commod : String
+        The commod name will be tailcommd in this case.
         
     Returns
     -------
@@ -67,6 +70,19 @@ def enrich_tails(name, vals, commod):
     return sink
 
 def sep_streams(name, vals, commod):
+    """Generates random separation effiencies 
+       for the separations facility.
+    
+    Parameters
+    ----------
+    name : String
+        Name for the archetype in the input file.
+    vals : Dictionary
+        Dictionary containing the specifications for the facilities
+        in the simulation. 
+    commod : String
+        Name of the commodity to be separated.
+    """ 
     sep_rand = random.uniform(0.0, 1.0)
     sep = 1 - (0.0000001)**(1-sep_rand)*(0.1)**sep_rand
     nucs = ["U", "Pu"]
@@ -89,11 +105,49 @@ def sep_streams(name, vals, commod):
     return 0
 
 def sep_leftover(name, vals, commod):
+    """Generates a sink facility for the waste
+       material after separation. 
+    
+    Parameters
+    ----------
+    name : String
+        Name for the archetype in the input file.
+    vals : Dictionary
+        Dictionary containing the specifications for the facilities
+        in the simulation. 
+    commod : String
+        Name of the commodity to be sent to the sink.
+    
+    Returns
+    -------
+    sink: Dictionary
+        Dictionary containing the specifications for a sink
+        facility. 
+    """
     vals[name] = 'leftovercommod'
     sink = generate_throwsink('leftovercommod', 'sepsink')
     return sink    
 
 def ff_fill(name, vals, commod):
+    """Generates a DU source facility for a fuel fabrication
+        facility.  
+    
+    Parameters
+    ----------
+    name : String
+        Name for the archetype in the input file.
+    vals : Dictionary
+        Dictionary containing the specifications for the facilities
+        in the simulation. 
+    commod : String
+        Name of the commodity for the source.
+    
+    Returns
+    -------
+    source: Dictionary
+        Dictionary containing the specifications for a source
+        facility. 
+    """
     vals[name] = {"val": 'fillcommod'}
     source = generate_throwsource('fillcommod', 'ffsource')
     return source
@@ -109,6 +163,13 @@ def skip(name, vals, commod):
 def generate_region_inst(sim, sim_spec):
     """Creates a null region and inst for the randomized runs.
     This operated in-place.
+    
+    Parameters
+    ----------
+    sim : Dictionary
+        Simulation specifications for the cyclus input file. 
+    sim_spec : SimSpec
+        The prebuild SimSpec for the simulation. 
     """
     sim["region"] = region = {
         "name": "SingleRegion",
@@ -132,6 +193,12 @@ def generate_deploy_inst(sim):
     It will generate a number of deployment times, randomize
     the times and determine the what to deploy at those times.
     It operates in place. 
+
+    
+    Parameters
+    ----------
+    sim : Dictionary
+        Simulation specifications for the cyclus input file. 
     """
     randtimes = sim['control']['duration']/12
     months = []
@@ -149,4 +216,46 @@ def generate_deploy_inst(sim):
             config['lifetimes']['val'].append(random.randint(40, 60))
     return config
     
+def generate_deploy_trans(sim, facs, facstart, facend, facinit):
+    """This creates a deploy institution for randomized runs. 
+    This deploy institutation is designed to test a given parameter
+    space for the possibility of transition between facilities.
+
+    Parameters
+    ----------
+    sim : Dictionary
+        Simulation specifications for the cyclus input file. 
+    facs : Array
+        Array containing the name of the facilities to be generated randomly
+    facstart : Array
+        Array containing the first possible deployment date for a facility
+    facend : Array
+        Array containing the last possible deployment date for a facility
+    facslope : Array
+        Array of possible slopes for deployment schedule.
+    """
+    randtimes = sim['control']['duration']/12
+    months = []
+    config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
+    i = 0
+    while i < randtimes:
+        months.append(random.randrange(1, sim['control']['duration'], 1))
+        i+=1
+    months.sort()
+    for date in months:
+        for facility in sim["facility"]:
+            config['prototypes']['val'].append(facility['name'])
+            config['build_times']['val'].append(date)
+            config['lifetimes']['val'].append(random.choice([40, 60]))
+            if facility["name"] in facs:
+                i = facs.index(facility["name"])
+                low, date, high = 0., (date-facstart[i])/(facend[i]-facstart[i]), 1.
+                value = 0                
+                if facstart[i] > 0. ? value = date : value = 1-date
+                if random.random() < date:
+                    config['n_build']['val'].append()    
+            else:
+                config['n_build']['val'].append(random.randint(0, 1))
+    return config
     
+

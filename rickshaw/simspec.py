@@ -167,6 +167,33 @@ def def_spec_calls():
             }
     return calls
 
+def choose_control():
+    """This program will choose the control scheme at random for a cyclus
+    input file in JSON
+
+    Returns
+    -------
+        control : dict
+            Dictionary generated to be the control scheme in the JSON cyclus
+            input file
+    """
+    logging.info('starting control')   
+    duration = randrange(12, 600, 6)
+    start_month = randrange(1, 12)
+    start_year = randrange(2000, 2050)
+    dt = randrange(2629846, 31558152, 2629846)
+
+    control = {
+
+                'duration' : duration,
+                'startmonth' : start_month,
+                'startyear' : start_year,
+                'dt' : dt,
+
+                }
+    logging.info('finishing control')
+    return control
+
 def read_input_def(obj, env):
     """
     Reads in the facility, region, and institution information in an 
@@ -252,7 +279,8 @@ class SimSpec(object):
     """
     def __init__(self, spec={}, ni=True):
         self.spec = copy.deepcopy(spec)
-        self.customized = False     
+        self.customized = False
+        self.control = chooce_control()     
         self.niche_links = def_niches()
         self.commodities = def_commodities()
         self.recipes = def_recipes()
@@ -277,7 +305,11 @@ class SimSpec(object):
             self.commodities.update(self.spec['commodities'])
         if 'special_calls' in self.spec:
             self.special_calls.update(self.spec['special_calls'])
-        if 'simulation' in self.spec:      
+        if 'parameters' in self.spec:
+            self.parameters = self.spec['parameters']
+        if 'simulation' in self.spec:
+            if 'control' in self.spec['simulation']:
+                sim.      
             if 'recipe' in self.spec['simulation']:
                 for recipe in self.spec['simulation']['recipe']:
                     self.recipes[recipe['name']] = recipe

@@ -14,8 +14,8 @@ except ImportError:
 from rickshaw import simspec
 from rickshaw import generate
 from rickshaw import server_scheduler
+from rickshaw import blue_waters
 from rickshaw.generate import CYCLUS_EXECUTABLE
-
 
 def main(args=None):
     p = ArgumentParser('rickshaw')
@@ -28,6 +28,8 @@ def main(args=None):
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
     p.add_argument('-op', dest='op', type=str, help='name of cyclus input file without extension', default="rickshaw")
+    p.add_argument('-n', dest='n', type=int, help='number of nodes to run on if ran on blue waters', default=None)
+    p.add_argument('-ppn', dest='ppn', type=int, help='number of processors per node for a blue waters run', default=None)
     ns = p.parse_args(args=args)
     spec = {}
     if ns.i is not None:
@@ -47,6 +49,8 @@ def main(args=None):
         except:
             print('Failed to parse richshaw input file, please verify file format')
             pass
+    if ns.n is not None:
+        blue_waters.generate_scripts(ns.n, ns.ppn)
     if ns.s is not None:
         ss = server_scheduler.ServerScheduler()
         i = 0        

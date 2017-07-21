@@ -451,8 +451,8 @@ def generate(max_num_niches=10, sim_spec=None):
     # intial structure
     logging.info('generate start')
     inp = {"simulation": {}}
+    control = sim_spec['conrol']
     sim = inp["simulation"]
-    sim["control"] = choose_control()
     # choose niches and archtypes
     niches = random_niches(sim_spec, max_niches=max_num_niches)
     arches = choose_archetypes(sim_spec, niches)
