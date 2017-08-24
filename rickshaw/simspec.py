@@ -176,22 +176,20 @@ def choose_control():
         control : dict
             Dictionary generated to be the control scheme in the JSON cyclus
             input file
-    """
-    logging.info('starting control')   
-    duration = randrange(12, 600, 6)
-    start_month = randrange(1, 12)
-    start_year = randrange(2000, 2050)
-    dt = randrange(2629846, 31558152, 2629846)
+    """ 
+    duration = random.randrange(1200, 2400, 6)
+    start_month = random.randrange(1, 12)
+    start_year = random.randrange(2000, 2050)
+    #dt = random.randrange(2629846, 31558152, 2629846)
 
     control = {
 
                 'duration' : duration,
                 'startmonth' : start_month,
                 'startyear' : start_year,
-                'dt' : dt,
+                #'dt' : dt,
 
                 }
-    logging.info('finishing control')
     return control
 
 def read_input_def(obj, env):
@@ -280,7 +278,7 @@ class SimSpec(object):
     def __init__(self, spec={}, ni=True):
         self.spec = copy.deepcopy(spec)
         self.customized = False
-        self.control = chooce_control()     
+        self.control = choose_control()     
         self.niche_links = def_niches()
         self.commodities = def_commodities()
         self.recipes = def_recipes()
@@ -288,6 +286,7 @@ class SimSpec(object):
         self.default_sources = {':agents:Source', ':cycamore:Source'}
         self.default_sinks = {':agents:Sink', ':cycamore:Sink'}
         self.special_calls = def_spec_calls()
+        self.parameters = {}
         self.arches = []
         self.annotations = {}
         self.facilities = {}
@@ -309,7 +308,7 @@ class SimSpec(object):
             self.parameters = self.spec['parameters']
         if 'simulation' in self.spec:
             if 'control' in self.spec['simulation']:
-                sim.      
+                sim.control.update(self.spec['simulation']['control'])
             if 'recipe' in self.spec['simulation']:
                 for recipe in self.spec['simulation']['recipe']:
                     self.recipes[recipe['name']] = recipe
@@ -323,7 +322,7 @@ class SimSpec(object):
                     self.facilities[obj['name']] = obj        
         for key, value in self.facilities.items():
             value = read_input_def(value, env)
-        self.facilities = self.facilities.values()             
+        self.facilities = self.facilities.values()            
 
 
 

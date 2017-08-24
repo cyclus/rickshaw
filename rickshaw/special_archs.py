@@ -180,7 +180,9 @@ def generate_region_inst(sim, sim_spec):
             }
         }
     if sim_spec.ni == True:
-        sim['region']['institution']['config'] = {"DeployInst": generate_deploy_inst(sim)}           
+        sim['region']['institution']['config'] = {"DeployInst": generate_deploy_trans(sim, 
+                                                                      sim_spec.parameters)} 
+        #sim['region']['institution']['config'] = {"DeployInst": generate_deploy_trans(sim)}          
     else:
         sim['region']['institution']['config'] = {"NullInst": None}
     entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
@@ -216,7 +218,7 @@ def generate_deploy_inst(sim):
             config['lifetimes']['val'].append(random.randint(40, 60))
     return config
     
-def generate_deploy_trans(sim, facs, facstart, facend, facinit):
+def generate_deploy_trans(sim, parameters):
     """This creates a deploy institution for randomized runs. 
     This deploy institutation is designed to test a given parameter
     space for the possibility of transition between facilities.
@@ -238,24 +240,35 @@ def generate_deploy_trans(sim, facs, facstart, facend, facinit):
     months = []
     config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
     i = 0
+    facs, facstart, facend = parameters['facs'], parameters['facstart'], parameters['facend']
+    facinit = parameters['facinit']
     while i < randtimes:
         months.append(random.randrange(1, sim['control']['duration'], 1))
         i+=1
     months.sort()
     for date in months:
         for facility in sim["facility"]:
-            config['prototypes']['val'].append(facility['name'])
-            config['build_times']['val'].append(date)
-            config['lifetimes']['val'].append(random.choice([40, 60]))
-            if facility["name"] in facs:
+            if facility["name"] in facs:           
                 i = facs.index(facility["name"])
-                low, date, high = 0., (date-facstart[i])/(facend[i]-facstart[i]), 1.
-                value = 0                
-                if facstart[i] > 0. ? value = date : value = 1-date
-                if random.random() < date:
-                    config['n_build']['val'].append()    
+                if facstart[i] > date or facend[i] < date:
+                    continue
+                low, mid, high = 0., (date-facstart[i])/(facend[i]-facstart[i]), 1.
+                value = 0
+                if facstart[i] > 0:
+                    value = mid
+                else: 
+                    value = 1-mid
+                if random.random() < value:
+                    config['prototypes']['val'].append(facility['name'])
+                    config['build_times']['val'].append(date)
+                    config['lifetimes']['val'].append(random.choice([40, 60]))
+                    config['n_build']['val'].append(random.choice([1,2,3]))    
             else:
-                config['n_build']['val'].append(random.randint(0, 1))
+                num = random.choice([0, 0, 0, 0, 1])
+                if num > 0:
+                    config['n_build']['val'].append(num)
+                    config['prototypes']['val'].append(facility['name'])
+                    config['build_times']['val'].append(date)
+                    config['lifetimes']['val'].append(random.choice([40, 60]))
     return config
-    
 

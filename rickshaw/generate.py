@@ -93,33 +93,6 @@ def random_niches(sim_spec, max_niches, choice="mine", niches=None):
         logging.info('Finishing Niches')
         return random_niches(sim_spec, max_niches-1, choice, niches)
 
-def choose_control():
-    """This program will choose the control scheme at random for a cyclus
-    input file in JSON
-
-    Returns
-    -------
-        control : dict
-            Dictionary generated to be the control scheme in the JSON cyclus
-            input file
-    """
-    logging.info('starting control')   
-    duration = randrange(12, 600, 6)
-    start_month = randrange(1, 12)
-    start_year = randrange(2000, 2050)
-    dt = randrange(2629846, 31558152, 2629846)
-
-    control = {
-
-                'duration' : duration,
-                'startmonth' : start_month,
-                'startyear' : start_year,
-                'dt' : dt,
-
-                }
-    logging.info('finishing control')
-    return control
-
 def up_hierarchy(sim_spec, key):
     logging.info('start upheir')
     # If we have it, immediately return
@@ -450,9 +423,9 @@ def generate(max_num_niches=10, sim_spec=None):
     """
     # intial structure
     logging.info('generate start')
-    inp = {"simulation": {}}
-    control = sim_spec['conrol']
+    inp = {"simulation": {}}  
     sim = inp["simulation"]
+    sim['control'] = sim_spec.control
     # choose niches and archtypes
     niches = random_niches(sim_spec, max_niches=max_num_niches)
     arches = choose_archetypes(sim_spec, niches)
