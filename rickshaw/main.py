@@ -68,7 +68,6 @@ def main(args=None):
                     pprint(input_file)
                 jsonfile = str(i) + '.json'
                 diff = deploy.test_schedule(input_file, spec['parameters'])
-                print(diff)              
                 if diff < min_diff:
                     min_diff = diff
                     tempfile = input_file
@@ -82,6 +81,7 @@ def main(args=None):
             i+=1
         with open('best.json', 'w') as jf:
             json.dump(tempfile, jf, indent=4)
+        print('Best schedule match had a difference of: ' + str(min_diff)) 
         deploy.plot_total_power(tempfile, parameters)
         return
     if ns.bn is not None:

@@ -252,8 +252,7 @@ def generate_deploy_trans(sim, parameters):
                 i = facs.index(facility["name"])
                 if facstart[i] > date or facend[i] < date:
                     continue
-                low, mid, high = 0., (date-facstart[i])/(facend[i]-facstart[i]), 1.
-                value = 0
+                value, mid = 0, (date-facstart[i])/(facend[i]-facstart[i])
                 if facstart[i] > 0:
                     value = mid
                 else: 
@@ -264,7 +263,7 @@ def generate_deploy_trans(sim, parameters):
                     config['lifetimes']['val'].append(random.choice([40, 60]))
                     config['n_build']['val'].append(random.choice([1,2,3]))    
             else:
-                num = random.choice([0, 0, 0, 0, 1])
+                num = random.choice([0, 0, 0, 0, 0, 0, 0, 0, 1])
                 if num > 0:
                     config['n_build']['val'].append(num)
                     config['prototypes']['val'].append(facility['name'])

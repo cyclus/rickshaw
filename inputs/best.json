@@ -1,0 +1,744 @@
+{
+    "simulation": {
+        "control": {
+            "startyear": 2013,
+            "startmonth": 2,
+            "duration": 2040
+        },
+        "archetypes": {
+            "spec": [
+                {
+                    "lib": "cycamore",
+                    "name": "Reactor"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Sink"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "Source"
+                },
+                {
+                    "lib": "agents",
+                    "alias": "agents_sink",
+                    "name": "Sink"
+                },
+                {
+                    "lib": "agents",
+                    "alias": "agents_source",
+                    "name": "Source"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullInst"
+                },
+                {
+                    "lib": "cycamore",
+                    "name": "DeployInst"
+                },
+                {
+                    "lib": "agents",
+                    "name": "NullRegion"
+                }
+            ]
+        },
+        "region": {
+            "institution": {
+                "initialfacilitylist": {
+                    "entry": [
+                        {
+                            "prototype": "Source",
+                            "number": 1
+                        },
+                        {
+                            "prototype": "Sink",
+                            "number": 1
+                        },
+                        {
+                            "prototype": "Reactor",
+                            "number": 1
+                        },
+                        {
+                            "prototype": "Reactor1",
+                            "number": 1
+                        }
+                    ]
+                },
+                "config": {
+                    "DeployInst": {
+                        "n_build": {
+                            "val": [
+                                2,
+                                3,
+                                3,
+                                3,
+                                3,
+                                3,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                2,
+                                1,
+                                1,
+                                1,
+                                2,
+                                1,
+                                3,
+                                2,
+                                1,
+                                2,
+                                2,
+                                1,
+                                1,
+                                1,
+                                3,
+                                1,
+                                1,
+                                2,
+                                3,
+                                1,
+                                1,
+                                1,
+                                3,
+                                1,
+                                1,
+                                1,
+                                1,
+                                2,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
+                                3,
+                                1,
+                                2,
+                                2,
+                                1,
+                                1,
+                                3,
+                                3,
+                                2,
+                                3,
+                                1,
+                                1,
+                                3,
+                                2,
+                                1,
+                                2,
+                                1,
+                                2,
+                                1,
+                                2,
+                                3,
+                                1,
+                                2,
+                                1,
+                                1,
+                                1,
+                                3,
+                                1,
+                                1,
+                                2,
+                                1,
+                                1,
+                                3,
+                                1,
+                                2,
+                                1,
+                                3,
+                                1,
+                                2,
+                                1,
+                                1,
+                                1,
+                                1,
+                                2,
+                                2,
+                                3,
+                                3,
+                                1,
+                                2,
+                                1,
+                                2,
+                                1,
+                                3,
+                                2,
+                                2,
+                                1,
+                                1,
+                                1,
+                                2,
+                                2,
+                                1,
+                                3,
+                                1,
+                                1,
+                                1,
+                                2,
+                                3,
+                                3,
+                                1,
+                                1,
+                                3
+                            ]
+                        },
+                        "prototypes": {
+                            "val": [
+                                "Reactor",
+                                "Reactor",
+                                "Reactor",
+                                "Reactor",
+                                "Reactor",
+                                "Reactor",
+                                "Reactor",
+                                "Sink",
+                                "Source",
+                                "Sink",
+                                "Sink",
+                                "Source",
+                                "Source",
+                                "Sink",
+                                "Sink",
+                                "Sink",
+                                "Reactor1",
+                                "Source",
+                                "Sink",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Sink",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Source",
+                                "Sink",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Sink",
+                                "Sink",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Sink",
+                                "Sink",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Reactor1",
+                                "Reactor1",
+                                "Source",
+                                "Sink",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Reactor1",
+                                "Sink",
+                                "Reactor1"
+                            ]
+                        },
+                        "build_times": {
+                            "val": [
+                                25,
+                                27,
+                                67,
+                                105,
+                                110,
+                                125,
+                                212,
+                                286,
+                                291,
+                                350,
+                                372,
+                                393,
+                                410,
+                                420,
+                                444,
+                                461,
+                                474,
+                                503,
+                                503,
+                                515,
+                                540,
+                                542,
+                                646,
+                                668,
+                                679,
+                                680,
+                                688,
+                                777,
+                                819,
+                                879,
+                                894,
+                                895,
+                                896,
+                                907,
+                                943,
+                                1018,
+                                1031,
+                                1042,
+                                1042,
+                                1054,
+                                1054,
+                                1064,
+                                1095,
+                                1116,
+                                1122,
+                                1122,
+                                1126,
+                                1181,
+                                1181,
+                                1186,
+                                1196,
+                                1230,
+                                1245,
+                                1247,
+                                1249,
+                                1250,
+                                1255,
+                                1295,
+                                1308,
+                                1364,
+                                1383,
+                                1393,
+                                1428,
+                                1440,
+                                1448,
+                                1448,
+                                1476,
+                                1486,
+                                1494,
+                                1503,
+                                1507,
+                                1513,
+                                1513,
+                                1514,
+                                1514,
+                                1524,
+                                1528,
+                                1530,
+                                1542,
+                                1542,
+                                1554,
+                                1575,
+                                1596,
+                                1597,
+                                1597,
+                                1660,
+                                1664,
+                                1665,
+                                1665,
+                                1673,
+                                1691,
+                                1719,
+                                1735,
+                                1741,
+                                1770,
+                                1800,
+                                1819,
+                                1828,
+                                1828,
+                                1830,
+                                1830,
+                                1840,
+                                1883,
+                                1885,
+                                1893,
+                                1907,
+                                1907,
+                                1928,
+                                1930,
+                                1941,
+                                1959,
+                                1959,
+                                1963,
+                                1977,
+                                1977,
+                                1977,
+                                1982,
+                                1990,
+                                1994,
+                                1996,
+                                1996
+                            ]
+                        },
+                        "lifetimes": {
+                            "val": [
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                60,
+                                60,
+                                40,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60,
+                                40,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60,
+                                40,
+                                60,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                60,
+                                40,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                60,
+                                60,
+                                40,
+                                60,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                60,
+                                40,
+                                60,
+                                60,
+                                60,
+                                40,
+                                40,
+                                40,
+                                60,
+                                60
+                            ]
+                        }
+                    }
+                },
+                "name": "SingleInstitution"
+            },
+            "config": {
+                "NullRegion": null
+            },
+            "name": "SingleRegion"
+        },
+        "recipe": [
+            {
+                "nuclide": [
+                    {
+                        "comp": 0.00711,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.99289,
+                        "id": "U238"
+                    }
+                ],
+                "basis": "mass",
+                "name": "natural_uranium_fuel"
+            },
+            {
+                "nuclide": [
+                    {
+                        "comp": 0.007039736340093318,
+                        "id": "U235"
+                    },
+                    {
+                        "comp": 0.9810379753236381,
+                        "id": "U238"
+                    },
+                    {
+                        "comp": 0.000265842076576761,
+                        "id": "Pu238"
+                    },
+                    {
+                        "comp": 0.005812631148651415,
+                        "id": "Pu239"
+                    },
+                    {
+                        "comp": 0.0029526311486514152,
+                        "id": "Pu240"
+                    },
+                    {
+                        "comp": 0.0017313155743257076,
+                        "id": "Pu241"
+                    },
+                    {
+                        "comp": 0.0008274210382883804,
+                        "id": "Pu242"
+                    },
+                    {
+                        "comp": 5.604210382883805e-05,
+                        "id": "Am241"
+                    },
+                    {
+                        "comp": 0.0001814210382883805,
+                        "id": "Am243"
+                    },
+                    {
+                        "comp": 2.384210382883805e-05,
+                        "id": "Cm242"
+                    },
+                    {
+                        "comp": 7.114210382883806e-05,
+                        "id": "Cm244"
+                    }
+                ],
+                "basis": "mass",
+                "name": "used_fuel"
+            }
+        ],
+        "facility": [
+            {
+                "config": {
+                    "Source": {
+                        "outcommod": "natural_uranium_fuel",
+                        "throughput": 7.39178276558239e+296,
+                        "inventory_size": 3.315226386382819e+297
+                    }
+                },
+                "name": "Source"
+            },
+            {
+                "config": {
+                    "Sink": {
+                        "capacity": 3.8187736301230305e+298,
+                        "max_inv_size": 2.0128804337356022e+298,
+                        "in_commods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        }
+                    }
+                },
+                "name": "Sink"
+            },
+            {
+                "config": {
+                    "Reactor": {
+                        "fuel_outrecipes": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "n_assem_core": 2,
+                        "cycle_time": 18,
+                        "refuel_time": 1,
+                        "fuel_incommods": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        },
+                        "power_cap": 800,
+                        "fuel_outcommods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "assem_size": 14284.505461890136,
+                        "n_assem_batch": 0,
+                        "n_assem_fresh": 2,
+                        "n_assem_spent": 452793041,
+                        "cycle_step": 0,
+                        "fuel_inrecipes": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        }
+                    }
+                },
+                "name": "Reactor"
+            },
+            {
+                "config": {
+                    "Reactor": {
+                        "fuel_outrecipes": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "n_assem_core": 2,
+                        "cycle_time": 18,
+                        "refuel_time": 1,
+                        "fuel_incommods": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        },
+                        "power_cap": 600,
+                        "fuel_outcommods": {
+                            "val": [
+                                "used_fuel"
+                            ]
+                        },
+                        "assem_size": 14284.505461890136,
+                        "n_assem_batch": 0,
+                        "n_assem_fresh": 2,
+                        "n_assem_spent": 452793041,
+                        "cycle_step": 0,
+                        "fuel_inrecipes": {
+                            "val": [
+                                "natural_uranium_fuel"
+                            ]
+                        }
+                    }
+                },
+                "name": "Reactor1"
+            }
+        ]
+    }
+}
