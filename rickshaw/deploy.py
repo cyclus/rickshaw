@@ -7,8 +7,6 @@ import numpy as np
 
 def read_file(inputfile):
     dict = inputfile
-    #with open(inputfile) as inp:
-    #    dict = json.load(inp)
     inst = dict['simulation']['region']['institution']['config']['DeployInst']
     sim_length = dict['simulation']['control']['duration']
     rpx, r1px = 0, 0
@@ -17,7 +15,6 @@ def read_file(inputfile):
             rpx = obj['config']['Reactor']['power_cap']
         if obj['name'] == 'Reactor1':
             r1px = obj['config']['Reactor']['power_cap']
-
     builds = inst['n_build']['val']
     protos = inst['prototypes']['val']
     times = inst['build_times']['val']
@@ -87,9 +84,6 @@ def combine_power(prototypes, sim_length):
     totalp = []
     power = {}
     for fac in prototypes:
-        #if len(power) == 0:
-        #    power = prototypes[fac]['fullpower']
-        #    continue
         for k,v in prototypes[fac]['fullpower'].items():
             if k < sim_length:
                 if k in power:
@@ -109,17 +103,22 @@ def plot_total_power(inputfile, parameters):
     prototypes, sim_length = read_file(inputfile)
     sumt, totalp = combine_power(prototypes, sim_length)
     pgrow = demand_curve(pstart, rate, sumt)
+    plt.figure(1)
     plt.plot(sumt, totalp, 'r', label="Total Power")
     plt.plot(sumt, pgrow, 'b', label="Expected")
-    plt.legend()
+    plt.figure(2)
+    plt.semilogy(sumt, totalp, 'r', label="Total Power")
+    plt.semilogy(sumt, pgrow, 'b', label="Expected")
     plt.xlabel("Months")
     plt.ylabel("Power (MWe)")
+    plt.legend()
     plt.show()
 
-def demand_curve(pstart, rate, sumt, timestep=12):
+def demand_curve(pstart, rate, sumt, timestep=12.0):
     pgrow = []
     for date in sumt:
-        pgrow.append(pstart*((1+rate)**(date/timestep)))
+        pgrow.append(pstart*((1.0+rate)**(date/timestep)))
+        #print(date, timestep, pstart*((1.0+rate)**(date/timestep)))
     pgrow = np.asarray(pgrow)
     return pgrow
 
@@ -131,5 +130,5 @@ def test_schedule(inputfile, parameters):
     prototypes, sim_length = read_file(inputfile)
     sumt, totalp = combine_power(prototypes, sim_length)
     pgrow = demand_curve(pstart, rate, sumt)
-    diff = calc_demand_error(totalp, pgrow)
+    diff = calc_demand_error(pgrow, totalp)
     return diff

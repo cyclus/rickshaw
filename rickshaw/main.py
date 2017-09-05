@@ -29,7 +29,7 @@ def main(args=None):
     p.add_argument('-o', dest='o', type=str, help='name of output file', default='rickshaw')
     p.add_argument('-s', dest='s', type=int, help='run in service mode with s sims', default=None)
     p.add_argument('-op', dest='op', type=str, help='name of cyclus input file without extension', default="rickshaw")
-    p.add_argument('-bn', dest='n', type=int, help='number of nodes to run on if ran on blue waters', default=None)
+    p.add_argument('-bn', dest='bn', type=int, help='number of nodes to run on if ran on blue waters', default=None)
     p.add_argument('-ppn', dest='ppn', type=int, help='number of processors per node for a blue waters run', default=None)
     p.add_argument('-d', dest = 'd', action="store_true", help='Build a deploy schedule to match the input file')
     ns = p.parse_args(args=args)

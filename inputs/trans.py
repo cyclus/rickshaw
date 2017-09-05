@@ -83,5 +83,6 @@
                  "reactor:fr": {"repository"},
                  "repository" : {None}
     },
-    "parameters": {'facs': ["Reactor", "Reactor1"], "facstart": [0, 200], "facend": [300, 2000], "facinit": [], "pstart": 2000, "rate": 0.02}
+    #"parameters": {"facs": ["Reactor", "Reactor1"], "facpower": [800.0, 600.0],"facstart": [0, 300], "facend": [300, 2000], "deploychoice": [[0,1,2],[2 ,3,4]], "pstart": 5000, "rate": 0.02, "generalchance": 0.1}
+    "parameters": {"schedule": {"Reactor": {20: [0.0, 0.4, 0.8, 1.0], 40: [0.0, 0.0, 0.0, 1.0]}}, "facs": ['Reactor', 'Reactor1'], "pstart": 5000, "rate": 0.02}
 }

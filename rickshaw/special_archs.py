@@ -179,16 +179,22 @@ def generate_region_inst(sim, sim_spec):
             "initialfacilitylist": {"entry": []},
             }
         }
+    entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
     if sim_spec.ni == True:
-        sim['region']['institution']['config'] = {"DeployInst": generate_deploy_trans(sim, 
-                                                                      sim_spec.parameters)} 
-        #sim['region']['institution']['config'] = {"DeployInst": generate_deploy_trans(sim)}          
+        sim['region']['institution']['config'] = {"DeployInst": generate_deploy(sim, 
+                                                                      sim_spec.parameters)}
+        for facility in sim["facility"]:
+            if facility in sim_spec.parameters['facs']:
+                continue
+            else:
+                entry = {"prototype": facility["name"], "number": 1}
+                entries.append(entry)          
     else:
         sim['region']['institution']['config'] = {"NullInst": None}
-    entries = sim["region"]["institution"]["initialfacilitylist"]["entry"]
-    for facility in sim["facility"]:
-        entry = {"prototype": facility["name"], "number": 1}
-        entries.append(entry)
+        for facility in sim["facility"]:
+            entry = {"prototype": facility["name"], "number": 1}
+            entries.append(entry)
+    
 
 def generate_deploy_inst(sim):
     """This creates a deploy institution for randomized runs. 
@@ -218,7 +224,46 @@ def generate_deploy_inst(sim):
             config['lifetimes']['val'].append(random.randint(40, 60))
     return config
     
-def generate_deploy_trans(sim, parameters):
+def trans_init_facs(sim, parameters, config):
+    pstart, facpower = parameters['pstart'], parameters['facpower']
+    facs, facstart, facend = parameters['facs'], parameters['facstart'], parameters['facend']
+    startfacs, facnum, power = [], {},  0.0
+    for fac in facs:
+        i = facs.index(fac)
+        if facstart[i] > 0:
+            startfacs.append(i)
+            facnum[i] = 0.0
+    while power < pstart:
+        fac = random.choice(startfacs)
+        facnum[fac] += 1.0
+        power += facpower[fac]
+    for fac in startfacs:
+        i = 0
+        while i < facnum[fac]:
+            config['prototypes']['val'].append(facs[fac])
+            config['build_times']['val'].append(0)
+            config['lifetimes']['val'].append(random.randrange(0,60,1))
+            config['n_build']['val'].append(1)  
+            i+=1
+    return config
+
+def generate_deploy(sim, parameters):
+    """Determines the function used to build the deploy institution. 
+   Parameters
+    ----------
+    sim : Dictionary
+        Simulation specifications for the cyclus input file. 
+    parameters: Dictionary
+        Parameters used to define the deploy institution.
+    """
+    config = {}
+    if 'schedule' in parameters.keys():
+        config = generate_deploy_sch(sim, parameters)
+    if 'lin' in parameters.keys():
+        config = generate_deploy_lin(sim, parameters)
+    return config
+
+def generate_deploy_lin(sim, parameters):
     """This creates a deploy institution for randomized runs. 
     This deploy institutation is designed to test a given parameter
     space for the possibility of transition between facilities.
@@ -227,21 +272,21 @@ def generate_deploy_trans(sim, parameters):
     ----------
     sim : Dictionary
         Simulation specifications for the cyclus input file. 
-    facs : Array
-        Array containing the name of the facilities to be generated randomly
-    facstart : Array
-        Array containing the first possible deployment date for a facility
-    facend : Array
-        Array containing the last possible deployment date for a facility
-    facslope : Array
-        Array of possible slopes for deployment schedule.
+    parameters: Dictionary
+        Parameters used to define the deploy institution.
     """
     randtimes = sim['control']['duration']/12
     months = []
     config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
     i = 0
     facs, facstart, facend = parameters['facs'], parameters['facstart'], parameters['facend']
-    facinit = parameters['facinit']
+    try:
+        gen_c = parameters['generalchance']
+    except:
+        print("No generalchance parameter set, using default of 10%")
+        gen_c = 0.1
+    deploy_c = parameters['deploychoice']    
+    config = trans_init_facs(sim, parameters, config)
     while i < randtimes:
         months.append(random.randrange(1, sim['control']['duration'], 1))
         i+=1
@@ -252,6 +297,9 @@ def generate_deploy_trans(sim, parameters):
                 i = facs.index(facility["name"])
                 if facstart[i] > date or facend[i] < date:
                     continue
+                num = random.choice(deploy_c[i])
+                if num == 0:
+                    continue
                 value, mid = 0, (date-facstart[i])/(facend[i]-facstart[i])
                 if facstart[i] > 0:
                     value = mid
@@ -261,13 +309,39 @@ def generate_deploy_trans(sim, parameters):
                     config['prototypes']['val'].append(facility['name'])
                     config['build_times']['val'].append(date)
                     config['lifetimes']['val'].append(random.choice([40, 60]))
-                    config['n_build']['val'].append(random.choice([1,2,3]))    
+                    config['n_build']['val'].append(num)    
             else:
-                num = random.choice([0, 0, 0, 0, 0, 0, 0, 0, 1])
-                if num > 0:
-                    config['n_build']['val'].append(num)
+                if random.random() < gen_c:
+                    config['n_build']['val'].append(1)
                     config['prototypes']['val'].append(facility['name'])
                     config['build_times']['val'].append(date)
                     config['lifetimes']['val'].append(random.choice([40, 60]))
+    return config
+
+def generate_deploy_sch(sim, parameters):
+    """This creates a deploy institution for randomized runs. 
+    This deploy institutation is designed to test a given parameter
+    space for the possibility of transition between facilities.
+
+    Parameters
+    ----------
+    sim : Dictionary
+        Simulation specifications for the cyclus input file. 
+    parameters: Dictionary
+        Parameters used to define the deploy institution.
+    """
+    config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
+    sched = parameters['schedule']
+    for fac, dates in sched.items():
+        for date, values in dates.items():
+            seed = random.random()
+            i = 0
+            while seed > values[i]:
+                i+=1
+            if i > 0:
+                config['prototypes']['val'].append(fac)
+                config['build_times']['val'].append(date)
+                config['lifetimes']['val'].append(40)
+                config['n_build']['val'].append(i)
     return config
 
