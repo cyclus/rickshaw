@@ -177,7 +177,7 @@ def choose_control():
             Dictionary generated to be the control scheme in the JSON cyclus
             input file
     """ 
-    duration = random.randrange(1200, 2400, 6)
+    duration = random.randrange(1200, 2400, 12)
     start_month = random.randrange(1, 12)
     start_year = random.randrange(2000, 2050)
     #dt = random.randrange(2629846, 31558152, 2629846)
@@ -293,7 +293,6 @@ class SimSpec(object):
         self.ni = ni
         env = Environment(loader=BaseLoader)
         env.filters['uniform'] = uniform
-
         # Check for specifications
         if 'niche_links' in self.spec:
             self.niche_links = self.spec['niche_links']
@@ -308,7 +307,7 @@ class SimSpec(object):
             self.parameters = self.spec['parameters']
         if 'simulation' in self.spec:
             if 'control' in self.spec['simulation']:
-                sim.control.update(self.spec['simulation']['control'])
+                self.control.update(self.spec['simulation']['control'])
             if 'recipe' in self.spec['simulation']:
                 for recipe in self.spec['simulation']['recipe']:
                     self.recipes[recipe['name']] = recipe

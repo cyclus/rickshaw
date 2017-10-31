@@ -111,6 +111,13 @@ def plot_total_power(inputfile, parameters):
     plt.semilogy(sumt, pgrow, 'b', label="Expected")
     plt.xlabel("Months")
     plt.ylabel("Power (MWe)")
+    plt.figure(3)
+    for fac in facs:
+        plt.plot(prototypes[fac]['sumtime'], prototypes[fac]['deploy'], label=fac)
+    plt.xlabel("Months")
+    plt.ylabel("Number of facilities")
+    plt.legend()
+
     plt.legend()
     plt.show()
 

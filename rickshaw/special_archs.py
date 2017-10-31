@@ -226,11 +226,12 @@ def generate_deploy_inst(sim):
     
 def trans_init_facs(sim, parameters, config):
     pstart, facpower = parameters['pstart'], parameters['facpower']
-    facs, facstart, facend = parameters['facs'], parameters['facstart'], parameters['facend']
+    lin = parameters['lin']
+    facs, facstart, facend = parameters['facs'], lin['facstart'], lin['facend']
     startfacs, facnum, power = [], {},  0.0
     for fac in facs:
         i = facs.index(fac)
-        if facstart[i] > 0:
+        if facstart[i] == 0:
             startfacs.append(i)
             facnum[i] = 0.0
     while power < pstart:
@@ -277,15 +278,16 @@ def generate_deploy_lin(sim, parameters):
     """
     randtimes = sim['control']['duration']/12
     months = []
+    lin = parameters['lin']
     config = {'prototypes': {'val':[]}, 'build_times': {'val': []}, 'n_build':{'val': []}, 'lifetimes': {'val':[]}}
     i = 0
-    facs, facstart, facend = parameters['facs'], parameters['facstart'], parameters['facend']
+    facs, facstart, facend, types = parameters['facs'], lin['facstart'], lin['facend'], lin['type']
     try:
         gen_c = parameters['generalchance']
     except:
         print("No generalchance parameter set, using default of 10%")
         gen_c = 0.1
-    deploy_c = parameters['deploychoice']    
+    deploy_c = lin['deploychoice']    
     config = trans_init_facs(sim, parameters, config)
     while i < randtimes:
         months.append(random.randrange(1, sim['control']['duration'], 1))
@@ -301,10 +303,12 @@ def generate_deploy_lin(sim, parameters):
                 if num == 0:
                     continue
                 value, mid = 0, (date-facstart[i])/(facend[i]-facstart[i])
-                if facstart[i] > 0:
+                if types[i] is 'inc':
                     value = mid
-                else: 
+                elif types[i] is 'dec': 
                     value = 1-mid
+                elif types[i] is 'unity':
+                    value = 1
                 if random.random() < value:
                     config['prototypes']['val'].append(facility['name'])
                     config['build_times']['val'].append(date)

@@ -1,6 +1,6 @@
 {
 'simulation': 
-    {
+    {'control': {'duration': 2200},
     'facility': [
                 {
                     "config": {
@@ -83,6 +83,6 @@
                  "reactor:fr": {"repository"},
                  "repository" : {None}
     },
-    #"parameters": {"facs": ["Reactor", "Reactor1"], "facpower": [800.0, 600.0],"facstart": [0, 300], "facend": [300, 2000], "deploychoice": [[0,1,2],[2 ,3,4]], "pstart": 5000, "rate": 0.02, "generalchance": 0.1}
-    "parameters": {"schedule": {"Reactor": {20: [0.0, 0.4, 0.8, 1.0], 40: [0.0, 0.0, 0.0, 1.0]}}, "facs": ['Reactor', 'Reactor1'], "pstart": 5000, "rate": 0.02}
+    "parameters": {"lin": {"facstart": [0, 500, 600], "facend": [500, 1500, 2400], 'type': ['inc', 'dec', 'inc'], "deploychoice": [[0,1,2], [0,1,2],[1,2,2]]}, "facs": ["Reactor", "Reactor", "Reactor1"], "facpower": [800.00, 800.0, 600.0], "pstart": 5000, "rate": 0.01, "generalchance": 0.1}
+    #"parameters": {"schedule": {"Reactor": {20: [0.0, 0.4, 0.8, 1.0], 40: [0.0, 0.0, 0.0, 1.0]}}, "facs": ['Reactor', 'Reactor1'], "pstart": 5000, "rate": 0.02}
 }
