@@ -1,9 +1,13 @@
 """Asynchonous job creation for rickshaw for use on HPC systems."""
 
+import json
 import asyncio
 import concurrent.futures
 from asyncio.subprocess import create_subprocess_exec
 from argparse import ArgumentParser
+
+from rickshaw.simspec import SimSpec
+from rickshaw.generate import generate
 
 def make_parser():
     """Makes the argument parser for the rickshaw node server."""
@@ -18,21 +22,27 @@ def make_parser():
                    help="Node name")
     p.add_argument("-f", "--format", type=str, default="h5", dest="format",
                    help="The format of output file, h5 or sqlite")
+    p.add_argument("-i", "--input", type=str, default=None, dest="i",
+                   help="Input templating file for Rickshaw")
     return p
 
-async def run_sim(output_q, filename):
-    inputfile = ""
-    p = await create_subprocess_exec("cyclus", "-o", filename, "-i", inputfile)
-    await p.wait()
-    await output_q.put(filename)
+async def run_sim(output_q, filename, template):
+    try:    
+        specific_spec = SimSpec(ni=False) if template is None else SimSpec.from_file(template)    
+        input_dict = generate(sim_spec=specific_spec)
+        inputfile = json.dumps(input_dict)
+        p = await create_subprocess_exec("cyclus", "-o", filename, "-i", inputfile, "-f", "json")
+        await p.wait()
+    finally:    
+        await output_q.put(filename)
 
-async def run_sims(output_q, nsim):
+async def run_sims(output_q, nsim, template):
     i = 0
     pending_tasks = []
     while i < nsim:
         while not output_q.empty() and i < nsim:
             filename = await output_q.get()
-            sim_task = asyncio.ensure_future(run_sim(output_q, filename))
+            sim_task = asyncio.ensure_future(run_sim(output_q, filename, template))
             pending_tasks.append(sim_task)            
             i += 1
         if len(pending_tasks) > 0:
@@ -52,7 +62,7 @@ def main(args=None):
     if ns.debug:
         loop.set_debug(True)
     try:
-        loop.run_until_complete(run_sims(output_q, ns.nsim))
+        loop.run_until_complete(run_sims(output_q, ns.nsim, ns.i))
     finally:
         if not loop.is_closed():
             loop.close()

@@ -232,6 +232,7 @@ def read_input_def(obj, env):
             obj[v] = read_input_def(obj[v], env)
     return obj
 
+
 class SimSpec(object):
     """
     Manages any constraints placed on Rickshaw generation.
@@ -275,7 +276,8 @@ class SimSpec(object):
     annotations : dict
         Container for archetype annotations. 
     """
-    def __init__(self, spec={}, ni=True):
+    def __init__(self, spec=None, ni=True):
+        spec = {} if spec is None else spec
         self.spec = copy.deepcopy(spec)
         self.customized = False
         self.control = choose_control()     
@@ -321,7 +323,29 @@ class SimSpec(object):
                     self.facilities[obj['name']] = obj        
         for key, value in self.facilities.items():
             value = read_input_def(value, env)
-        self.facilities = self.facilities.values()            
+        self.facilities = self.facilities.values() 
+
+    @classmethod 
+    def from_file(cls, filename):
+        spec = {}
+        try:
+            ext = os.path.splitext(filename)[1]
+            if ext == '.json':
+                with open(filename) as jf:
+                    spec = json.load(jf)
+                    for k,v in simspec['niche_links'].items():
+                        spec['niche_links'][k] = set(v)
+                    for k,v in simspec['archetypes'].items():
+                        spec['archetypes'][k] = set(v)
+            elif ext == '.py':
+                with open(filename) as pf:
+                    py_str = pf.read()
+                    spec = eval(py_str)
+        except:
+            print('Failed to parse richshaw input file, please verify file format')
+            pass
+        ss = cls(spec=spec)
+        return ss
 
 
 

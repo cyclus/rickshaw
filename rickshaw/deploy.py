@@ -5,6 +5,8 @@ import json
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 
+from rickshaw import generate
+
 def read_file(inputfile):
     dict = inputfile
     inst = dict['simulation']['region']['institution']['config']['DeployInst']
@@ -139,3 +141,29 @@ def test_schedule(inputfile, parameters):
     pgrow = demand_curve(pstart, rate, sumt)
     diff = calc_demand_error(pgrow, totalp)
     return diff
+
+def run_deploy(nsims, specific_spec):
+    i = 0;
+    min_diff = 1.0
+    tempfile = {}
+    parameters = {}
+    while i < nsims:
+        try:            
+            input_file = generate.generate(sim_spec=specific_spec)
+            if ns.v:
+                pprint(input_file)
+            jsonfile = str(i) + '.json'
+            diff = deploy.test_schedule(input_file, spec['parameters'])
+            if diff < min_diff:
+                min_diff = diff
+                tempfile = input_file
+                parameters = spec['parameters']
+            if diff < 0.05:
+                with open(jsonfile, 'w') as jf:
+                    json.dump(input_file, jf, indent=4)
+        except Exception as e:
+        i+=1
+    with open('best.json', 'w') as jf:
+        json.dump(tempfile, jf, indent=4)
+    print('Best schedule match had a difference of: ' + str(min_diff)) 
+    deploy.plot_total_power(tempfile, parameters)
