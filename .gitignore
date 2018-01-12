@@ -92,3 +92,6 @@ ENV/
 # Misc Files
 *.sqlite
 *.h5
+
+# Rever
+rever/
