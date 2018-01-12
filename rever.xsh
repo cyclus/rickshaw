@@ -8,7 +8,7 @@ $ACTIVITIES = ['pytest', 'version_bump', 'changelog', 'tag', 'push_tag',
 $CHANGELOG_FILENAME = 'CHANGELOG.rst'
 $CHANGELOG_TEMPLATE = 'TEMPLATE.rst'
 
-$DOCKER_CONDA_DEPS = ['python-json-logger', 'pprintpp', 'jinja2']
+$DOCKER_CONDA_DEPS = ['python-json-logger', 'pprintpp', 'jinja2', 'pytest']
 $DOCKER_INSTALL_COMMAND = 'git clean -fdx && ./setup.py install --user'
 
 $VERSION_BUMP_PATTERNS = [

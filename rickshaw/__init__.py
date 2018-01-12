@@ -14,4 +14,4 @@ log_handler.setFormatter(formatter)
 logger.addHandler(log_handler)
 logger.addHandler(file_handler)
 
-__version__ = "0.0.1"
+__version__ = '1.5.3'
