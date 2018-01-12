@@ -8,11 +8,8 @@ except ImportError:
     from distutils.core import setup
     HAVE_SETUPTOOLS = False
 
-localdir = os.path.dirname(__file__)
-sys.path.insert(0, localdir)
-import rickshaw
-VERSION = rickshaw.__version__
-del sys.path[0]
+
+VERSION = "0.0.1"
 
 setup_kwargs = {
     "version": VERSION,
@@ -33,6 +30,8 @@ setup_kwargs = {
     "scripts": ["scripts/rickshaw", "scripts/rickserv"]
     }
 
+if HAVE_SETUPTOOLS:
+    setup_kwargs['install_requires'] = ['python-json-logger', 'pprintpp', 'jinja2']
 
 if __name__ == '__main__':
     setup(

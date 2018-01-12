@@ -37,12 +37,12 @@ def read_file(inputfile):
         prototypes[protos[i]]['builds'].append(builds[i])
         if times[i] in prototypes[protos[i]]['fulltime']:
             prototypes[protos[i]]['fulltime'][times[i]] += builds[i]
-            prototypes[protos[i]]['fullpower'][times[i]] += builds[i] * prototypes[protos[i]]['px']      
+            prototypes[protos[i]]['fullpower'][times[i]] += builds[i] * prototypes[protos[i]]['px']
         else:
             prototypes[protos[i]]['fulltime'][times[i]] = builds[i]
-            prototypes[protos[i]]['fullpower'][times[i]] = builds[i] * prototypes[protos[i]]['px']     
+            prototypes[protos[i]]['fullpower'][times[i]] = builds[i] * prototypes[protos[i]]['px']
         prototypes[protos[i]]['fulltime'][times[i]+(lifes[i]*12)] = builds[i]*-1
-        prototypes[protos[i]]['fullpower'][times[i]+(lifes[i]*12)] = builds[i]*-1*prototypes[protos[i]]['px'] 
+        prototypes[protos[i]]['fullpower'][times[i]+(lifes[i]*12)] = builds[i]*-1*prototypes[protos[i]]['px']
     for proto in prototypes.keys():
         p = prototypes[proto]
         for date in p['fulltime'].keys():
