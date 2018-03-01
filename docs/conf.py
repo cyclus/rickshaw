@@ -211,7 +211,7 @@ htmlhelp_basename = 'rickshawdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'xonsh.tex', u'rickshaw documentation',
+  ('index', 'rickshaw.tex', u'rickshaw documentation',
    u'Anthony Scopatz', 'manual'),
 ]
 
