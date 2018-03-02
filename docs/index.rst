@@ -53,7 +53,7 @@ open an issue on GitHub.
 Helpful Links
 =============
 
-* `Documentation <http://xon.sh>`_
+* `Documentation <http://www.ergs.sc.edu/rickshaw-docs>`_
 * `GitHub Repository <https://github.com/ergs/rickshaw>`_
 * :ref:`genindex`
 * :ref:`modindex`
@@ -61,7 +61,7 @@ Helpful Links
 
 .. raw:: html
 
-    <a href="https://github.com/ergs/rickshaw" class='github-fork-ribbon' title='Fork me on GitHub'>Fork me on GitHub</a>
+    <a href="https://github.com/cyclus/rickshaw" class='github-fork-ribbon' title='Fork me on GitHub'>Fork me on GitHub</a>
 
     <style>
     /*!

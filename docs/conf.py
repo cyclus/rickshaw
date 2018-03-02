@@ -197,7 +197,7 @@ html_style = "numpy_friendly.css"
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'xonshdoc'
+htmlhelp_basename = 'rickshawdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -211,7 +211,7 @@ htmlhelp_basename = 'xonshdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'xonsh.tex', u'xonsh documentation',
+  ('index', 'rickshaw.tex', u'rickshaw documentation',
    u'Anthony Scopatz', 'manual'),
 ]
 
